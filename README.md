@@ -1,102 +1,60 @@
 # ExamMate
 
-ExamMate is a responsive web app for exam practice and review.  
-It is designed for personal study use and focuses on solving multiple-choice questions, checking answers instantly, reading explanations, reviewing incorrect answers, and tracking learning progress over time.
+## Overview
 
-## Project Status
+ExamMate는 시험 대비를 위한 예상문제풀이 웹앱 프로젝트입니다.  
+사용자는 객관식 문제를 풀고, 정답 여부를 확인하고, 해설을 읽고, 오답을 다시 복습할 수 있도록 설계되어 있습니다.
 
-This repository is currently in the planning and bootstrap stage.
+## Status
 
-- Project requirements are documented
-- Research and architecture notes are documented
-- Development plan and branch breakdown are documented
-- Application implementation has not started yet
+현재 이 저장소는 기획과 초기 구조 설계 단계에 있습니다.  
+아직 실제 앱 구현은 시작 전이며, 요구사항 문서화와 개발 계획 정리가 먼저 진행된 상태입니다.
 
-## Planned Core Features
+## Features
 
-- Multiple-choice question solving
-- Choice selection and answer submission
-- Instant answer checking
-- Explanation view after submission
-- Result summary with score breakdown
-- Incorrect answer review flow
-- Random quiz mode
-- Exam mode
-- Favorites
-- Learning statistics dashboard
-- LocalStorage-based progress persistence
+이 프로젝트에서 구현하려는 핵심 기능은 다음과 같습니다.
 
-## Tech Stack
+- 객관식 문제풀이
+- 보기 선택과 제출
+- 정답/오답 판정
+- 해설 확인
+- 결과 요약
+- 오답 복습
+- 랜덤 모드
+- 시험 모드
+- 즐겨찾기
+- 학습 통계
+- LocalStorage 기반 학습 기록 유지
+
+## Stack
+
+프로젝트는 아래 기술 스택을 기준으로 진행합니다.
 
 - Next.js
 - TypeScript
 - Tailwind CSS
 - LocalStorage
 
-## Repository Documents
+## Documents
 
-- `codex-project-guidelines-exam-webapp.md`: project rules and implementation requirements
-- `research.md`: deep analysis of product structure, flows, and architecture
-- `plan.md`: development phases, feature breakdown, and branch strategy
+저장소에는 현재 아래 문서들이 정리되어 있습니다.
 
-## Development Strategy
+- `codex-project-guidelines-exam-webapp.md`: 프로젝트 요구사항과 작업 원칙
+- `research.md`: 프로젝트 구조와 동작 방식에 대한 분석 문서
+- `plan.md`: 현재 브랜치에서 수행할 작업 계획 문서
 
-This project follows a small-scope feature branch workflow.
+## Branch Strategy
 
-- `main` is kept as the most stable branch
-- work is done on separate feature branches
-- one branch should focus on one purpose
-- changes are planned before implementation
-- major structure or data changes should be explained before being made
+이 프로젝트는 작은 단위의 브랜치 전략을 사용합니다.
 
-Example branches:
+- `main`: 비교적 안정적인 상태 유지
+- `feature/*`: 기능 단위 개발
+- `fix/*`: 버그 수정
+- `refactor/*`: 구조 개선
 
-- `feature/project-bootstrap`
-- `feature/domain-types`
-- `feature/question-data`
-- `feature/question-ui`
-- `feature/answer-checking`
-- `feature/localstorage-progress`
+현재 작업은 `feature/project-bootstrap` 브랜치 기준으로 진행됩니다.
 
-## Planned App Structure
+## Direction
 
-```text
-app/
-  page.tsx
-  quiz/page.tsx
-  result/page.tsx
-  review/page.tsx
-  dashboard/page.tsx
-  favorites/page.tsx
-components/
-  common/
-  question/
-  result/
-  review/
-  dashboard/
-data/
-  questions.json
-lib/
-  storage/
-  quiz/
-  utils/
-  types/
-```
-
-## Product Direction
-
-ExamMate is not intended to be just a simple quiz page.  
-The goal is to build a local-state-based study system with clear quiz session flow, review loops, and persistent learning records.
-
-The implementation priorities are:
-
-1. Establish stable project structure
-2. Define data and type models
-3. Build the quiz-solving flow
-4. Add result and review flows
-5. Extend with modes, favorites, persistence, and statistics
-
-## Next Step
-
-The first implementation target is `feature/project-bootstrap`, which will set up the Next.js App Router project structure, Tailwind, and the base route/layout skeleton for later features.
-
+이 프로젝트는 단순한 퀴즈 페이지가 아니라,  
+문제풀이 흐름, 오답 복습, 학습 기록 저장, 통계 확인까지 포함하는 학습용 웹앱을 목표로 합니다.

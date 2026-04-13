@@ -5,11 +5,13 @@ import { useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
 import type { ChoiceIndex, QuestionSet } from "../../lib/types";
+import { checkAnswer } from "../../lib/quiz/check-answer";
 import { ChoiceList } from "./ChoiceList";
 import { EmptyQuestionState } from "./EmptyQuestionState";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { QuestionCard } from "./QuestionCard";
 import { QuizHeader } from "./QuizHeader";
+import { SubmitBar } from "./SubmitBar";
 
 type QuizPageState = Readonly<{
   activeQuestionSet: QuestionSet | null;
@@ -22,6 +24,9 @@ const INITIAL_QUIZ_PAGE_STATE: QuizPageState = {
 };
 
 const INITIAL_SELECTED_CHOICE_INDEX: ChoiceIndex | null = null;
+const INITIAL_SUBMITTED_CHOICE_INDEX: ChoiceIndex | null = null;
+const INITIAL_IS_SUBMITTED = false;
+const INITIAL_IS_CORRECT: boolean | null = null;
 
 function getModeLabel(mode: string | null): string {
   if (mode === "random") {
@@ -40,6 +45,10 @@ export function QuizPageContent() {
   const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<ChoiceIndex | null>(
     INITIAL_SELECTED_CHOICE_INDEX
   );
+  const [submittedChoiceIndex, setSubmittedChoiceIndex] =
+    useState<ChoiceIndex | null>(INITIAL_SUBMITTED_CHOICE_INDEX);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(INITIAL_IS_SUBMITTED);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(INITIAL_IS_CORRECT);
   const searchParams = useSearchParams();
   const modeLabel = getModeLabel(searchParams.get("mode"));
 
@@ -56,7 +65,28 @@ export function QuizPageContent() {
 
   useEffect(() => {
     setSelectedChoiceIndex(INITIAL_SELECTED_CHOICE_INDEX);
+    setSubmittedChoiceIndex(INITIAL_SUBMITTED_CHOICE_INDEX);
+    setIsSubmitted(INITIAL_IS_SUBMITTED);
+    setIsCorrect(INITIAL_IS_CORRECT);
   }, [currentQuestion?.id]);
+
+  function handleSelectChoice(choiceIndex: ChoiceIndex): void {
+    if (isSubmitted) {
+      return;
+    }
+
+    setSelectedChoiceIndex(choiceIndex);
+  }
+
+  function handleSubmit(): void {
+    if (currentQuestion === undefined || selectedChoiceIndex === null || isSubmitted) {
+      return;
+    }
+
+    setSubmittedChoiceIndex(selectedChoiceIndex);
+    setIsSubmitted(true);
+    setIsCorrect(checkAnswer(currentQuestion, selectedChoiceIndex));
+  }
 
   return (
     <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
@@ -90,10 +120,19 @@ export function QuizPageContent() {
               question={currentQuestion}
               questionNumber={currentQuestionNumber}
             />
+            <SubmitBar
+              canSubmit={selectedChoiceIndex !== null}
+              isSubmitted={isSubmitted}
+              isCorrect={isCorrect}
+              onSubmit={handleSubmit}
+            />
             <ChoiceList
               choices={currentQuestion.choices}
               selectedChoiceIndex={selectedChoiceIndex}
-              onSelectChoice={setSelectedChoiceIndex}
+              submittedChoiceIndex={submittedChoiceIndex}
+              correctChoiceIndex={isSubmitted ? currentQuestion.answer : null}
+              isSubmitted={isSubmitted}
+              onSelectChoice={handleSelectChoice}
             />
           </>
         ) : null}

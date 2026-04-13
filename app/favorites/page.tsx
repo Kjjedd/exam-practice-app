@@ -1,3 +1,5 @@
+import { FavoritesPageContent } from "../../components/favorites/FavoritesPageContent";
+
 export default function FavoritesPage() {
-  return null;
+  return <FavoritesPageContent />;
 }

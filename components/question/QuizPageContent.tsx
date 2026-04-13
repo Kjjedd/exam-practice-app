@@ -125,6 +125,7 @@ export function QuizPageContent() {
   const searchParams = useSearchParams();
   const quizMode = getQuizMode(searchParams.get("mode"));
   const modeLabel = getModeLabel(quizMode);
+  const isExamMode = quizMode === "exam";
 
   useEffect(() => {
     setState({
@@ -250,6 +251,7 @@ export function QuizPageContent() {
               totalQuestions={questions.length}
               modeLabel={modeLabel}
               questionSetTitle={state.activeQuestionSet?.title ?? "활성 문제 세트"}
+              isExamMode={isExamMode}
             />
             <ProgressIndicator
               currentQuestionNumber={currentQuestionNumber}
@@ -264,6 +266,7 @@ export function QuizPageContent() {
               isSubmitted={isSubmitted}
               isCorrect={isCorrect}
               onSubmit={handleSubmit}
+              isExamMode={isExamMode}
             />
             <ChoiceList
               choices={currentQuestion.choices}
@@ -285,6 +288,7 @@ export function QuizPageContent() {
               <QuizNavigation
                 isLastQuestion={isLastQuestion}
                 onProceed={handleProceedToNextStep}
+                isExamMode={isExamMode}
               />
             ) : null}
           </>

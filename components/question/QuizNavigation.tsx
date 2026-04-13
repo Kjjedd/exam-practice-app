@@ -1,17 +1,35 @@
 type QuizNavigationProps = Readonly<{
   isLastQuestion: boolean;
   onProceed: () => void;
+  isExamMode?: boolean;
 }>;
 
 export function QuizNavigation({
   isLastQuestion,
-  onProceed
+  onProceed,
+  isExamMode = false
 }: QuizNavigationProps) {
-  const heading = isLastQuestion ? "세션 종료" : "다음 문제";
+  const heading = isLastQuestion
+    ? isExamMode
+      ? "시험 종료"
+      : "세션 종료"
+    : isExamMode
+      ? "다음 문항"
+      : "다음 문제";
   const description = isLastQuestion
-    ? "현재 문제가 마지막입니다. 이제 결과 화면으로 넘어갈 준비가 되었습니다."
-    : "해설을 확인했다면 다음 문제로 넘어가며 새 문제 상태를 시작할 수 있습니다.";
-  const buttonLabel = isLastQuestion ? "결과 보기" : "다음 문제로 이동";
+    ? isExamMode
+      ? "마지막 문항까지 제출했습니다. 시험 결과 화면으로 이동할 준비가 되었습니다."
+      : "현재 문제가 마지막입니다. 이제 결과 화면으로 넘어갈 준비가 되었습니다."
+    : isExamMode
+      ? "현재 문항 제출이 끝났습니다. 흐름을 유지한 채 다음 문항으로 진행하세요."
+      : "해설을 확인했다면 다음 문제로 넘어가며 새 문제 상태를 시작할 수 있습니다.";
+  const buttonLabel = isLastQuestion
+    ? isExamMode
+      ? "시험 결과 보기"
+      : "결과 보기"
+    : isExamMode
+      ? "다음 문항으로 이동"
+      : "다음 문제로 이동";
 
   return (
     <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-6 shadow-sm sm:px-8 sm:py-8">

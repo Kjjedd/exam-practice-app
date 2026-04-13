@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
-import type { ChoiceIndex, QuestionSet } from "../../lib/types";
+import { writeLatestQuizSession } from "../../lib/quiz/session-storage";
+import type { ChoiceIndex, QuestionResult, QuestionSet, QuizSession } from "../../lib/types";
 import { checkAnswer } from "../../lib/quiz/check-answer";
 import { ChoiceList } from "./ChoiceList";
 import { EmptyQuestionState } from "./EmptyQuestionState";
@@ -31,6 +32,7 @@ const INITIAL_IS_SUBMITTED = false;
 const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
 const INITIAL_CURRENT_QUESTION_INDEX = 0;
+const INITIAL_QUESTION_RESULTS: readonly QuestionResult[] = [];
 
 function getModeLabel(mode: string | null): string {
   if (mode === "random") {
@@ -59,6 +61,9 @@ export function QuizPageContent() {
   const [isExplanationOpen, setIsExplanationOpen] = useState<boolean>(
     INITIAL_IS_EXPLANATION_OPEN
   );
+  const [questionResults, setQuestionResults] =
+    useState<readonly QuestionResult[]>(INITIAL_QUESTION_RESULTS);
+  const [sessionStartedAt, setSessionStartedAt] = useState<string>(new Date().toISOString());
   const router = useRouter();
   const searchParams = useSearchParams();
   const modeLabel = getModeLabel(searchParams.get("mode"));
@@ -77,6 +82,8 @@ export function QuizPageContent() {
 
   useEffect(() => {
     setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+    setQuestionResults(INITIAL_QUESTION_RESULTS);
+    setSessionStartedAt(new Date().toISOString());
   }, [state.activeQuestionSet?.id]);
 
   useEffect(() => {
@@ -100,10 +107,23 @@ export function QuizPageContent() {
       return;
     }
 
+    const submittedAt = new Date().toISOString();
+    const nextIsCorrect = checkAnswer(currentQuestion, selectedChoiceIndex);
+    const nextQuestionResult: QuestionResult = {
+      questionId: currentQuestion.id,
+      selectedAnswer: selectedChoiceIndex,
+      isCorrect: nextIsCorrect,
+      submittedAt
+    };
+
     setSubmittedChoiceIndex(selectedChoiceIndex);
     setIsSubmitted(true);
-    setIsCorrect(checkAnswer(currentQuestion, selectedChoiceIndex));
+    setIsCorrect(nextIsCorrect);
     setIsExplanationOpen(true);
+    setQuestionResults((currentValue) => [
+      ...currentValue.filter((result) => result.questionId !== currentQuestion.id),
+      nextQuestionResult
+    ]);
   }
 
   function handleToggleExplanation(): void {
@@ -120,6 +140,27 @@ export function QuizPageContent() {
     }
 
     if (isLastQuestion) {
+      if (state.activeQuestionSet === null) {
+        router.push("/result");
+        return;
+      }
+
+      const completedQuizSession: QuizSession = {
+        mode: searchParams.get("mode") === "random"
+          ? "random"
+          : searchParams.get("mode") === "exam"
+            ? "exam"
+            : "normal",
+        questionSetId: state.activeQuestionSet.id,
+        questionSetTitle: state.activeQuestionSet.title,
+        questionIds: questions.map((question) => question.id),
+        currentQuestionIndex,
+        results: questionResults,
+        startedAt: sessionStartedAt,
+        completedAt: new Date().toISOString()
+      };
+
+      writeLatestQuizSession(completedQuizSession);
       router.push("/result");
       return;
     }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { loadActiveQuestionSet } from "../../lib/data";
+import { getWrongQuestionIds } from "../../lib/quiz/get-wrong-questions";
 import { readLatestQuizSession } from "../../lib/quiz/session-storage";
 import {
   summarizeResults,
@@ -12,6 +13,7 @@ import {
 import type { QuestionSet, QuizSession } from "../../lib/types";
 import { ResultQuestionList } from "./ResultQuestionList";
 import { ResultSummaryCard } from "./ResultSummaryCard";
+import { WrongAnswerCallout } from "./WrongAnswerCallout";
 
 type ResultPageState = Readonly<{
   activeQuestionSet: QuestionSet | null;
@@ -105,6 +107,8 @@ export function ResultPageContent() {
     );
   }
 
+  const wrongQuestionIds = getWrongQuestionIds(state.quizSession);
+
   return (
     <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -144,6 +148,8 @@ export function ResultPageContent() {
             tone="neutral"
           />
         </section>
+
+        <WrongAnswerCallout wrongCount={wrongQuestionIds.length} />
 
         <ResultQuestionList items={state.resultSummary.items} />
       </div>

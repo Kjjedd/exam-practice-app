@@ -6,6 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { loadActiveQuestionSet } from "../../lib/data";
 import { shuffleQuestionIds } from "../../lib/quiz/shuffle-questions";
 import { writeLatestQuizSession } from "../../lib/quiz/session-storage";
+import {
+  isFavoriteQuestion,
+  readFavoriteQuestionIds,
+  toggleFavoriteQuestionId
+} from "../../lib/storage/favorites";
 import type {
   ChoiceIndex,
   QuestionId,
@@ -18,6 +23,7 @@ import { checkAnswer } from "../../lib/quiz/check-answer";
 import { ChoiceList } from "./ChoiceList";
 import { EmptyQuestionState } from "./EmptyQuestionState";
 import { ExplanationPanel } from "./ExplanationPanel";
+import { FavoriteToggle } from "./FavoriteToggle";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { QuizNavigation } from "./QuizNavigation";
 import { QuestionCard } from "./QuestionCard";
@@ -105,6 +111,8 @@ export function QuizPageContent() {
   const [state, setState] = useState<QuizPageState>(INITIAL_QUIZ_PAGE_STATE);
   const [sessionQuestionIds, setSessionQuestionIds] =
     useState<readonly QuestionId[]>(INITIAL_SESSION_QUESTION_IDS);
+  const [favoriteQuestionIds, setFavoriteQuestionIds] =
+    useState<readonly QuestionId[]>(INITIAL_SESSION_QUESTION_IDS);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
     INITIAL_CURRENT_QUESTION_INDEX
   );
@@ -123,6 +131,7 @@ export function QuizPageContent() {
   const [sessionStartedAt, setSessionStartedAt] = useState<string>(new Date().toISOString());
   const router = useRouter();
   const searchParams = useSearchParams();
+  const entryQuestionId = searchParams.get("questionId");
   const quizMode = getQuizMode(searchParams.get("mode"));
   const modeLabel = getModeLabel(quizMode);
   const isExamMode = quizMode === "exam";
@@ -132,6 +141,7 @@ export function QuizPageContent() {
       activeQuestionSet: loadActiveQuestionSet(),
       isReady: true
     });
+    setFavoriteQuestionIds(readFavoriteQuestionIds());
   }, []);
 
   const questions = resolveSessionQuestions(state.activeQuestionSet, sessionQuestionIds);
@@ -145,6 +155,20 @@ export function QuizPageContent() {
     setQuestionResults(INITIAL_QUESTION_RESULTS);
     setSessionStartedAt(new Date().toISOString());
   }, [state.activeQuestionSet, quizMode]);
+
+  useEffect(() => {
+    if (entryQuestionId === null) {
+      return;
+    }
+
+    const nextQuestionIndex = sessionQuestionIds.indexOf(entryQuestionId);
+
+    if (nextQuestionIndex < 0) {
+      return;
+    }
+
+    setCurrentQuestionIndex(nextQuestionIndex);
+  }, [entryQuestionId, sessionQuestionIds]);
 
   useEffect(() => {
     setSelectedChoiceIndex(INITIAL_SELECTED_CHOICE_INDEX);
@@ -192,6 +216,14 @@ export function QuizPageContent() {
     }
 
     setIsExplanationOpen((currentValue) => !currentValue);
+  }
+
+  function handleToggleFavorite(): void {
+    if (currentQuestion === undefined) {
+      return;
+    }
+
+    setFavoriteQuestionIds(toggleFavoriteQuestionId(currentQuestion.id));
   }
 
   function handleProceedToNextStep(): void {
@@ -257,6 +289,15 @@ export function QuizPageContent() {
               currentQuestionNumber={currentQuestionNumber}
               totalQuestions={questions.length}
             />
+            <div className="flex justify-end">
+              <FavoriteToggle
+                isFavorite={
+                  currentQuestion !== undefined &&
+                  isFavoriteQuestion(favoriteQuestionIds, currentQuestion.id)
+                }
+                onToggle={handleToggleFavorite}
+              />
+            </div>
             <QuestionCard
               question={currentQuestion}
               questionNumber={currentQuestionNumber}

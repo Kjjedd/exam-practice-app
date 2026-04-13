@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
-import type { QuestionSet } from "../../lib/types";
+import type { ChoiceIndex, QuestionSet } from "../../lib/types";
 import { ChoiceList } from "./ChoiceList";
 import { EmptyQuestionState } from "./EmptyQuestionState";
 import { ProgressIndicator } from "./ProgressIndicator";
@@ -21,6 +21,8 @@ const INITIAL_QUIZ_PAGE_STATE: QuizPageState = {
   isReady: false
 };
 
+const INITIAL_SELECTED_CHOICE_INDEX: ChoiceIndex | null = null;
+
 function getModeLabel(mode: string | null): string {
   if (mode === "random") {
     return "Random Mode";
@@ -35,6 +37,9 @@ function getModeLabel(mode: string | null): string {
 
 export function QuizPageContent() {
   const [state, setState] = useState<QuizPageState>(INITIAL_QUIZ_PAGE_STATE);
+  const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<ChoiceIndex | null>(
+    INITIAL_SELECTED_CHOICE_INDEX
+  );
   const searchParams = useSearchParams();
   const modeLabel = getModeLabel(searchParams.get("mode"));
 
@@ -48,6 +53,10 @@ export function QuizPageContent() {
   const questions = state.activeQuestionSet?.questions ?? [];
   const currentQuestionNumber = 1;
   const currentQuestion = questions[0];
+
+  useEffect(() => {
+    setSelectedChoiceIndex(INITIAL_SELECTED_CHOICE_INDEX);
+  }, [currentQuestion?.id]);
 
   return (
     <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
@@ -81,7 +90,11 @@ export function QuizPageContent() {
               question={currentQuestion}
               questionNumber={currentQuestionNumber}
             />
-            <ChoiceList choices={currentQuestion.choices} />
+            <ChoiceList
+              choices={currentQuestion.choices}
+              selectedChoiceIndex={selectedChoiceIndex}
+              onSelectChoice={setSelectedChoiceIndex}
+            />
           </>
         ) : null}
       </div>

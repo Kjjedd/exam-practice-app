@@ -4,8 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
+import { shuffleQuestionIds } from "../../lib/quiz/shuffle-questions";
 import { writeLatestQuizSession } from "../../lib/quiz/session-storage";
-import type { ChoiceIndex, QuestionResult, QuestionSet, QuizSession } from "../../lib/types";
+import type {
+  ChoiceIndex,
+  QuestionId,
+  QuestionResult,
+  QuestionSet,
+  QuizMode,
+  QuizSession
+} from "../../lib/types";
 import { checkAnswer } from "../../lib/quiz/check-answer";
 import { ChoiceList } from "./ChoiceList";
 import { EmptyQuestionState } from "./EmptyQuestionState";
@@ -33,8 +41,21 @@ const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
 const INITIAL_CURRENT_QUESTION_INDEX = 0;
 const INITIAL_QUESTION_RESULTS: readonly QuestionResult[] = [];
+const INITIAL_SESSION_QUESTION_IDS: readonly QuestionId[] = [];
 
-function getModeLabel(mode: string | null): string {
+function getQuizMode(mode: string | null): QuizMode {
+  if (mode === "random") {
+    return "random";
+  }
+
+  if (mode === "exam") {
+    return "exam";
+  }
+
+  return "normal";
+}
+
+function getModeLabel(mode: QuizMode): string {
   if (mode === "random") {
     return "Random Mode";
   }
@@ -43,11 +64,47 @@ function getModeLabel(mode: string | null): string {
     return "Exam Mode";
   }
 
+  if (mode === "review") {
+    return "Review Mode";
+  }
+
   return "Normal Mode";
+}
+
+function resolveSessionQuestionIds(
+  activeQuestionSet: QuestionSet | null,
+  mode: QuizMode
+): readonly QuestionId[] {
+  if (activeQuestionSet === null) {
+    return INITIAL_SESSION_QUESTION_IDS;
+  }
+
+  const questionIds = activeQuestionSet.questions.map((question) => question.id);
+
+  return mode === "random" ? shuffleQuestionIds(questionIds) : questionIds;
+}
+
+function resolveSessionQuestions(
+  activeQuestionSet: QuestionSet | null,
+  sessionQuestionIds: readonly QuestionId[]
+) {
+  if (activeQuestionSet === null) {
+    return [];
+  }
+
+  const questionById = new Map<QuestionId, QuestionSet["questions"][number]>(
+    activeQuestionSet.questions.map((question) => [question.id, question])
+  );
+
+  return sessionQuestionIds
+    .map((questionId) => questionById.get(questionId))
+    .filter((question): question is QuestionSet["questions"][number] => question !== undefined);
 }
 
 export function QuizPageContent() {
   const [state, setState] = useState<QuizPageState>(INITIAL_QUIZ_PAGE_STATE);
+  const [sessionQuestionIds, setSessionQuestionIds] =
+    useState<readonly QuestionId[]>(INITIAL_SESSION_QUESTION_IDS);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
     INITIAL_CURRENT_QUESTION_INDEX
   );
@@ -66,7 +123,8 @@ export function QuizPageContent() {
   const [sessionStartedAt, setSessionStartedAt] = useState<string>(new Date().toISOString());
   const router = useRouter();
   const searchParams = useSearchParams();
-  const modeLabel = getModeLabel(searchParams.get("mode"));
+  const quizMode = getQuizMode(searchParams.get("mode"));
+  const modeLabel = getModeLabel(quizMode);
 
   useEffect(() => {
     setState({
@@ -75,16 +133,17 @@ export function QuizPageContent() {
     });
   }, []);
 
-  const questions = state.activeQuestionSet?.questions ?? [];
+  const questions = resolveSessionQuestions(state.activeQuestionSet, sessionQuestionIds);
   const currentQuestion = questions[currentQuestionIndex];
   const currentQuestionNumber = currentQuestionIndex + 1;
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   useEffect(() => {
+    setSessionQuestionIds(resolveSessionQuestionIds(state.activeQuestionSet, quizMode));
     setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
     setQuestionResults(INITIAL_QUESTION_RESULTS);
     setSessionStartedAt(new Date().toISOString());
-  }, [state.activeQuestionSet?.id]);
+  }, [state.activeQuestionSet, quizMode]);
 
   useEffect(() => {
     setSelectedChoiceIndex(INITIAL_SELECTED_CHOICE_INDEX);
@@ -146,14 +205,10 @@ export function QuizPageContent() {
       }
 
       const completedQuizSession: QuizSession = {
-        mode: searchParams.get("mode") === "random"
-          ? "random"
-          : searchParams.get("mode") === "exam"
-            ? "exam"
-            : "normal",
+        mode: quizMode,
         questionSetId: state.activeQuestionSet.id,
         questionSetTitle: state.activeQuestionSet.title,
-        questionIds: questions.map((question) => question.id),
+        questionIds: sessionQuestionIds,
         currentQuestionIndex,
         results: questionResults,
         startedAt: sessionStartedAt,

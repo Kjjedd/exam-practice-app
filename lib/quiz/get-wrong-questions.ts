@@ -12,7 +12,11 @@ export function getWrongQuestions(
   quizSession: QuizSession,
   questions: readonly Question[]
 ): readonly Question[] {
-  const wrongQuestionIds = new Set(getWrongQuestionIds(quizSession));
+  const questionById = new Map<QuestionId, Question>(
+    questions.map((question) => [question.id, question])
+  );
 
-  return questions.filter((question) => wrongQuestionIds.has(question.id));
+  return getWrongQuestionIds(quizSession)
+    .map((questionId) => questionById.get(questionId))
+    .filter((question): question is Question => question !== undefined);
 }

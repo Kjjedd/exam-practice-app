@@ -8,6 +8,7 @@ import type { ChoiceIndex, QuestionSet } from "../../lib/types";
 import { checkAnswer } from "../../lib/quiz/check-answer";
 import { ChoiceList } from "./ChoiceList";
 import { EmptyQuestionState } from "./EmptyQuestionState";
+import { ExplanationPanel } from "./ExplanationPanel";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { QuestionCard } from "./QuestionCard";
 import { QuizHeader } from "./QuizHeader";
@@ -27,6 +28,7 @@ const INITIAL_SELECTED_CHOICE_INDEX: ChoiceIndex | null = null;
 const INITIAL_SUBMITTED_CHOICE_INDEX: ChoiceIndex | null = null;
 const INITIAL_IS_SUBMITTED = false;
 const INITIAL_IS_CORRECT: boolean | null = null;
+const INITIAL_IS_EXPLANATION_OPEN = false;
 
 function getModeLabel(mode: string | null): string {
   if (mode === "random") {
@@ -49,6 +51,9 @@ export function QuizPageContent() {
     useState<ChoiceIndex | null>(INITIAL_SUBMITTED_CHOICE_INDEX);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(INITIAL_IS_SUBMITTED);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(INITIAL_IS_CORRECT);
+  const [isExplanationOpen, setIsExplanationOpen] = useState<boolean>(
+    INITIAL_IS_EXPLANATION_OPEN
+  );
   const searchParams = useSearchParams();
   const modeLabel = getModeLabel(searchParams.get("mode"));
 
@@ -68,6 +73,7 @@ export function QuizPageContent() {
     setSubmittedChoiceIndex(INITIAL_SUBMITTED_CHOICE_INDEX);
     setIsSubmitted(INITIAL_IS_SUBMITTED);
     setIsCorrect(INITIAL_IS_CORRECT);
+    setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
   }, [currentQuestion?.id]);
 
   function handleSelectChoice(choiceIndex: ChoiceIndex): void {
@@ -86,6 +92,15 @@ export function QuizPageContent() {
     setSubmittedChoiceIndex(selectedChoiceIndex);
     setIsSubmitted(true);
     setIsCorrect(checkAnswer(currentQuestion, selectedChoiceIndex));
+    setIsExplanationOpen(true);
+  }
+
+  function handleToggleExplanation(): void {
+    if (!isSubmitted) {
+      return;
+    }
+
+    setIsExplanationOpen((currentValue) => !currentValue);
   }
 
   return (
@@ -134,6 +149,14 @@ export function QuizPageContent() {
               isSubmitted={isSubmitted}
               onSelectChoice={handleSelectChoice}
             />
+            {isSubmitted && isCorrect !== null ? (
+              <ExplanationPanel
+                explanation={currentQuestion.explanation}
+                isCorrect={isCorrect}
+                isOpen={isExplanationOpen}
+                onToggle={handleToggleExplanation}
+              />
+            ) : null}
           </>
         ) : null}
       </div>

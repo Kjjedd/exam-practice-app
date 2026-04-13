@@ -38,6 +38,22 @@ function hasCompleteSession(quizSession: QuizSession | null): quizSession is Qui
   );
 }
 
+function getSessionModeDescription(quizSession: QuizSession): string {
+  if (quizSession.mode === "random") {
+    return "이번 세션은 랜덤 모드로 진행되어 섞인 순서대로 문제를 풀었습니다.";
+  }
+
+  if (quizSession.mode === "review") {
+    return "이번 세션은 오답 복습 모드로 진행되었습니다.";
+  }
+
+  if (quizSession.mode === "exam") {
+    return "이번 세션은 시험 모드로 진행되었습니다.";
+  }
+
+  return "이번 세션은 일반 모드로 진행되었습니다.";
+}
+
 export function ResultPageContent() {
   const [state, setState] = useState<ResultPageState>(INITIAL_RESULT_PAGE_STATE);
 
@@ -123,6 +139,9 @@ export function ResultPageContent() {
             {state.quizSession.questionSetTitle} 기준으로 이번 세션의 전체 흐름을
             정리했습니다. 숫자 요약을 먼저 확인한 뒤, 아래에서 문제별 정답/오답을
             살펴볼 수 있습니다.
+          </p>
+          <p className="mt-3 text-sm leading-6 text-ink/65 sm:text-base">
+            {getSessionModeDescription(state.quizSession)}
           </p>
         </section>
 

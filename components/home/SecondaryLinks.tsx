@@ -32,8 +32,8 @@ export function SecondaryLinks() {
           보조 학습 기능
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/70 sm:text-base">
-          홈 화면에서는 메인 문제풀이뿐 아니라 복습, 즐겨찾기, 통계 흐름으로도
-          바로 이동할 수 있어야 합니다.
+          홈 화면에서는 가져오기와 문제풀이뿐 아니라 복습, 즐겨찾기, 통계
+          흐름으로도 바로 이동할 수 있어야 합니다.
         </p>
         <div className="mt-6 grid gap-3">
           {secondaryLinks.map((link) => (
@@ -53,9 +53,9 @@ export function SecondaryLinks() {
       <div className="rounded-[1.75rem] border border-ink/10 bg-ink p-6 text-white shadow-sm sm:p-8">
         <h2 className="text-2xl font-semibold tracking-tight">학습 흐름 요약</h2>
         <ul className="mt-5 space-y-4 text-sm leading-6 text-white/80 sm:text-base">
-          <li>문제를 풀고 바로 정답 여부를 확인합니다.</li>
-          <li>해설을 읽으며 이해를 보완합니다.</li>
-          <li>오답과 중요한 문제를 다시 모아 복습합니다.</li>
+          <li>문제 PDF를 가져오고 검수해 활성 문제 세트를 만듭니다.</li>
+          <li>저장된 문제 세트를 기준으로 문제풀이를 시작합니다.</li>
+          <li>해설과 오답 복습으로 이해를 보완합니다.</li>
           <li>누적 학습 기록과 통계로 진도를 확인합니다.</li>
         </ul>
       </div>

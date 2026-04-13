@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
 import type { ChoiceIndex, QuestionSet } from "../../lib/types";
@@ -10,6 +10,7 @@ import { ChoiceList } from "./ChoiceList";
 import { EmptyQuestionState } from "./EmptyQuestionState";
 import { ExplanationPanel } from "./ExplanationPanel";
 import { ProgressIndicator } from "./ProgressIndicator";
+import { QuizNavigation } from "./QuizNavigation";
 import { QuestionCard } from "./QuestionCard";
 import { QuizHeader } from "./QuizHeader";
 import { SubmitBar } from "./SubmitBar";
@@ -29,6 +30,7 @@ const INITIAL_SUBMITTED_CHOICE_INDEX: ChoiceIndex | null = null;
 const INITIAL_IS_SUBMITTED = false;
 const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
+const INITIAL_CURRENT_QUESTION_INDEX = 0;
 
 function getModeLabel(mode: string | null): string {
   if (mode === "random") {
@@ -44,6 +46,9 @@ function getModeLabel(mode: string | null): string {
 
 export function QuizPageContent() {
   const [state, setState] = useState<QuizPageState>(INITIAL_QUIZ_PAGE_STATE);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
+    INITIAL_CURRENT_QUESTION_INDEX
+  );
   const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<ChoiceIndex | null>(
     INITIAL_SELECTED_CHOICE_INDEX
   );
@@ -54,6 +59,7 @@ export function QuizPageContent() {
   const [isExplanationOpen, setIsExplanationOpen] = useState<boolean>(
     INITIAL_IS_EXPLANATION_OPEN
   );
+  const router = useRouter();
   const searchParams = useSearchParams();
   const modeLabel = getModeLabel(searchParams.get("mode"));
 
@@ -65,8 +71,13 @@ export function QuizPageContent() {
   }, []);
 
   const questions = state.activeQuestionSet?.questions ?? [];
-  const currentQuestionNumber = 1;
-  const currentQuestion = questions[0];
+  const currentQuestion = questions[currentQuestionIndex];
+  const currentQuestionNumber = currentQuestionIndex + 1;
+  const isLastQuestion = currentQuestionIndex === questions.length - 1;
+
+  useEffect(() => {
+    setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+  }, [state.activeQuestionSet?.id]);
 
   useEffect(() => {
     setSelectedChoiceIndex(INITIAL_SELECTED_CHOICE_INDEX);
@@ -101,6 +112,23 @@ export function QuizPageContent() {
     }
 
     setIsExplanationOpen((currentValue) => !currentValue);
+  }
+
+  function handleProceedToNextStep(): void {
+    if (!isSubmitted || currentQuestion === undefined) {
+      return;
+    }
+
+    if (isLastQuestion) {
+      router.push("/result");
+      return;
+    }
+
+    setCurrentQuestionIndex((currentValue) => {
+      const nextIndex = currentValue + 1;
+
+      return nextIndex < questions.length ? nextIndex : currentValue;
+    });
   }
 
   return (
@@ -155,6 +183,12 @@ export function QuizPageContent() {
                 isCorrect={isCorrect}
                 isOpen={isExplanationOpen}
                 onToggle={handleToggleExplanation}
+              />
+            ) : null}
+            {isSubmitted ? (
+              <QuizNavigation
+                isLastQuestion={isLastQuestion}
+                onProceed={handleProceedToNextStep}
               />
             ) : null}
           </>

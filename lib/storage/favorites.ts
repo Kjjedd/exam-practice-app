@@ -1,10 +1,11 @@
 import type { QuestionId } from "../types";
+import {
+  readStorageValue,
+  removeStorageValue,
+  writeStorageValue
+} from "./storage-core";
 
 const FAVORITE_QUESTION_IDS_STORAGE_KEY = "exammate.favorite-question-ids.v1";
-
-function canUseLocalStorage(): boolean {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
-}
 
 function validateFavoriteQuestionIds(
   favoriteQuestionIds: readonly QuestionId[]
@@ -29,11 +30,7 @@ function parseFavoriteQuestionIds(rawValue: string): readonly QuestionId[] {
 }
 
 export function readFavoriteQuestionIds(): readonly QuestionId[] {
-  if (!canUseLocalStorage()) {
-    return [];
-  }
-
-  const rawValue = window.localStorage.getItem(FAVORITE_QUESTION_IDS_STORAGE_KEY);
+  const rawValue = readStorageValue(FAVORITE_QUESTION_IDS_STORAGE_KEY);
 
   if (rawValue === null) {
     return [];
@@ -50,12 +47,7 @@ export function writeFavoriteQuestionIds(
   favoriteQuestionIds: readonly QuestionId[]
 ): readonly QuestionId[] {
   const validatedFavoriteQuestionIds = validateFavoriteQuestionIds(favoriteQuestionIds);
-
-  if (!canUseLocalStorage()) {
-    return validatedFavoriteQuestionIds;
-  }
-
-  window.localStorage.setItem(
+  writeStorageValue(
     FAVORITE_QUESTION_IDS_STORAGE_KEY,
     JSON.stringify({
       favoriteQuestionIds: validatedFavoriteQuestionIds
@@ -66,11 +58,7 @@ export function writeFavoriteQuestionIds(
 }
 
 export function clearFavoriteQuestionIds(): readonly QuestionId[] {
-  if (!canUseLocalStorage()) {
-    return [];
-  }
-
-  window.localStorage.removeItem(FAVORITE_QUESTION_IDS_STORAGE_KEY);
+  removeStorageValue(FAVORITE_QUESTION_IDS_STORAGE_KEY);
 
   return [];
 }

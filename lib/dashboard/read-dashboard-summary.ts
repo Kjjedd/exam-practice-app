@@ -1,7 +1,5 @@
-import {
-  hasCompleteQuizSession,
-  readLatestQuizSession
-} from "../quiz/session-storage";
+import { readLatestQuizSession } from "../quiz/session-storage";
+import { hasCompleteQuizSession } from "../quiz/quiz-session-model";
 import { readStoredStudyProgressSummary } from "../storage";
 import type { QuizMode, StudyStats } from "../types";
 

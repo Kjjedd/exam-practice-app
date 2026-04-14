@@ -1,4 +1,5 @@
-import { readLatestQuizSession, hasCompleteQuizSession, clearLatestQuizSession } from "../quiz/session-storage";
+import { clearLatestQuizSession, readLatestQuizSession } from "../quiz/session-storage";
+import { hasCompleteQuizSession } from "../quiz/quiz-session-model";
 import type { QuestionSetId } from "../types";
 import { clearFavoriteQuestionIds, readFavoriteQuestionIds } from "./favorites";
 import { clearQuestionBank, readQuestionBank } from "./question-bank";

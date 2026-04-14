@@ -1,4 +1,5 @@
-import { getActiveQuestionSet, readQuestionBank } from "../storage/question-bank";
+import { readQuestionBank } from "../storage/question-bank";
+import { getActiveQuestionSet } from "../storage/question-bank-model";
 import type { Question, QuestionBank, QuestionId, QuestionSet, QuestionSetSummary } from "../types";
 
 export function loadQuestionBank(): QuestionBank {

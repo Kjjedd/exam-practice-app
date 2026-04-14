@@ -2,9 +2,9 @@ import type { Question, QuestionBank, QuestionSet, QuestionSetId } from "../type
 import {
   clearQuestionBank as clearStoredQuestionBank,
   readQuestionBank,
-  validateQuestionSet,
   writeQuestionBank
 } from "../storage/question-bank";
+import { validateQuestionSet } from "../storage/question-bank-model";
 
 export type SaveQuestionSetInput = Readonly<{
   id?: QuestionSetId;

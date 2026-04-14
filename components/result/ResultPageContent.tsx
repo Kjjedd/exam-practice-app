@@ -5,10 +5,8 @@ import { useEffect, useState } from "react";
 
 import { loadActiveQuestionSet } from "../../lib/data";
 import { getWrongQuestionIds } from "../../lib/quiz/get-wrong-questions";
-import {
-  hasCompleteQuizSession,
-  readLatestQuizSession
-} from "../../lib/quiz/session-storage";
+import { readLatestQuizSession } from "../../lib/quiz/session-storage";
+import { hasCompleteQuizSession } from "../../lib/quiz/quiz-session-model";
 import {
   summarizeResults,
   type ResultSummary

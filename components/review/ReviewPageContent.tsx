@@ -6,10 +6,8 @@ import { useRouter } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
 import { getWrongQuestions } from "../../lib/quiz/get-wrong-questions";
-import {
-  hasCompleteQuizSession,
-  readLatestQuizSession
-} from "../../lib/quiz/session-storage";
+import { readLatestQuizSession } from "../../lib/quiz/session-storage";
+import { hasCompleteQuizSession } from "../../lib/quiz/quiz-session-model";
 import { checkAnswer } from "../../lib/quiz/check-answer";
 import type { ChoiceIndex, Question, QuestionResult, QuestionSet, QuizSession } from "../../lib/types";
 import { ChoiceList } from "../question/ChoiceList";

@@ -11,22 +11,22 @@ import {
   summarizeResults,
   type ResultSummary
 } from "../../lib/quiz/summarize-results";
-import type { QuestionSet, QuizSession } from "../../lib/types";
+import type { QuizSession } from "../../lib/types";
 import { ResultQuestionList } from "./ResultQuestionList";
 import { ResultSummaryCard } from "./ResultSummaryCard";
 import { WrongAnswerCallout } from "./WrongAnswerCallout";
 
 type ResultPageState = Readonly<{
-  activeQuestionSet: QuestionSet | null;
   quizSession: QuizSession | null;
   resultSummary: ResultSummary | null;
+  isQuestionSetMatched: boolean;
   isReady: boolean;
 }>;
 
 const INITIAL_RESULT_PAGE_STATE: ResultPageState = {
-  activeQuestionSet: null,
   quizSession: null,
   resultSummary: null,
+  isQuestionSetMatched: false,
   isReady: false
 };
 
@@ -52,17 +52,18 @@ export function ResultPageContent() {
   useEffect(() => {
     const activeQuestionSet = loadActiveQuestionSet();
     const quizSession = readLatestQuizSession();
-    const shouldBuildSummary =
+    const isQuestionSetMatched =
       activeQuestionSet !== null &&
       hasCompleteQuizSession(quizSession) &&
       activeQuestionSet.id === quizSession.questionSetId;
+    const resultSummary = hasCompleteQuizSession(quizSession)
+      ? summarizeResults(quizSession, isQuestionSetMatched ? activeQuestionSet.questions : [])
+      : null;
 
     setState({
-      activeQuestionSet,
       quizSession,
-      resultSummary: shouldBuildSummary
-        ? summarizeResults(quizSession, activeQuestionSet.questions)
-        : null,
+      resultSummary,
+      isQuestionSetMatched,
       isReady: true
     });
   }, []);
@@ -135,12 +136,24 @@ export function ResultPageContent() {
           <p className="mt-3 text-sm leading-6 text-ink/65 sm:text-base">
             {getSessionModeDescription(state.quizSession)}
           </p>
+          {!state.isQuestionSetMatched ? (
+            <p className="mt-3 rounded-2xl border border-coral/15 bg-coral/5 px-4 py-4 text-sm leading-6 text-coral">
+              현재 활성 문제 세트가 이 세션과 다르기 때문에, 일부 문제 본문은 세션
+              기준 기본 라벨로 표시됩니다. 그래도 결과 숫자와 정답/오답 상태는 저장된
+              세션 기준으로 유지됩니다.
+            </p>
+          ) : null}
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           <ResultSummaryCard
             label="Total Questions"
             value={`${state.resultSummary.totalQuestions}`}
+            tone="neutral"
+          />
+          <ResultSummaryCard
+            label="Answered"
+            value={`${state.resultSummary.answeredCount}`}
             tone="neutral"
           />
           <ResultSummaryCard
@@ -151,6 +164,11 @@ export function ResultPageContent() {
           <ResultSummaryCard
             label="Wrong Answers"
             value={`${state.resultSummary.wrongCount}`}
+            tone="warning"
+          />
+          <ResultSummaryCard
+            label="Unanswered"
+            value={`${state.resultSummary.unansweredCount}`}
             tone="warning"
           />
           <ResultSummaryCard

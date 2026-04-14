@@ -1,5 +1,5 @@
-import { ImportReviewReadyPage } from "../../../components/import/ImportReviewReadyPage";
+import { ImportReviewPageContent } from "../../../components/import/ImportReviewPageContent";
 
 export default function ImportReviewPage() {
-  return <ImportReviewReadyPage />;
+  return <ImportReviewPageContent />;
 }

@@ -33,12 +33,18 @@ export function ResultQuestionList({ items }: ResultQuestionListProps) {
               </div>
               <span
                 className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
-                  item.isCorrect
+                  item.status === "correct"
                     ? "bg-tide/12 text-tide"
-                    : "bg-coral/12 text-coral"
+                    : item.status === "wrong"
+                      ? "bg-coral/12 text-coral"
+                      : "bg-ink/10 text-ink/60"
                 }`}
               >
-                {item.isCorrect ? "Correct" : "Wrong"}
+                {item.status === "correct"
+                  ? "Correct"
+                  : item.status === "wrong"
+                    ? "Wrong"
+                    : "Unanswered"}
               </span>
             </div>
           </li>

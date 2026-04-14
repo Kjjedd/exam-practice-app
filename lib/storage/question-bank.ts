@@ -203,6 +203,10 @@ export function writeQuestionBank(questionBank: QuestionBank): QuestionBank {
   return validatedQuestionBank;
 }
 
+export function clearQuestionBank(): QuestionBank {
+  return writeQuestionBank(createEmptyQuestionBank());
+}
+
 export function getActiveQuestionSet(questionBank: QuestionBank): QuestionSet | null {
   if (questionBank.activeQuestionSetId === null) {
     return null;

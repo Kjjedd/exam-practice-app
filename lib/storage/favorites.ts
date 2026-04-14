@@ -65,6 +65,16 @@ export function writeFavoriteQuestionIds(
   return validatedFavoriteQuestionIds;
 }
 
+export function clearFavoriteQuestionIds(): readonly QuestionId[] {
+  if (!canUseLocalStorage()) {
+    return [];
+  }
+
+  window.localStorage.removeItem(FAVORITE_QUESTION_IDS_STORAGE_KEY);
+
+  return [];
+}
+
 export function isFavoriteQuestion(
   favoriteQuestionIds: readonly QuestionId[],
   questionId: QuestionId

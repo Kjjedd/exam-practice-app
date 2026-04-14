@@ -82,6 +82,17 @@ function validateQuizSession(quizSession: QuizSession): QuizSession {
   return quizSession;
 }
 
+export function hasCompleteQuizSession(
+  quizSession: QuizSession | null
+): quizSession is QuizSession {
+  return (
+    quizSession !== null &&
+    quizSession.completedAt !== null &&
+    quizSession.questionIds.length > 0 &&
+    quizSession.results.length === quizSession.questionIds.length
+  );
+}
+
 function parseStoredQuizSession(rawValue: string): QuizSession {
   const parsed = JSON.parse(rawValue) as Partial<QuizSession> & {
     questionIds?: readonly string[];

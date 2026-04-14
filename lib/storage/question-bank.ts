@@ -1,7 +1,7 @@
 import type { QuestionBank } from "../types";
+import { getDefaultQuestionBank } from "../data/default-question-bank";
 import {
   createEmptyQuestionBank,
-  getActiveQuestionSet,
   parseQuestionBankStorage,
   validateQuestionBank
 } from "./question-bank-model";
@@ -12,17 +12,27 @@ import {
 
 const QUESTION_BANK_STORAGE_KEY = "exammate.question-bank.v1";
 
+function getInitialQuestionBank(): QuestionBank {
+  return getDefaultQuestionBank();
+}
+
 export function readQuestionBank(): QuestionBank {
   const rawValue = readStorageValue(QUESTION_BANK_STORAGE_KEY);
 
   if (rawValue === null) {
-    return createEmptyQuestionBank();
+    return getInitialQuestionBank();
   }
 
   try {
-    return parseQuestionBankStorage(rawValue);
+    const parsedQuestionBank = parseQuestionBankStorage(rawValue);
+
+    if (parsedQuestionBank.questionSets.length === 0) {
+      return getInitialQuestionBank();
+    }
+
+    return parsedQuestionBank;
   } catch {
-    return createEmptyQuestionBank();
+    return getInitialQuestionBank();
   }
 }
 

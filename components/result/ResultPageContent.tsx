@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 
 import { loadActiveQuestionSet } from "../../lib/data";
 import { getWrongQuestionIds } from "../../lib/quiz/get-wrong-questions";
-import { readLatestQuizSession } from "../../lib/quiz/session-storage";
+import {
+  hasCompleteQuizSession,
+  readLatestQuizSession
+} from "../../lib/quiz/session-storage";
 import {
   summarizeResults,
   type ResultSummary
@@ -28,15 +31,6 @@ const INITIAL_RESULT_PAGE_STATE: ResultPageState = {
   resultSummary: null,
   isReady: false
 };
-
-function hasCompleteSession(quizSession: QuizSession | null): quizSession is QuizSession {
-  return (
-    quizSession !== null &&
-    quizSession.completedAt !== null &&
-    quizSession.questionIds.length > 0 &&
-    quizSession.results.length === quizSession.questionIds.length
-  );
-}
 
 function getSessionModeDescription(quizSession: QuizSession): string {
   if (quizSession.mode === "random") {
@@ -62,7 +56,7 @@ export function ResultPageContent() {
     const quizSession = readLatestQuizSession();
     const shouldBuildSummary =
       activeQuestionSet !== null &&
-      hasCompleteSession(quizSession) &&
+      hasCompleteQuizSession(quizSession) &&
       activeQuestionSet.id === quizSession.questionSetId;
 
     setState({

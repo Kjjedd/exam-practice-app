@@ -1,6 +1,6 @@
 import type { Question, QuestionBank, QuestionSet, QuestionSetId } from "../types";
 import {
-  createEmptyQuestionBank,
+  clearQuestionBank as clearStoredQuestionBank,
   readQuestionBank,
   validateQuestionSet,
   writeQuestionBank
@@ -86,5 +86,5 @@ export function setActiveQuestionSet(questionSetId: QuestionSetId): QuestionBank
 }
 
 export function clearQuestionBank(): QuestionBank {
-  return writeQuestionBank(createEmptyQuestionBank());
+  return clearStoredQuestionBank();
 }

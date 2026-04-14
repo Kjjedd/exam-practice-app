@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
 import { getWrongQuestions } from "../../lib/quiz/get-wrong-questions";
-import { readLatestQuizSession } from "../../lib/quiz/session-storage";
+import {
+  hasCompleteQuizSession,
+  readLatestQuizSession
+} from "../../lib/quiz/session-storage";
 import { checkAnswer } from "../../lib/quiz/check-answer";
 import type { ChoiceIndex, Question, QuestionResult, QuestionSet, QuizSession } from "../../lib/types";
 import { ChoiceList } from "../question/ChoiceList";
@@ -39,15 +42,6 @@ const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
 const INITIAL_REVIEW_RESULTS: readonly QuestionResult[] = [];
 
-function hasCompleteSession(quizSession: QuizSession | null): quizSession is QuizSession {
-  return (
-    quizSession !== null &&
-    quizSession.completedAt !== null &&
-    quizSession.questionIds.length > 0 &&
-    quizSession.results.length === quizSession.questionIds.length
-  );
-}
-
 export function ReviewPageContent() {
   const [state, setState] = useState<ReviewPageState>(INITIAL_REVIEW_PAGE_STATE);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
@@ -71,7 +65,7 @@ export function ReviewPageContent() {
     const activeQuestionSet = loadActiveQuestionSet();
     const quizSession = readLatestQuizSession();
     const wrongQuestions =
-      activeQuestionSet !== null && hasCompleteSession(quizSession)
+      activeQuestionSet !== null && hasCompleteQuizSession(quizSession)
         ? getWrongQuestions(quizSession, activeQuestionSet.questions)
         : [];
 

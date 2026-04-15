@@ -1,7 +1,5 @@
 import type { QuestionBank } from "../types";
 import {
-  DEFAULT_QUESTION_SET_600_PLUS_ID,
-  DEFAULT_QUESTION_SET_ID,
   getDefaultQuestionBank
 } from "../data/default-question-bank";
 import {
@@ -22,9 +20,6 @@ function getInitialQuestionBank(): QuestionBank {
 
 function mergeDefaultQuestionBank(currentQuestionBank: QuestionBank): QuestionBank {
   const defaultQuestionBank = getDefaultQuestionBank();
-  const hasStoredSecondDefaultSet = currentQuestionBank.questionSets.some(
-    (questionSet) => questionSet.id === DEFAULT_QUESTION_SET_600_PLUS_ID
-  );
   const mergedQuestionSets = [
     ...defaultQuestionBank.questionSets,
     ...currentQuestionBank.questionSets.filter(
@@ -35,12 +30,7 @@ function mergeDefaultQuestionBank(currentQuestionBank: QuestionBank): QuestionBa
     )
   ];
 
-  const nextActiveQuestionSetId =
-    !hasStoredSecondDefaultSet &&
-    (currentQuestionBank.activeQuestionSetId === DEFAULT_QUESTION_SET_ID ||
-      currentQuestionBank.activeQuestionSetId === null)
-      ? DEFAULT_QUESTION_SET_600_PLUS_ID
-      : currentQuestionBank.activeQuestionSetId;
+  const nextActiveQuestionSetId = currentQuestionBank.activeQuestionSetId;
 
   return validateQuestionBank({
     version: 1,

@@ -16,7 +16,6 @@ import { ProgressIndicator } from "../question/ProgressIndicator";
 import { QuestionCard } from "../question/QuestionCard";
 import { QuizHeader } from "../question/QuizHeader";
 import { QuizNavigation } from "../question/QuizNavigation";
-import { SubmitBar } from "../question/SubmitBar";
 
 type ReviewPageState = Readonly<{
   activeQuestionSet: QuestionSet | null;
@@ -33,8 +32,8 @@ const INITIAL_REVIEW_PAGE_STATE: ReviewPageState = {
 };
 
 const INITIAL_CURRENT_QUESTION_INDEX = 0;
-const INITIAL_SELECTED_CHOICE_INDEX: ChoiceIndex | null = null;
-const INITIAL_SUBMITTED_CHOICE_INDEX: ChoiceIndex | null = null;
+const INITIAL_SELECTED_CHOICE_INDEXES: readonly ChoiceIndex[] = [];
+const INITIAL_SUBMITTED_CHOICE_INDEXES: readonly ChoiceIndex[] = [];
 const INITIAL_IS_SUBMITTED = false;
 const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
@@ -45,11 +44,14 @@ export function ReviewPageContent() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
     INITIAL_CURRENT_QUESTION_INDEX
   );
-  const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<ChoiceIndex | null>(
-    INITIAL_SELECTED_CHOICE_INDEX
+  const [selectedChoiceIndexes, setSelectedChoiceIndexes] = useState<
+    readonly ChoiceIndex[]
+  >(
+    INITIAL_SELECTED_CHOICE_INDEXES
   );
-  const [submittedChoiceIndex, setSubmittedChoiceIndex] =
-    useState<ChoiceIndex | null>(INITIAL_SUBMITTED_CHOICE_INDEX);
+  const [submittedChoiceIndexes, setSubmittedChoiceIndexes] = useState<
+    readonly ChoiceIndex[]
+  >(INITIAL_SUBMITTED_CHOICE_INDEXES);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(INITIAL_IS_SUBMITTED);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(INITIAL_IS_CORRECT);
   const [isExplanationOpen, setIsExplanationOpen] = useState<boolean>(
@@ -85,36 +87,51 @@ export function ReviewPageContent() {
   }, [state.quizSession?.completedAt]);
 
   useEffect(() => {
-    setSelectedChoiceIndex(INITIAL_SELECTED_CHOICE_INDEX);
-    setSubmittedChoiceIndex(INITIAL_SUBMITTED_CHOICE_INDEX);
+    setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
+    setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
     setIsSubmitted(INITIAL_IS_SUBMITTED);
     setIsCorrect(INITIAL_IS_CORRECT);
     setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
   }, [currentQuestion?.id]);
 
-  function handleSelectChoice(choiceIndex: ChoiceIndex): void {
-    if (isSubmitted) {
-      return;
-    }
-
-    setSelectedChoiceIndex(choiceIndex);
+  function toggleChoiceSelection(
+    currentValue: readonly ChoiceIndex[],
+    choiceIndex: ChoiceIndex
+  ): readonly ChoiceIndex[] {
+    return currentValue.includes(choiceIndex)
+      ? currentValue.filter((currentIndex) => currentIndex !== choiceIndex)
+      : [...currentValue, choiceIndex].sort((left, right) => left - right);
   }
 
-  function handleSubmit(): void {
-    if (currentQuestion === undefined || selectedChoiceIndex === null || isSubmitted) {
+  function handleSelectChoice(choiceIndex: ChoiceIndex): void {
+    if (currentQuestion === undefined || isSubmitted) {
       return;
     }
 
-    const submittedAt = new Date().toISOString();
-    const nextIsCorrect = checkAnswer(currentQuestion, selectedChoiceIndex);
+    const nextSelectedChoiceIndexes =
+      currentQuestion.answers.length > 1
+        ? toggleChoiceSelection(selectedChoiceIndexes, choiceIndex)
+        : [choiceIndex];
+
+    setSelectedChoiceIndexes(nextSelectedChoiceIndexes);
+
+    if (currentQuestion.answers.length > 1 && nextSelectedChoiceIndexes.length < currentQuestion.answers.length) {
+      setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
+      setIsSubmitted(false);
+      setIsCorrect(INITIAL_IS_CORRECT);
+      setIsExplanationOpen(false);
+      return;
+    }
+
+    const nextIsCorrect = checkAnswer(currentQuestion, nextSelectedChoiceIndexes);
     const nextQuestionResult: QuestionResult = {
       questionId: currentQuestion.id,
-      selectedAnswer: selectedChoiceIndex,
+      selectedAnswers: nextSelectedChoiceIndexes,
       isCorrect: nextIsCorrect,
-      submittedAt
+      submittedAt: new Date().toISOString()
     };
 
-    setSubmittedChoiceIndex(selectedChoiceIndex);
+    setSubmittedChoiceIndexes(nextSelectedChoiceIndexes);
     setIsSubmitted(true);
     setIsCorrect(nextIsCorrect);
     setIsExplanationOpen(true);
@@ -218,17 +235,12 @@ export function ReviewPageContent() {
           question={currentQuestion}
           questionNumber={currentQuestionNumber}
         />
-        <SubmitBar
-          canSubmit={selectedChoiceIndex !== null}
-          isSubmitted={isSubmitted}
-          isCorrect={isCorrect}
-          onSubmit={handleSubmit}
-        />
         <ChoiceList
           choices={currentQuestion.choices}
-          selectedChoiceIndex={selectedChoiceIndex}
-          submittedChoiceIndex={submittedChoiceIndex}
-          correctChoiceIndex={isSubmitted ? currentQuestion.answer : null}
+          selectedChoiceIndexes={selectedChoiceIndexes}
+          submittedChoiceIndexes={submittedChoiceIndexes}
+          correctChoiceIndexes={isSubmitted ? currentQuestion.answers : []}
+          requiredSelectionCount={currentQuestion.answers.length}
           isSubmitted={isSubmitted}
           onSelectChoice={handleSelectChoice}
         />

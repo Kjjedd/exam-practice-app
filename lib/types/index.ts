@@ -6,6 +6,8 @@ export type {
   QuestionId
 } from "./question";
 export type { QuestionResult } from "./question-result";
+export type { InProgressQuizSession } from "./in-progress-quiz-session";
+export type { ExamTemplate, ExamTemplateId } from "./exam-template";
 export type {
   QuestionBank,
   QuestionSet,

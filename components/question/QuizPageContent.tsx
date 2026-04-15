@@ -4,8 +4,15 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
+import { DEFAULT_QUESTION_SET_ID } from "../../lib/data/default-question-bank";
+import { getAwsExamTemplateById } from "../../lib/exams/aws-exam-templates";
 import { shuffleQuestionIds } from "../../lib/quiz/shuffle-questions";
-import { writeLatestQuizSession } from "../../lib/quiz/session-storage";
+import {
+  clearInProgressQuizSession,
+  readInProgressQuizSession,
+  writeInProgressQuizSession,
+  writeLatestQuizSession
+} from "../../lib/quiz/session-storage";
 import {
   isFavoriteQuestion,
   readFavoriteQuestionIds,
@@ -13,6 +20,8 @@ import {
 } from "../../lib/storage/favorites";
 import type {
   ChoiceIndex,
+  ExamTemplate,
+  Question,
   QuestionId,
   QuestionResult,
   QuestionSet,
@@ -28,7 +37,6 @@ import { ProgressIndicator } from "./ProgressIndicator";
 import { QuizNavigation } from "./QuizNavigation";
 import { QuestionCard } from "./QuestionCard";
 import { QuizHeader } from "./QuizHeader";
-import { SubmitBar } from "./SubmitBar";
 
 type QuizPageState = Readonly<{
   activeQuestionSet: QuestionSet | null;
@@ -40,8 +48,8 @@ const INITIAL_QUIZ_PAGE_STATE: QuizPageState = {
   isReady: false
 };
 
-const INITIAL_SELECTED_CHOICE_INDEX: ChoiceIndex | null = null;
-const INITIAL_SUBMITTED_CHOICE_INDEX: ChoiceIndex | null = null;
+const INITIAL_SELECTED_CHOICE_INDEXES: readonly ChoiceIndex[] = [];
+const INITIAL_SUBMITTED_CHOICE_INDEXES: readonly ChoiceIndex[] = [];
 const INITIAL_IS_SUBMITTED = false;
 const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
@@ -79,7 +87,8 @@ function getModeLabel(mode: QuizMode): string {
 
 function resolveSessionQuestionIds(
   activeQuestionSet: QuestionSet | null,
-  mode: QuizMode
+  mode: QuizMode,
+  examTemplate: ExamTemplate | null
 ): readonly QuestionId[] {
   if (activeQuestionSet === null) {
     return INITIAL_SESSION_QUESTION_IDS;
@@ -87,7 +96,24 @@ function resolveSessionQuestionIds(
 
   const questionIds = activeQuestionSet.questions.map((question) => question.id);
 
-  return mode === "random" ? shuffleQuestionIds(questionIds) : questionIds;
+  if (mode === "random") {
+    return shuffleQuestionIds(questionIds);
+  }
+
+  if (mode === "exam") {
+    const shuffledQuestionIds = shuffleQuestionIds(questionIds);
+
+    if (examTemplate === null) {
+      return shuffledQuestionIds;
+    }
+
+    return shuffledQuestionIds.slice(
+      0,
+      Math.min(shuffledQuestionIds.length, examTemplate.totalQuestionCount)
+    );
+  }
+
+  return questionIds;
 }
 
 function resolveSessionQuestions(
@@ -107,6 +133,71 @@ function resolveSessionQuestions(
     .filter((question): question is QuestionSet["questions"][number] => question !== undefined);
 }
 
+function getQuestionResult(
+  questionResults: readonly QuestionResult[],
+  questionId: QuestionId | undefined
+): QuestionResult | null {
+  if (questionId === undefined) {
+    return null;
+  }
+
+  return questionResults.find((result) => result.questionId === questionId) ?? null;
+}
+
+function toggleChoiceSelection(
+  currentValue: readonly ChoiceIndex[],
+  choiceIndex: ChoiceIndex
+): readonly ChoiceIndex[] {
+  return currentValue.includes(choiceIndex)
+    ? currentValue.filter((currentIndex) => currentIndex !== choiceIndex)
+    : [...currentValue, choiceIndex].sort((left, right) => left - right);
+}
+
+function createQuestionResult(
+  question: Question,
+  selectedAnswers: readonly ChoiceIndex[]
+): QuestionResult {
+  return {
+    questionId: question.id,
+    selectedAnswers,
+    isCorrect: checkAnswer(question, selectedAnswers),
+    submittedAt: new Date().toISOString()
+  };
+}
+
+function isResumableQuizSession(
+  activeQuestionSet: QuestionSet,
+  quizMode: QuizMode,
+  quizSession: ReturnType<typeof readInProgressQuizSession>,
+  examTemplateId: string | null
+): boolean {
+  if (quizSession === null) {
+    return false;
+  }
+
+  if (
+    quizSession.mode !== quizMode ||
+    quizSession.questionSetId !== activeQuestionSet.id ||
+    quizSession.examTemplateId !== examTemplateId
+  ) {
+    return false;
+  }
+
+  if (
+    quizSession.questionIds.length === 0 ||
+    quizSession.currentQuestionIndex < 0 ||
+    quizSession.currentQuestionIndex >= quizSession.questionIds.length
+  ) {
+    return false;
+  }
+
+  const availableQuestionIds = new Set(
+    activeQuestionSet.questions.map((question) => question.id)
+  );
+
+  return quizSession.questionIds.every((questionId) => availableQuestionIds.has(questionId));
+}
+
 export function QuizPageContent() {
   const [state, setState] = useState<QuizPageState>(INITIAL_QUIZ_PAGE_STATE);
   const [sessionQuestionIds, setSessionQuestionIds] =
@@ -116,11 +207,14 @@ export function QuizPageContent() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(
     INITIAL_CURRENT_QUESTION_INDEX
   );
-  const [selectedChoiceIndex, setSelectedChoiceIndex] = useState<ChoiceIndex | null>(
-    INITIAL_SELECTED_CHOICE_INDEX
+  const [selectedChoiceIndexes, setSelectedChoiceIndexes] = useState<
+    readonly ChoiceIndex[]
+  >(
+    INITIAL_SELECTED_CHOICE_INDEXES
   );
-  const [submittedChoiceIndex, setSubmittedChoiceIndex] =
-    useState<ChoiceIndex | null>(INITIAL_SUBMITTED_CHOICE_INDEX);
+  const [submittedChoiceIndexes, setSubmittedChoiceIndexes] = useState<
+    readonly ChoiceIndex[]
+  >(INITIAL_SUBMITTED_CHOICE_INDEXES);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(INITIAL_IS_SUBMITTED);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(INITIAL_IS_CORRECT);
   const [isExplanationOpen, setIsExplanationOpen] = useState<boolean>(
@@ -132,9 +226,12 @@ export function QuizPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const entryQuestionId = searchParams.get("questionId");
+  const shouldRestartSession = searchParams.get("restart") === "1";
   const quizMode = getQuizMode(searchParams.get("mode"));
+  const examTemplate = getAwsExamTemplateById(searchParams.get("exam"));
   const modeLabel = getModeLabel(quizMode);
   const isExamMode = quizMode === "exam";
+  const isFreeNavigationMode = quizMode === "normal";
 
   useEffect(() => {
     setState({
@@ -149,60 +246,197 @@ export function QuizPageContent() {
   const currentQuestionNumber = currentQuestionIndex + 1;
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
-  useEffect(() => {
-    setSessionQuestionIds(resolveSessionQuestionIds(state.activeQuestionSet, quizMode));
+  function startFreshSession(
+    nextQuestionSet: QuestionSet,
+    nextMode: QuizMode,
+    nextExamTemplate: ExamTemplate | null
+  ): void {
+    setSessionQuestionIds(
+      resolveSessionQuestionIds(nextQuestionSet, nextMode, nextExamTemplate)
+    );
     setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
     setQuestionResults(INITIAL_QUESTION_RESULTS);
     setSessionStartedAt(new Date().toISOString());
-  }, [state.activeQuestionSet, quizMode]);
-
-  useEffect(() => {
-    if (entryQuestionId === null) {
-      return;
-    }
-
-    const nextQuestionIndex = sessionQuestionIds.indexOf(entryQuestionId);
-
-    if (nextQuestionIndex < 0) {
-      return;
-    }
-
-    setCurrentQuestionIndex(nextQuestionIndex);
-  }, [entryQuestionId, sessionQuestionIds]);
-
-  useEffect(() => {
-    setSelectedChoiceIndex(INITIAL_SELECTED_CHOICE_INDEX);
-    setSubmittedChoiceIndex(INITIAL_SUBMITTED_CHOICE_INDEX);
+    setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
+    setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
     setIsSubmitted(INITIAL_IS_SUBMITTED);
     setIsCorrect(INITIAL_IS_CORRECT);
     setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
-  }, [currentQuestion?.id]);
-
-  function handleSelectChoice(choiceIndex: ChoiceIndex): void {
-    if (isSubmitted) {
-      return;
-    }
-
-    setSelectedChoiceIndex(choiceIndex);
   }
 
-  function handleSubmit(): void {
-    if (currentQuestion === undefined || selectedChoiceIndex === null || isSubmitted) {
+  useEffect(() => {
+    if (!state.isReady) {
       return;
     }
 
-    const submittedAt = new Date().toISOString();
-    const nextIsCorrect = checkAnswer(currentQuestion, selectedChoiceIndex);
-    const nextQuestionResult: QuestionResult = {
-      questionId: currentQuestion.id,
-      selectedAnswer: selectedChoiceIndex,
-      isCorrect: nextIsCorrect,
-      submittedAt
-    };
+    if (state.activeQuestionSet === null) {
+      setSessionQuestionIds(INITIAL_SESSION_QUESTION_IDS);
+      setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+      setQuestionResults(INITIAL_QUESTION_RESULTS);
+      return;
+    }
 
-    setSubmittedChoiceIndex(selectedChoiceIndex);
+    if (quizMode === "exam" && state.activeQuestionSet.id !== DEFAULT_QUESTION_SET_ID) {
+      setSessionQuestionIds(INITIAL_SESSION_QUESTION_IDS);
+      setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+      setQuestionResults(INITIAL_QUESTION_RESULTS);
+      return;
+    }
+
+    if (quizMode === "exam" && examTemplate === null) {
+      setSessionQuestionIds(INITIAL_SESSION_QUESTION_IDS);
+      setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+      setQuestionResults(INITIAL_QUESTION_RESULTS);
+      return;
+    }
+
+    if (shouldRestartSession) {
+      clearInProgressQuizSession();
+      startFreshSession(state.activeQuestionSet, quizMode, examTemplate);
+      return;
+    }
+
+    const nextSessionQuestionIds = resolveSessionQuestionIds(
+      state.activeQuestionSet,
+      quizMode,
+      examTemplate
+    );
+
+    if (entryQuestionId !== null) {
+      const entryQuestionIndex = nextSessionQuestionIds.indexOf(entryQuestionId);
+
+      setSessionQuestionIds(nextSessionQuestionIds);
+      setCurrentQuestionIndex(
+        entryQuestionIndex >= 0 ? entryQuestionIndex : INITIAL_CURRENT_QUESTION_INDEX
+      );
+      setQuestionResults(INITIAL_QUESTION_RESULTS);
+      setSessionStartedAt(new Date().toISOString());
+      return;
+    }
+
+    const inProgressQuizSession = readInProgressQuizSession();
+
+    if (
+      inProgressQuizSession !== null &&
+      inProgressQuizSession.questionSetId !== state.activeQuestionSet.id
+    ) {
+      clearInProgressQuizSession();
+    }
+
+    const resumableQuizSession =
+      state.activeQuestionSet !== null &&
+      isResumableQuizSession(
+        state.activeQuestionSet,
+        quizMode,
+        inProgressQuizSession,
+        examTemplate?.id ?? null
+      )
+        ? inProgressQuizSession
+        : null;
+
+    if (resumableQuizSession !== null) {
+      setSessionQuestionIds(resumableQuizSession.questionIds);
+      setCurrentQuestionIndex(resumableQuizSession.currentQuestionIndex);
+      setQuestionResults(resumableQuizSession.results);
+      setSessionStartedAt(resumableQuizSession.startedAt);
+      return;
+    }
+
+    setSessionQuestionIds(nextSessionQuestionIds);
+    setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+    setQuestionResults(INITIAL_QUESTION_RESULTS);
+    setSessionStartedAt(new Date().toISOString());
+  }, [
+    entryQuestionId,
+    examTemplate,
+    quizMode,
+    shouldRestartSession,
+    state.activeQuestionSet,
+    state.isReady
+  ]);
+
+  useEffect(() => {
+    const currentQuestionResult = getQuestionResult(questionResults, currentQuestion?.id);
+
+    if (currentQuestionResult !== null) {
+      setSelectedChoiceIndexes(currentQuestionResult.selectedAnswers);
+      setSubmittedChoiceIndexes(currentQuestionResult.selectedAnswers);
+      setIsSubmitted(true);
+      setIsCorrect(isExamMode ? null : currentQuestionResult.isCorrect);
+      setIsExplanationOpen(false);
+      return;
+    }
+
+    setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
+    setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
+    setIsSubmitted(INITIAL_IS_SUBMITTED);
+    setIsCorrect(INITIAL_IS_CORRECT);
+    setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
+  }, [currentQuestion?.id, isExamMode, questionResults]);
+
+  function handleSelectChoice(choiceIndex: ChoiceIndex): void {
+    if (currentQuestion === undefined || (isSubmitted && !isExamMode)) {
+      return;
+    }
+
+    const nextSelectedChoiceIndexes =
+      currentQuestion.answers.length > 1 || isExamMode
+        ? toggleChoiceSelection(selectedChoiceIndexes, choiceIndex)
+        : [choiceIndex];
+
+    if (isExamMode) {
+      setSelectedChoiceIndexes(nextSelectedChoiceIndexes);
+      setSubmittedChoiceIndexes(nextSelectedChoiceIndexes);
+      setIsSubmitted(nextSelectedChoiceIndexes.length > 0);
+      setIsCorrect(INITIAL_IS_CORRECT);
+      setIsExplanationOpen(false);
+      setQuestionResults((currentValue) => {
+        const filteredResults = currentValue.filter(
+          (result) => result.questionId !== currentQuestion.id
+        );
+
+        if (nextSelectedChoiceIndexes.length === 0) {
+          return filteredResults;
+        }
+
+        return [...filteredResults, createQuestionResult(currentQuestion, nextSelectedChoiceIndexes)];
+      });
+      return;
+    }
+
+    if (currentQuestion.answers.length > 1) {
+      setSelectedChoiceIndexes(nextSelectedChoiceIndexes);
+
+      if (nextSelectedChoiceIndexes.length < currentQuestion.answers.length) {
+        setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
+        setIsSubmitted(false);
+        setIsCorrect(INITIAL_IS_CORRECT);
+        setIsExplanationOpen(false);
+        return;
+      }
+
+      const nextQuestionResult = createQuestionResult(
+        currentQuestion,
+        nextSelectedChoiceIndexes
+      );
+
+      setSubmittedChoiceIndexes(nextSelectedChoiceIndexes);
+      setIsSubmitted(true);
+      setIsCorrect(nextQuestionResult.isCorrect);
+      setIsExplanationOpen(true);
+      setQuestionResults((currentValue) => [
+        ...currentValue.filter((result) => result.questionId !== currentQuestion.id),
+        nextQuestionResult
+      ]);
+      return;
+    }
+
+    const nextQuestionResult = createQuestionResult(currentQuestion, nextSelectedChoiceIndexes);
+
+    setSelectedChoiceIndexes(nextSelectedChoiceIndexes);
+    setSubmittedChoiceIndexes(nextSelectedChoiceIndexes);
     setIsSubmitted(true);
-    setIsCorrect(nextIsCorrect);
+    setIsCorrect(nextQuestionResult.isCorrect);
     setIsExplanationOpen(true);
     setQuestionResults((currentValue) => [
       ...currentValue.filter((result) => result.questionId !== currentQuestion.id),
@@ -241,6 +475,8 @@ export function QuizPageContent() {
         mode: quizMode,
         questionSetId: state.activeQuestionSet.id,
         questionSetTitle: state.activeQuestionSet.title,
+        examTemplateId: examTemplate?.id ?? null,
+        examTemplateTitle: examTemplate?.title ?? null,
         questionIds: sessionQuestionIds,
         currentQuestionIndex,
         results: questionResults,
@@ -248,6 +484,7 @@ export function QuizPageContent() {
         completedAt: new Date().toISOString()
       };
 
+      clearInProgressQuizSession();
       writeLatestQuizSession(completedQuizSession);
       router.push("/result");
       return;
@@ -260,9 +497,61 @@ export function QuizPageContent() {
     });
   }
 
+  function handleGoToPreviousQuestion(): void {
+    if (!isFreeNavigationMode) {
+      return;
+    }
+
+    setCurrentQuestionIndex((currentValue) => {
+      const previousIndex = currentValue - 1;
+
+      return previousIndex >= 0 ? previousIndex : currentValue;
+    });
+  }
+
+  function handleGoToNextQuestion(): void {
+    if (!isFreeNavigationMode) {
+      return;
+    }
+
+    setCurrentQuestionIndex((currentValue) => {
+      const nextIndex = currentValue + 1;
+
+      return nextIndex < questions.length ? nextIndex : currentValue;
+    });
+  }
+
+  function handleExitToHome(): void {
+    if (state.activeQuestionSet !== null && sessionQuestionIds.length > 0) {
+      writeInProgressQuizSession({
+        mode: quizMode,
+        questionSetId: state.activeQuestionSet.id,
+        questionSetTitle: state.activeQuestionSet.title,
+        examTemplateId: examTemplate?.id ?? null,
+        examTemplateTitle: examTemplate?.title ?? null,
+        questionIds: sessionQuestionIds,
+        currentQuestionIndex,
+        results: questionResults,
+        startedAt: sessionStartedAt,
+        savedAt: new Date().toISOString()
+      });
+    }
+
+    router.push("/");
+  }
+
+  function handleRestartSession(): void {
+    if (state.activeQuestionSet === null) {
+      return;
+    }
+
+    clearInProgressQuizSession();
+    startFreshSession(state.activeQuestionSet, quizMode, examTemplate);
+  }
+
   return (
     <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-      <div className="mx-auto flex max-w-4xl flex-col gap-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6">
         {!state.isReady ? (
           <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
             <h1 className="text-2xl font-semibold tracking-tight text-ink">
@@ -274,7 +563,36 @@ export function QuizPageContent() {
           </section>
         ) : null}
 
-        {state.isReady && !currentQuestion ? <EmptyQuestionState /> : null}
+        {state.isReady && !currentQuestion ? (
+          <EmptyQuestionState
+            title={
+              isExamMode && examTemplate === null
+                ? "시험 템플릿을 먼저 선택하세요."
+                : undefined
+            }
+            description={
+              isExamMode && state.activeQuestionSet?.id !== DEFAULT_QUESTION_SET_ID
+                ? "시험 모드는 기본 AWS SAA 문제 세트에서만 사용할 수 있습니다. PDF 업로드 세트는 일반 문제풀이와 랜덤 모드만 지원합니다."
+                : isExamMode && examTemplate === null
+                ? "시험 모드는 지원되는 실제 시험 템플릿을 고른 뒤 시작할 수 있습니다."
+                : undefined
+            }
+            primaryHref={
+              isExamMode && state.activeQuestionSet?.id !== DEFAULT_QUESTION_SET_ID
+                ? "/quiz"
+                : isExamMode
+                  ? "/exam"
+                  : "/import"
+            }
+            primaryLabel={
+              isExamMode && state.activeQuestionSet?.id !== DEFAULT_QUESTION_SET_ID
+                ? "일반 문제풀이로 이동"
+                : isExamMode
+                  ? "시험 선택하기"
+                  : "PDF 가져오기"
+            }
+          />
+        ) : null}
 
         {state.isReady && currentQuestion ? (
           <>
@@ -284,6 +602,10 @@ export function QuizPageContent() {
               modeLabel={modeLabel}
               questionSetTitle={state.activeQuestionSet?.title ?? "활성 문제 세트"}
               isExamMode={isExamMode}
+              examTemplateCode={examTemplate?.code ?? null}
+              examTemplateTitle={examTemplate?.title ?? null}
+              onExitToHome={handleExitToHome}
+              onRestartSession={handleRestartSession}
             />
             <ProgressIndicator
               currentQuestionNumber={currentQuestionNumber}
@@ -301,23 +623,19 @@ export function QuizPageContent() {
             <QuestionCard
               question={currentQuestion}
               questionNumber={currentQuestionNumber}
-            />
-            <SubmitBar
-              canSubmit={selectedChoiceIndex !== null}
-              isSubmitted={isSubmitted}
-              isCorrect={isCorrect}
-              onSubmit={handleSubmit}
               isExamMode={isExamMode}
             />
             <ChoiceList
               choices={currentQuestion.choices}
-              selectedChoiceIndex={selectedChoiceIndex}
-              submittedChoiceIndex={submittedChoiceIndex}
-              correctChoiceIndex={isSubmitted ? currentQuestion.answer : null}
+              selectedChoiceIndexes={selectedChoiceIndexes}
+              submittedChoiceIndexes={submittedChoiceIndexes}
+              correctChoiceIndexes={!isExamMode && isSubmitted ? currentQuestion.answers : []}
+              requiredSelectionCount={currentQuestion.answers.length}
               isSubmitted={isSubmitted}
+              isExamMode={isExamMode}
               onSelectChoice={handleSelectChoice}
             />
-            {isSubmitted && isCorrect !== null ? (
+            {!isExamMode && isSubmitted && isCorrect !== null ? (
               <ExplanationPanel
                 explanation={currentQuestion.explanation}
                 isCorrect={isCorrect}
@@ -325,11 +643,18 @@ export function QuizPageContent() {
                 onToggle={handleToggleExplanation}
               />
             ) : null}
-            {isSubmitted ? (
+            {isFreeNavigationMode || isSubmitted ? (
               <QuizNavigation
                 isLastQuestion={isLastQuestion}
                 onProceed={handleProceedToNextStep}
                 isExamMode={isExamMode}
+                onExitToHome={handleExitToHome}
+                isFreeNavigationEnabled={isFreeNavigationMode}
+                canGoPrevious={currentQuestionIndex > 0}
+                canGoNext={!isLastQuestion}
+                canFinishSession={isLastQuestion && isSubmitted}
+                onGoPrevious={handleGoToPreviousQuestion}
+                onGoNext={handleGoToNextQuestion}
               />
             ) : null}
           </>

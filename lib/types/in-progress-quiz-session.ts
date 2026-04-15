@@ -4,7 +4,7 @@ import type { QuizMode } from "./quiz-mode";
 import type { QuestionSetId } from "./question-set";
 import type { ExamTemplateId } from "./exam-template";
 
-export type QuizSession = Readonly<{
+export type InProgressQuizSession = Readonly<{
   mode: QuizMode;
   questionSetId: QuestionSetId;
   questionSetTitle: string;
@@ -14,5 +14,5 @@ export type QuizSession = Readonly<{
   currentQuestionIndex: number;
   results: readonly QuestionResult[];
   startedAt: string;
-  completedAt: string | null;
+  savedAt: string;
 }>;

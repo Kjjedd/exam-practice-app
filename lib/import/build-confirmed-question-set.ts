@@ -31,7 +31,7 @@ function buildQuestion(
     id: createQuestionId(index),
     question: candidate.question.trim(),
     choices: candidate.choices.map((choice) => choice.trim()),
-    answer: candidate.answer,
+    answers: [candidate.answer],
     explanation:
       candidate.explanation.trim().length > 0
         ? candidate.explanation.trim()

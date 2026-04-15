@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { loadActiveQuestionSet } from "../../lib/data";
+import { getAwsExamTemplateById } from "../../lib/exams/aws-exam-templates";
 import { getWrongQuestionIds } from "../../lib/quiz/get-wrong-questions";
 import { readLatestQuizSession } from "../../lib/quiz/session-storage";
 import { hasCompleteQuizSession } from "../../lib/quiz/quiz-session-model";
@@ -44,6 +45,10 @@ function getSessionModeDescription(quizSession: QuizSession): string {
   }
 
   return "이번 세션은 일반 모드로 진행되었습니다.";
+}
+
+function getPracticeExamStatusText(accuracyRate: number, passingPercentage: number): string {
+  return accuracyRate >= passingPercentage ? "연습 기준 합격" : "연습 기준 불합격";
 }
 
 export function ResultPageContent() {
@@ -117,6 +122,7 @@ export function ResultPageContent() {
   }
 
   const wrongQuestionIds = getWrongQuestionIds(state.quizSession);
+  const examTemplate = getAwsExamTemplateById(state.quizSession.examTemplateId);
 
   return (
     <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
@@ -136,6 +142,26 @@ export function ResultPageContent() {
           <p className="mt-3 text-sm leading-6 text-ink/65 sm:text-base">
             {getSessionModeDescription(state.quizSession)}
           </p>
+          {state.quizSession.mode === "exam" && examTemplate !== null ? (
+            <div className="mt-4 rounded-2xl border border-coral/15 bg-coral/5 px-4 py-4 text-sm leading-6 text-ink/78">
+              <p>
+                <span className="font-semibold text-ink">시험:</span> {examTemplate.code} ·{" "}
+                {examTemplate.title}
+              </p>
+              <p className="mt-2">
+                <span className="font-semibold text-ink">문항 수:</span>{" "}
+                {examTemplate.totalQuestionCount}문항
+              </p>
+              <p className="mt-2">
+                <span className="font-semibold text-ink">공식 기준:</span>{" "}
+                {examTemplate.officialScoringSummary}
+              </p>
+              <p className="mt-2">
+                <span className="font-semibold text-ink">앱 연습 기준:</span>{" "}
+                {examTemplate.practiceScoringSummary}
+              </p>
+            </div>
+          ) : null}
           {!state.isQuestionSetMatched ? (
             <p className="mt-3 rounded-2xl border border-coral/15 bg-coral/5 px-4 py-4 text-sm leading-6 text-coral">
               현재 활성 문제 세트가 이 세션과 다르기 때문에, 일부 문제 본문은 세션
@@ -176,6 +202,20 @@ export function ResultPageContent() {
             value={`${state.resultSummary.accuracyRate}%`}
             tone="neutral"
           />
+          {state.quizSession.mode === "exam" && examTemplate !== null ? (
+            <ResultSummaryCard
+              label="Practice Result"
+              value={getPracticeExamStatusText(
+                state.resultSummary.accuracyRate,
+                examTemplate.practicePassingPercentage
+              )}
+              tone={
+                state.resultSummary.accuracyRate >= examTemplate.practicePassingPercentage
+                  ? "success"
+                  : "warning"
+              }
+            />
+          ) : null}
         </section>
 
         <WrongAnswerCallout wrongCount={wrongQuestionIds.length} />

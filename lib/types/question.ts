@@ -7,7 +7,7 @@ export type Question = Readonly<{
   id: QuestionId;
   question: string;
   choices: readonly QuestionChoice[];
-  answer: ChoiceIndex;
+  answers: readonly ChoiceIndex[];
   explanation: string;
   category: QuestionCategory;
 }>;

@@ -28,3 +28,80 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+@keyframes processingFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(0, -12px, 0) scale(1.04);
+  }
+}
+
+@keyframes processingPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scaleX(0.2);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes processingCardLift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes processingBlink {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.95);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+.processing-orb {
+  animation: processingFloat 5.8s ease-in-out infinite;
+}
+
+.processing-orb-delay-1 {
+  animation-delay: 0.9s;
+}
+
+.processing-orb-delay-2 {
+  animation-delay: 1.8s;
+}
+
+.processing-card {
+  animation: processingCardLift 4.2s ease-in-out infinite;
+}
+
+.processing-bar {
+  transform-origin: left center;
+  animation: processingPulse 2.4s ease-in-out infinite;
+}
+
+.processing-dot {
+  animation: processingBlink 1.8s ease-in-out infinite;
+}
+
+.processing-dot-delay {
+  animation-delay: 0.6s;
+}

@@ -21,6 +21,7 @@ import {
 } from "../../lib/import/pdf-import-input";
 import { validateImportedCandidates } from "../../lib/import/validate-imported-candidates";
 import { ImportQuestionEditor } from "./ImportQuestionEditor";
+import { ImportProcessingStage } from "./ImportProcessingStage";
 import { ImportReviewList } from "./ImportReviewList";
 import { ImportValidationSummary as ImportValidationSummaryCard } from "./ImportValidationSummary";
 import { SelectedPdfSummary } from "./SelectedPdfSummary";
@@ -312,17 +313,21 @@ export function ImportReviewPageContent() {
   if (state.importStatus === "parsing" || isPending) {
     return (
       <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-4xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
-          <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
-            Import Review
-          </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink">
-            PDF를 자동으로 문제 후보로 변환하고 있습니다.
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-            문항 수가 많은 PDF라면 조금 더 시간이 걸릴 수 있습니다. 변환이 끝나면 바로
-            검수 화면으로 이어집니다.
-          </p>
+        <div className="mx-auto flex max-w-6xl flex-col gap-6">
+          <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
+            <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
+              Import Review
+            </span>
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink">
+              PDF를 자동으로 문제 후보로 변환하고 있습니다.
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+              문항 수가 많은 PDF라면 조금 더 시간이 걸릴 수 있습니다. 변환이 끝나면 바로
+              검수 화면으로 이어집니다.
+            </p>
+          </section>
+
+          <ImportProcessingStage />
         </div>
       </main>
     );

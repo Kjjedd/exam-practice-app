@@ -1,5 +1,5 @@
 const PDF_MIME_TYPE = "application/pdf";
-const MAX_PDF_FILE_SIZE_BYTES = 20 * 1024 * 1024;
+const MAX_PDF_FILE_SIZE_BYTES = 25 * 1024 * 1024;
 
 export type PdfFileValidationResult =
   | Readonly<{
@@ -47,7 +47,7 @@ export function validatePdfFile(file: File | null): PdfFileValidationResult {
   if (file.size > MAX_PDF_FILE_SIZE_BYTES) {
     return {
       isValid: false,
-      errorMessage: "파일이 너무 큽니다. 20MB 이하 PDF만 지원합니다."
+      errorMessage: "파일이 너무 큽니다. 25MB 이하 PDF만 지원합니다."
     };
   }
 

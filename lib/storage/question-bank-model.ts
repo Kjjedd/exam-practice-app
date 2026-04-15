@@ -45,12 +45,26 @@ function validateQuestion(question: Question): Question {
     assertNonEmptyText(choice, `Question choice is required: ${question.id}:${index}`);
   });
 
-  if (!Number.isInteger(question.answer)) {
-    throw new Error(`Question answer must be an integer: ${question.id}`);
+  if (!Array.isArray(question.answers)) {
+    throw new Error(`Question answers must be an array: ${question.id}`);
   }
 
-  if (question.answer < 0 || question.answer >= question.choices.length) {
-    throw new Error(`Question answer is out of range: ${question.id}`);
+  if (question.answers.length === 0) {
+    throw new Error(`Question must have at least one correct answer: ${question.id}`);
+  }
+
+  question.answers.forEach((answerIndex) => {
+    if (!Number.isInteger(answerIndex)) {
+      throw new Error(`Question answer must be an integer: ${question.id}`);
+    }
+
+    if (answerIndex < 0 || answerIndex >= question.choices.length) {
+      throw new Error(`Question answer is out of range: ${question.id}`);
+    }
+  });
+
+  if (new Set(question.answers).size !== question.answers.length) {
+    throw new Error(`Question answers must not contain duplicates: ${question.id}`);
   }
 
   if (typeof question.explanation !== "string") {

@@ -44,7 +44,12 @@ const primaryActions: readonly PrimaryAction[] = [
 type PrimaryActionsProps = Readonly<{
   hasActiveQuestionSet: boolean;
   canUseExamMode: boolean;
+  isRangeValid: boolean;
+  rangeValidationMessage: string | null;
   isReady: boolean;
+  normalModeHref: string;
+  randomModeHref: string;
+  examModeHref: string;
   resumeHref: string | null;
   restartHref: string | null;
   resumeMode: QuizMode | null;
@@ -71,7 +76,12 @@ function getResumeModeLabel(resumeMode: QuizMode | null): string {
 export function PrimaryActions({
   hasActiveQuestionSet,
   canUseExamMode,
+  isRangeValid,
+  rangeValidationMessage,
   isReady,
+  normalModeHref,
+  randomModeHref,
+  examModeHref,
   resumeHref,
   restartHref,
   resumeMode,
@@ -97,6 +107,13 @@ export function PrimaryActions({
         <div className="mb-5 rounded-[1.5rem] border border-dashed border-coral/35 bg-coral/6 px-5 py-4">
           <p className="text-sm leading-6 text-ink/75 sm:text-base">
             활성 문제 세트가 없습니다. 먼저 PDF를 가져오세요.
+          </p>
+        </div>
+      ) : null}
+      {hasActiveQuestionSet && isReady && !isRangeValid && rangeValidationMessage !== null ? (
+        <div className="mb-5 rounded-[1.5rem] border border-dashed border-[#d8a647] bg-[#fff7ea] px-5 py-4">
+          <p className="text-sm leading-6 text-ink/75 sm:text-base">
+            {rangeValidationMessage}
           </p>
         </div>
       ) : null}
@@ -144,14 +161,24 @@ export function PrimaryActions({
         {primaryActions.map((action) => {
           const isDisabled =
             action.availability === "active-set"
-              ? !hasActiveQuestionSet || !isReady
+              ? !hasActiveQuestionSet || !isReady || !isRangeValid
               : action.availability === "default-saa"
-                ? !hasActiveQuestionSet || !isReady || !canUseExamMode
+                ? !hasActiveQuestionSet || !isReady || !canUseExamMode || !isRangeValid
                 : false;
           const disabledText =
             action.availability === "default-saa" && hasActiveQuestionSet && !canUseExamMode
               ? "SAA 기본 세트 필요"
+              : hasActiveQuestionSet && !isRangeValid
+                ? "범위 확인 필요"
               : "세트 필요";
+          const resolvedHref =
+            action.badge === "Normal"
+              ? normalModeHref
+              : action.badge === "Random"
+                ? randomModeHref
+                : action.badge === "Exam"
+                  ? examModeHref
+                  : action.href;
 
           if (isDisabled) {
             return (
@@ -178,7 +205,7 @@ export function PrimaryActions({
           return (
             <Link
               key={action.title}
-              href={action.href}
+              href={resolvedHref}
               className="group rounded-[1.75rem] border border-ink/10 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-ink/15 hover:shadow-[0_16px_36px_rgba(16,36,62,0.08)]"
             >
               <div className="flex items-start justify-between gap-4">

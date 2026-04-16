@@ -1,8 +1,14 @@
-import { DEFAULT_QUESTION_SET_ID } from "../data/default-question-bank";
+import {
+  DEFAULT_QUESTION_SET_600_PLUS_ID,
+  DEFAULT_QUESTION_SET_ID
+} from "../data/default-question-bank";
 import type { QuestionSet, QuestionSetSummary } from "../types";
 
 export function canUseExamModeForQuestionSet(
   questionSet: QuestionSet | QuestionSetSummary | null
 ): boolean {
-  return questionSet?.id === DEFAULT_QUESTION_SET_ID;
+  return (
+    questionSet?.id === DEFAULT_QUESTION_SET_ID ||
+    questionSet?.id === DEFAULT_QUESTION_SET_600_PLUS_ID
+  );
 }

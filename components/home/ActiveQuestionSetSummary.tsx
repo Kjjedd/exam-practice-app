@@ -7,6 +7,12 @@ type ActiveQuestionSetSummaryProps = Readonly<{
   questionSetSummaries: readonly QuestionSetSummary[];
   isReady: boolean;
   onSelectQuestionSet?: (questionSetId: string) => void;
+  rangeStartInput: string;
+  rangeEndInput: string;
+  onChangeRangeStart?: (value: string) => void;
+  onChangeRangeEnd?: (value: string) => void;
+  isRangeSelectable: boolean;
+  rangeValidationMessage: string | null;
 }>;
 
 function formatCreatedAt(createdAt: string): string {
@@ -26,7 +32,13 @@ export function ActiveQuestionSetSummary({
   activeQuestionSet,
   questionSetSummaries,
   onSelectQuestionSet,
-  isReady
+  isReady,
+  rangeStartInput,
+  rangeEndInput,
+  onChangeRangeStart,
+  onChangeRangeEnd,
+  isRangeSelectable,
+  rangeValidationMessage
 }: ActiveQuestionSetSummaryProps) {
   const hasActiveQuestionSet = activeQuestionSet !== null;
 
@@ -80,6 +92,54 @@ export function ActiveQuestionSetSummary({
               </dd>
             </div>
           </dl>
+          {isRangeSelectable ? (
+            <div className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-4 shadow-sm">
+              <div className="flex flex-col gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                    Question Range
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-ink/68">
+                    이 세트는 {activeQuestionSet.minimumQuestionNumber}~
+                    {activeQuestionSet.maximumQuestionNumber} 범위에서 시작 번호와 끝 번호를 직접 지정할 수 있습니다.
+                  </p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="flex flex-col gap-2 text-sm font-medium text-ink/72">
+                    시작 번호
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={activeQuestionSet.minimumQuestionNumber ?? undefined}
+                      max={activeQuestionSet.maximumQuestionNumber ?? undefined}
+                      value={rangeStartInput}
+                      onChange={(event) => onChangeRangeStart?.(event.target.value)}
+                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-base text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm font-medium text-ink/72">
+                    끝 번호
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      min={activeQuestionSet.minimumQuestionNumber ?? undefined}
+                      max={activeQuestionSet.maximumQuestionNumber ?? undefined}
+                      value={rangeEndInput}
+                      onChange={(event) => onChangeRangeEnd?.(event.target.value)}
+                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-base text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white"
+                    />
+                  </label>
+                </div>
+                {rangeValidationMessage !== null ? (
+                  <p className="text-sm leading-6 text-[#b36926]">{rangeValidationMessage}</p>
+                ) : (
+                  <p className="text-sm leading-6 text-ink/62">
+                    지정한 범위가 일반, 랜덤, 시험 모드 시작에 함께 적용됩니다.
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : null}
           {questionSetSummaries.length > 1 ? (
             <div className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-4 shadow-sm">
               <div className="flex items-center justify-between gap-3">
@@ -88,7 +148,7 @@ export function ActiveQuestionSetSummary({
                     Set Switcher
                   </p>
                   <p className="mt-2 text-sm leading-6 text-ink/68">
-                    기본 세트와 600번 이후 세트를 바로 전환할 수 있습니다.
+                    두 개의 기본 세트 중 하나를 고른 뒤 범위를 지정해 시작할 수 있습니다.
                   </p>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { loadQuestionSetSummaries } from "../../lib/data";
 import { setActiveQuestionSet } from "../../lib/data/save-question-set";
@@ -48,17 +48,35 @@ function getResumeHref(quizSession: InProgressQuizSession | null): string | null
     return null;
   }
 
+  const searchParams = new URLSearchParams();
+
+  if (quizSession.questionRangeStart !== null) {
+    searchParams.set("start", String(quizSession.questionRangeStart));
+  }
+
+  if (quizSession.questionRangeEnd !== null) {
+    searchParams.set("end", String(quizSession.questionRangeEnd));
+  }
+
   if (quizSession.mode === "random") {
-    return "/quiz?mode=random";
+    searchParams.set("mode", "random");
+    return `/quiz?${searchParams.toString()}`;
   }
 
   if (quizSession.mode === "exam") {
-    return quizSession.examTemplateId === null
-      ? "/exam"
-      : `/quiz?mode=exam&exam=${quizSession.examTemplateId}`;
+    if (quizSession.examTemplateId === null) {
+      return `/exam?${searchParams.toString()}`;
+    }
+
+    searchParams.set("mode", "exam");
+    searchParams.set("exam", quizSession.examTemplateId);
+
+    return `/quiz?${searchParams.toString()}`;
   }
 
-  return "/quiz";
+  const queryString = searchParams.toString();
+
+  return queryString.length > 0 ? `/quiz?${queryString}` : "/quiz";
 }
 
 function getRestartHref(quizSession: InProgressQuizSession | null): string | null {
@@ -66,21 +84,86 @@ function getRestartHref(quizSession: InProgressQuizSession | null): string | nul
     return null;
   }
 
+  const searchParams = new URLSearchParams();
+
+  if (quizSession.questionRangeStart !== null) {
+    searchParams.set("start", String(quizSession.questionRangeStart));
+  }
+
+  if (quizSession.questionRangeEnd !== null) {
+    searchParams.set("end", String(quizSession.questionRangeEnd));
+  }
+
+  searchParams.set("restart", "1");
+
   if (quizSession.mode === "random") {
-    return "/quiz?mode=random&restart=1";
+    searchParams.set("mode", "random");
+    return `/quiz?${searchParams.toString()}`;
   }
 
   if (quizSession.mode === "exam") {
-    return quizSession.examTemplateId === null
-      ? "/exam"
-      : `/quiz?mode=exam&exam=${quizSession.examTemplateId}&restart=1`;
+    if (quizSession.examTemplateId === null) {
+      return `/exam?${searchParams.toString()}`;
+    }
+
+    searchParams.set("mode", "exam");
+    searchParams.set("exam", quizSession.examTemplateId);
+
+    return `/quiz?${searchParams.toString()}`;
   }
 
-  return "/quiz?restart=1";
+  return `/quiz?${searchParams.toString()}`;
+}
+
+function parseRangeInput(value: string): number | null {
+  const trimmedValue = value.trim();
+
+  if (trimmedValue.length === 0) {
+    return null;
+  }
+
+  if (!/^\d+$/.test(trimmedValue)) {
+    return null;
+  }
+
+  const parsedValue = Number.parseInt(trimmedValue, 10);
+
+  return Number.isInteger(parsedValue) ? parsedValue : null;
+}
+
+function buildModeHref(
+  pathname: "/quiz" | "/exam",
+  rangeStart: number | null,
+  rangeEnd: number | null,
+  mode: "normal" | "random" | "exam"
+): string {
+  const searchParams = new URLSearchParams();
+
+  if (rangeStart !== null) {
+    searchParams.set("start", String(rangeStart));
+  }
+
+  if (rangeEnd !== null) {
+    searchParams.set("end", String(rangeEnd));
+  }
+
+  if (mode === "random") {
+    searchParams.set("mode", "random");
+  }
+
+  const queryString = searchParams.toString();
+
+  if (queryString.length === 0) {
+    return pathname;
+  }
+
+  return `${pathname}?${queryString}`;
 }
 
 export function HomeEntrySection() {
   const [state, setState] = useState<HomeEntryState>(INITIAL_HOME_ENTRY_STATE);
+  const [rangeStartInput, setRangeStartInput] = useState<string>("");
+  const [rangeEndInput, setRangeEndInput] = useState<string>("");
 
   function refreshHomeEntryState(): void {
     const questionSetSummaries = loadQuestionSetSummaries();
@@ -106,6 +189,30 @@ export function HomeEntrySection() {
     refreshHomeEntryState();
   }, []);
 
+  useEffect(() => {
+    if (state.activeQuestionSet === null) {
+      setRangeStartInput("");
+      setRangeEndInput("");
+      return;
+    }
+
+    if (
+      state.activeQuestionSet.minimumQuestionNumber === null ||
+      state.activeQuestionSet.maximumQuestionNumber === null
+    ) {
+      setRangeStartInput("");
+      setRangeEndInput("");
+      return;
+    }
+
+    setRangeStartInput(String(state.activeQuestionSet.minimumQuestionNumber));
+    setRangeEndInput(String(state.activeQuestionSet.maximumQuestionNumber));
+  }, [
+    state.activeQuestionSet?.id,
+    state.activeQuestionSet?.minimumQuestionNumber,
+    state.activeQuestionSet?.maximumQuestionNumber
+  ]);
+
   function handleClearResume(): void {
     clearInProgressQuizSession();
     refreshHomeEntryState();
@@ -117,12 +224,98 @@ export function HomeEntrySection() {
     refreshHomeEntryState();
   }
 
+  const parsedRangeStart = parseRangeInput(rangeStartInput);
+  const parsedRangeEnd = parseRangeInput(rangeEndInput);
+
+  const rangeValidation = useMemo(() => {
+    const activeQuestionSet = state.activeQuestionSet;
+
+    if (
+      activeQuestionSet === null ||
+      activeQuestionSet.minimumQuestionNumber === null ||
+      activeQuestionSet.maximumQuestionNumber === null
+    ) {
+      return {
+        isRangeSelectable: false,
+        isValid: true,
+        message: null as string | null,
+        rangeStart: null as number | null,
+        rangeEnd: null as number | null
+      };
+    }
+
+    if (parsedRangeStart === null || parsedRangeEnd === null) {
+      return {
+        isRangeSelectable: true,
+        isValid: false,
+        message: "시작 번호와 끝 번호를 모두 입력하세요.",
+        rangeStart: null,
+        rangeEnd: null
+      };
+    }
+
+    if (
+      parsedRangeStart < activeQuestionSet.minimumQuestionNumber ||
+      parsedRangeEnd > activeQuestionSet.maximumQuestionNumber
+    ) {
+      return {
+        isRangeSelectable: true,
+        isValid: false,
+        message: `현재 세트는 ${activeQuestionSet.minimumQuestionNumber}~${activeQuestionSet.maximumQuestionNumber} 범위만 지원합니다.`,
+        rangeStart: null,
+        rangeEnd: null
+      };
+    }
+
+    if (parsedRangeStart > parsedRangeEnd) {
+      return {
+        isRangeSelectable: true,
+        isValid: false,
+        message: "시작 번호는 끝 번호보다 클 수 없습니다.",
+        rangeStart: null,
+        rangeEnd: null
+      };
+    }
+
+    return {
+      isRangeSelectable: true,
+      isValid: true,
+      message: null,
+      rangeStart: parsedRangeStart,
+      rangeEnd: parsedRangeEnd
+    };
+  }, [parsedRangeEnd, parsedRangeStart, state.activeQuestionSet]);
+
+  const normalModeHref = buildModeHref(
+    "/quiz",
+    rangeValidation.rangeStart,
+    rangeValidation.rangeEnd,
+    "normal"
+  );
+  const randomModeHref = buildModeHref(
+    "/quiz",
+    rangeValidation.rangeStart,
+    rangeValidation.rangeEnd,
+    "random"
+  );
+  const examModeHref = buildModeHref(
+    "/exam",
+    rangeValidation.rangeStart,
+    rangeValidation.rangeEnd,
+    "exam"
+  );
+
   return (
     <section className="grid gap-5 xl:grid-cols-[1.28fr_0.72fr]">
       <PrimaryActions
         hasActiveQuestionSet={state.activeQuestionSet !== null}
         canUseExamMode={canUseExamModeForQuestionSet(state.activeQuestionSet)}
+        isRangeValid={rangeValidation.isValid}
+        rangeValidationMessage={rangeValidation.message}
         isReady={state.isReady}
+        normalModeHref={normalModeHref}
+        randomModeHref={randomModeHref}
+        examModeHref={examModeHref}
         resumeHref={getResumeHref(state.resumableQuizSession)}
         restartHref={getRestartHref(state.resumableQuizSession)}
         resumeMode={state.resumableQuizSession?.mode ?? null}
@@ -138,6 +331,12 @@ export function HomeEntrySection() {
         questionSetSummaries={state.questionSetSummaries}
         isReady={state.isReady}
         onSelectQuestionSet={handleChangeActiveQuestionSet}
+        rangeStartInput={rangeStartInput}
+        rangeEndInput={rangeEndInput}
+        onChangeRangeStart={setRangeStartInput}
+        onChangeRangeEnd={setRangeEndInput}
+        isRangeSelectable={rangeValidation.isRangeSelectable}
+        rangeValidationMessage={rangeValidation.message}
       />
     </section>
   );

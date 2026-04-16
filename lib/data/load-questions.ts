@@ -1,5 +1,6 @@
 import { readQuestionBank } from "../storage/question-bank";
 import { getActiveQuestionSet } from "../storage/question-bank-model";
+import { getQuestionSetNumberRange } from "../quiz/question-range";
 import type { Question, QuestionBank, QuestionId, QuestionSet, QuestionSetSummary } from "../types";
 
 export function loadQuestionBank(): QuestionBank {
@@ -19,6 +20,8 @@ export function loadQuestionSetSummaries(): readonly QuestionSetSummary[] {
     sourceLabel: questionSet.sourceLabel,
     createdAt: questionSet.createdAt,
     questionCount: questionSet.questions.length,
+    minimumQuestionNumber: getQuestionSetNumberRange(questionSet)?.start ?? null,
+    maximumQuestionNumber: getQuestionSetNumberRange(questionSet)?.end ?? null,
     isActive: questionSet.id === questionBank.activeQuestionSetId
   }));
 }

@@ -3,6 +3,7 @@ type QuizHeaderProps = Readonly<{
   totalQuestions: number;
   modeLabel: string;
   questionSetTitle: string;
+  questionRangeLabel?: string | null;
   isExamMode?: boolean;
   examTemplateCode?: string | null;
   examTemplateTitle?: string | null;
@@ -15,6 +16,7 @@ export function QuizHeader({
   totalQuestions,
   modeLabel,
   questionSetTitle,
+  questionRangeLabel = null,
   isExamMode = false,
   examTemplateCode = null,
   examTemplateTitle = null,
@@ -68,6 +70,11 @@ export function QuizHeader({
         <div className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm leading-6 text-ink/80">
           <span className="font-semibold text-ink">활성 세트:</span> {questionSetTitle}
         </div>
+        {questionRangeLabel !== null ? (
+          <div className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm leading-6 text-ink/80">
+            <span className="font-semibold text-ink">문제 범위:</span> {questionRangeLabel}
+          </div>
+        ) : null}
         {isExamMode && examTemplateTitle !== null ? (
           <div className="rounded-2xl border border-coral/15 bg-coral/5 px-4 py-3 text-sm leading-6 text-ink/80">
             <span className="font-semibold text-ink">시험 템플릿:</span>{" "}

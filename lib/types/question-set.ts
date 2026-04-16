@@ -16,6 +16,8 @@ export type QuestionSetSummary = Readonly<{
   sourceLabel: string;
   createdAt: string;
   questionCount: number;
+  minimumQuestionNumber: number | null;
+  maximumQuestionNumber: number | null;
   isActive: boolean;
 }>;
 

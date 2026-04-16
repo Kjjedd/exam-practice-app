@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
 import { canUseExamModeForQuestionSet } from "../../lib/exams/exam-mode-availability";
@@ -11,6 +12,17 @@ import type { QuestionSet } from "../../lib/types";
 export function ExamSelectionPageContent() {
   const [activeQuestionSet, setActiveQuestionSet] = useState<QuestionSet | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const searchParams = useSearchParams();
+  const requestedRangeStart = searchParams.get("start");
+  const requestedRangeEnd = searchParams.get("end");
+  const rangeQueryString = new URLSearchParams(
+    requestedRangeStart !== null && requestedRangeEnd !== null
+      ? {
+          start: requestedRangeStart,
+          end: requestedRangeEnd
+        }
+      : {}
+  ).toString();
 
   useEffect(() => {
     setActiveQuestionSet(loadActiveQuestionSet());
@@ -70,6 +82,11 @@ export function ExamSelectionPageContent() {
             앱에서는 시험 정보는 그대로 보여주되 합격 판정은 연습용 기준으로 따로
             계산합니다.
           </p>
+          {rangeQueryString.length > 0 ? (
+            <p className="mt-3 text-sm leading-6 text-ink/72">
+              현재 선택 범위: {requestedRangeStart}~{requestedRangeEnd}
+            </p>
+          ) : null}
         </section>
 
         <section className="grid gap-4 lg:grid-cols-2">
@@ -127,7 +144,9 @@ export function ExamSelectionPageContent() {
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
-                  href={`/quiz?mode=exam&exam=${template.id}&restart=1`}
+                  href={`/quiz?mode=exam&exam=${template.id}&restart=1${
+                    rangeQueryString.length > 0 ? `&${rangeQueryString}` : ""
+                  }`}
                   className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
                 >
                   이 시험으로 시작

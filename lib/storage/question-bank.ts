@@ -1,6 +1,7 @@
 import type { QuestionBank } from "../types";
 import {
-  getDefaultQuestionBank
+  getDefaultQuestionBank,
+  MANAGED_DEFAULT_QUESTION_SET_IDS
 } from "../data/default-question-bank";
 import {
   createEmptyQuestionBank,
@@ -20,13 +21,11 @@ function getInitialQuestionBank(): QuestionBank {
 
 function mergeDefaultQuestionBank(currentQuestionBank: QuestionBank): QuestionBank {
   const defaultQuestionBank = getDefaultQuestionBank();
+  const managedDefaultQuestionSetIds = new Set<string>(MANAGED_DEFAULT_QUESTION_SET_IDS);
   const mergedQuestionSets = [
     ...defaultQuestionBank.questionSets,
     ...currentQuestionBank.questionSets.filter(
-      (questionSet) =>
-        !defaultQuestionBank.questionSets.some(
-          (defaultQuestionSet) => defaultQuestionSet.id === questionSet.id
-        )
+      (questionSet) => !managedDefaultQuestionSetIds.has(questionSet.id)
     )
   ];
 

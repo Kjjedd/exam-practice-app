@@ -60,6 +60,17 @@ function validateQuizSessionCore(
     throw new Error("Quiz session questionSetTitle must be a string.");
   }
 
+  if (
+    quizSession.questionRangeStart !== null &&
+    !Number.isInteger(quizSession.questionRangeStart)
+  ) {
+    throw new Error("Quiz session questionRangeStart must be an integer or null.");
+  }
+
+  if (quizSession.questionRangeEnd !== null && !Number.isInteger(quizSession.questionRangeEnd)) {
+    throw new Error("Quiz session questionRangeEnd must be an integer or null.");
+  }
+
   if (quizSession.examTemplateId !== null && typeof quizSession.examTemplateId !== "string") {
     throw new Error("Quiz session examTemplateId must be a string or null.");
   }
@@ -168,6 +179,10 @@ export function parseStoredQuizSession(rawValue: string): QuizSession {
         ? (parsed.questionSetId as QuestionSetId)
         : "",
     questionSetTitle: typeof parsed.questionSetTitle === "string" ? parsed.questionSetTitle : "",
+    questionRangeStart:
+      typeof parsed.questionRangeStart === "number" ? parsed.questionRangeStart : null,
+    questionRangeEnd:
+      typeof parsed.questionRangeEnd === "number" ? parsed.questionRangeEnd : null,
     examTemplateId: typeof parsed.examTemplateId === "string" ? parsed.examTemplateId : null,
     examTemplateTitle:
       typeof parsed.examTemplateTitle === "string" ? parsed.examTemplateTitle : null,
@@ -217,6 +232,10 @@ export function parseStoredInProgressQuizSession(rawValue: string): InProgressQu
         ? (parsed.questionSetId as QuestionSetId)
         : "",
     questionSetTitle: typeof parsed.questionSetTitle === "string" ? parsed.questionSetTitle : "",
+    questionRangeStart:
+      typeof parsed.questionRangeStart === "number" ? parsed.questionRangeStart : null,
+    questionRangeEnd:
+      typeof parsed.questionRangeEnd === "number" ? parsed.questionRangeEnd : null,
     examTemplateId: typeof parsed.examTemplateId === "string" ? parsed.examTemplateId : null,
     examTemplateTitle:
       typeof parsed.examTemplateTitle === "string" ? parsed.examTemplateTitle : null,

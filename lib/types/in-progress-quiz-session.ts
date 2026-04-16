@@ -8,6 +8,8 @@ export type InProgressQuizSession = Readonly<{
   mode: QuizMode;
   questionSetId: QuestionSetId;
   questionSetTitle: string;
+  questionRangeStart: number | null;
+  questionRangeEnd: number | null;
   examTemplateId: ExamTemplateId | null;
   examTemplateTitle: string | null;
   questionIds: readonly QuestionId[];

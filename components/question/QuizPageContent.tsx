@@ -4,8 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
-import { DEFAULT_QUESTION_SET_ID } from "../../lib/data/default-question-bank";
 import { getAwsExamTemplateById } from "../../lib/exams/aws-exam-templates";
+import { canUseExamModeForQuestionSet } from "../../lib/exams/exam-mode-availability";
+import {
+  filterQuestionIdsByNumberRange,
+  getQuestionNumberRangeLabel,
+  getQuestionSetNumberRange,
+  type QuestionNumberRange
+} from "../../lib/quiz/question-range";
 import { shuffleQuestionIds } from "../../lib/quiz/shuffle-questions";
 import {
   clearInProgressQuizSession,
@@ -88,13 +94,17 @@ function getModeLabel(mode: QuizMode): string {
 function resolveSessionQuestionIds(
   activeQuestionSet: QuestionSet | null,
   mode: QuizMode,
-  examTemplate: ExamTemplate | null
+  examTemplate: ExamTemplate | null,
+  selectedQuestionRange: QuestionNumberRange | null
 ): readonly QuestionId[] {
   if (activeQuestionSet === null) {
     return INITIAL_SESSION_QUESTION_IDS;
   }
 
-  const questionIds = activeQuestionSet.questions.map((question) => question.id);
+  const questionIds =
+    selectedQuestionRange === null
+      ? activeQuestionSet.questions.map((question) => question.id)
+      : filterQuestionIdsByNumberRange(activeQuestionSet, selectedQuestionRange);
 
   if (mode === "random") {
     return shuffleQuestionIds(questionIds);
@@ -169,8 +179,12 @@ function isResumableQuizSession(
   activeQuestionSet: QuestionSet,
   quizMode: QuizMode,
   quizSession: ReturnType<typeof readInProgressQuizSession>,
-  examTemplateId: string | null
+  examTemplateId: string | null,
+  selectedQuestionRange: QuestionNumberRange | null
 ): boolean {
+  const expectedRangeStart = selectedQuestionRange?.start ?? null;
+  const expectedRangeEnd = selectedQuestionRange?.end ?? null;
+
   if (quizSession === null) {
     return false;
   }
@@ -178,7 +192,9 @@ function isResumableQuizSession(
   if (
     quizSession.mode !== quizMode ||
     quizSession.questionSetId !== activeQuestionSet.id ||
-    quizSession.examTemplateId !== examTemplateId
+    quizSession.examTemplateId !== examTemplateId ||
+    quizSession.questionRangeStart !== expectedRangeStart ||
+    quizSession.questionRangeEnd !== expectedRangeEnd
   ) {
     return false;
   }
@@ -196,6 +212,16 @@ function isResumableQuizSession(
   );
 
   return quizSession.questionIds.every((questionId) => availableQuestionIds.has(questionId));
+}
+
+function parseRangeValue(value: string | null): number | null {
+  if (value === null || !/^\d+$/.test(value)) {
+    return null;
+  }
+
+  const parsedValue = Number.parseInt(value, 10);
+
+  return Number.isInteger(parsedValue) ? parsedValue : null;
 }
 
 export function QuizPageContent() {
@@ -229,9 +255,36 @@ export function QuizPageContent() {
   const shouldRestartSession = searchParams.get("restart") === "1";
   const quizMode = getQuizMode(searchParams.get("mode"));
   const examTemplate = getAwsExamTemplateById(searchParams.get("exam"));
+  const requestedRangeStart = parseRangeValue(searchParams.get("start"));
+  const requestedRangeEnd = parseRangeValue(searchParams.get("end"));
   const modeLabel = getModeLabel(quizMode);
   const isExamMode = quizMode === "exam";
   const isFreeNavigationMode = quizMode === "normal";
+  const activeQuestionSetRange =
+    state.activeQuestionSet === null ? null : getQuestionSetNumberRange(state.activeQuestionSet);
+  const selectedQuestionRange =
+    activeQuestionSetRange !== null &&
+    requestedRangeStart !== null &&
+    requestedRangeEnd !== null &&
+    requestedRangeStart >= activeQuestionSetRange.start &&
+    requestedRangeEnd <= activeQuestionSetRange.end &&
+    requestedRangeStart <= requestedRangeEnd
+      ? {
+          start: requestedRangeStart,
+          end: requestedRangeEnd
+        }
+      : activeQuestionSetRange;
+  const selectedQuestionRangeLabel = getQuestionNumberRangeLabel(selectedQuestionRange);
+  const hasExplicitInvalidRange =
+    state.activeQuestionSet !== null &&
+    activeQuestionSetRange !== null &&
+    ((requestedRangeStart !== null && requestedRangeEnd === null) ||
+      (requestedRangeStart === null && requestedRangeEnd !== null) ||
+      (requestedRangeStart !== null &&
+        requestedRangeEnd !== null &&
+        (requestedRangeStart < activeQuestionSetRange.start ||
+          requestedRangeEnd > activeQuestionSetRange.end ||
+          requestedRangeStart > requestedRangeEnd)));
 
   useEffect(() => {
     setState({
@@ -252,7 +305,12 @@ export function QuizPageContent() {
     nextExamTemplate: ExamTemplate | null
   ): void {
     setSessionQuestionIds(
-      resolveSessionQuestionIds(nextQuestionSet, nextMode, nextExamTemplate)
+      resolveSessionQuestionIds(
+        nextQuestionSet,
+        nextMode,
+        nextExamTemplate,
+        selectedQuestionRange
+      )
     );
     setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
     setQuestionResults(INITIAL_QUESTION_RESULTS);
@@ -276,7 +334,7 @@ export function QuizPageContent() {
       return;
     }
 
-    if (quizMode === "exam" && state.activeQuestionSet.id !== DEFAULT_QUESTION_SET_ID) {
+    if (quizMode === "exam" && !canUseExamModeForQuestionSet(state.activeQuestionSet)) {
       setSessionQuestionIds(INITIAL_SESSION_QUESTION_IDS);
       setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
       setQuestionResults(INITIAL_QUESTION_RESULTS);
@@ -284,6 +342,13 @@ export function QuizPageContent() {
     }
 
     if (quizMode === "exam" && examTemplate === null) {
+      setSessionQuestionIds(INITIAL_SESSION_QUESTION_IDS);
+      setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+      setQuestionResults(INITIAL_QUESTION_RESULTS);
+      return;
+    }
+
+    if (hasExplicitInvalidRange) {
       setSessionQuestionIds(INITIAL_SESSION_QUESTION_IDS);
       setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
       setQuestionResults(INITIAL_QUESTION_RESULTS);
@@ -299,8 +364,20 @@ export function QuizPageContent() {
     const nextSessionQuestionIds = resolveSessionQuestionIds(
       state.activeQuestionSet,
       quizMode,
-      examTemplate
+      examTemplate,
+      selectedQuestionRange
     );
+
+    if (
+      quizMode === "exam" &&
+      examTemplate !== null &&
+      nextSessionQuestionIds.length < examTemplate.totalQuestionCount
+    ) {
+      setSessionQuestionIds(INITIAL_SESSION_QUESTION_IDS);
+      setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+      setQuestionResults(INITIAL_QUESTION_RESULTS);
+      return;
+    }
 
     if (entryQuestionId !== null) {
       const entryQuestionIndex = nextSessionQuestionIds.indexOf(entryQuestionId);
@@ -329,7 +406,8 @@ export function QuizPageContent() {
         state.activeQuestionSet,
         quizMode,
         inProgressQuizSession,
-        examTemplate?.id ?? null
+        examTemplate?.id ?? null,
+        selectedQuestionRange
       )
         ? inProgressQuizSession
         : null;
@@ -349,7 +427,9 @@ export function QuizPageContent() {
   }, [
     entryQuestionId,
     examTemplate,
+    hasExplicitInvalidRange,
     quizMode,
+    selectedQuestionRange,
     shouldRestartSession,
     state.activeQuestionSet,
     state.isReady
@@ -475,6 +555,8 @@ export function QuizPageContent() {
         mode: quizMode,
         questionSetId: state.activeQuestionSet.id,
         questionSetTitle: state.activeQuestionSet.title,
+        questionRangeStart: selectedQuestionRange?.start ?? null,
+        questionRangeEnd: selectedQuestionRange?.end ?? null,
         examTemplateId: examTemplate?.id ?? null,
         examTemplateTitle: examTemplate?.title ?? null,
         questionIds: sessionQuestionIds,
@@ -527,6 +609,8 @@ export function QuizPageContent() {
         mode: quizMode,
         questionSetId: state.activeQuestionSet.id,
         questionSetTitle: state.activeQuestionSet.title,
+        questionRangeStart: selectedQuestionRange?.start ?? null,
+        questionRangeEnd: selectedQuestionRange?.end ?? null,
         examTemplateId: examTemplate?.id ?? null,
         examTemplateTitle: examTemplate?.title ?? null,
         questionIds: sessionQuestionIds,
@@ -568,24 +652,34 @@ export function QuizPageContent() {
             title={
               isExamMode && examTemplate === null
                 ? "시험 템플릿을 먼저 선택하세요."
+                : hasExplicitInvalidRange
+                  ? "선택한 문제 범위를 확인해 주세요."
                 : undefined
             }
             description={
-              isExamMode && state.activeQuestionSet?.id !== DEFAULT_QUESTION_SET_ID
-                ? "시험 모드는 기본 AWS SAA 문제 세트에서만 사용할 수 있습니다. PDF 업로드 세트는 일반 문제풀이와 랜덤 모드만 지원합니다."
+              isExamMode && !canUseExamModeForQuestionSet(state.activeQuestionSet)
+                ? "시험 모드는 지원되는 AWS SAA 기본 세트에서만 사용할 수 있습니다. 업로드한 PDF 세트는 일반 문제풀이와 랜덤 모드만 지원합니다."
                 : isExamMode && examTemplate === null
                 ? "시험 모드는 지원되는 실제 시험 템플릿을 고른 뒤 시작할 수 있습니다."
+                : hasExplicitInvalidRange
+                  ? "선택한 범위가 현재 세트의 유효 범위를 벗어났습니다. 홈에서 범위를 다시 지정해 주세요."
+                  : isExamMode &&
+                      examTemplate !== null &&
+                      sessionQuestionIds.length < examTemplate.totalQuestionCount
+                    ? "선택한 범위 안의 문제 수가 시험 템플릿 요구 문항 수보다 적습니다. 홈에서 더 넓은 범위를 지정해 주세요."
+                    : hasExplicitInvalidRange
+                      ? "홈 화면에서 현재 활성 세트에 맞는 시작 번호와 끝 번호를 다시 지정한 뒤 시작해 주세요."
                 : undefined
             }
             primaryHref={
-              isExamMode && state.activeQuestionSet?.id !== DEFAULT_QUESTION_SET_ID
+              isExamMode && !canUseExamModeForQuestionSet(state.activeQuestionSet)
                 ? "/quiz"
                 : isExamMode
                   ? "/exam"
                   : "/import"
             }
             primaryLabel={
-              isExamMode && state.activeQuestionSet?.id !== DEFAULT_QUESTION_SET_ID
+              isExamMode && !canUseExamModeForQuestionSet(state.activeQuestionSet)
                 ? "일반 문제풀이로 이동"
                 : isExamMode
                   ? "시험 선택하기"
@@ -601,6 +695,7 @@ export function QuizPageContent() {
               totalQuestions={questions.length}
               modeLabel={modeLabel}
               questionSetTitle={state.activeQuestionSet?.title ?? "활성 문제 세트"}
+              questionRangeLabel={selectedQuestionRangeLabel}
               isExamMode={isExamMode}
               examTemplateCode={examTemplate?.code ?? null}
               examTemplateTitle={examTemplate?.title ?? null}

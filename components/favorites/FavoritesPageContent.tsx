@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { loadActiveQuestionSet } from "../../lib/data";
-import { readFavoriteQuestionIds } from "../../lib/storage/favorites";
+import {
+  readFavoriteQuestionIds,
+  removeFavoriteQuestionId
+} from "../../lib/storage/favorites";
 import type { Question, QuestionId, QuestionSet } from "../../lib/types";
 
 type FavoritesPageState = Readonly<{
@@ -43,7 +46,8 @@ export function FavoritesPageContent() {
 
   useEffect(() => {
     const activeQuestionSet = loadActiveQuestionSet();
-    const favoriteQuestionIds = readFavoriteQuestionIds();
+    const favoriteQuestionIds =
+      activeQuestionSet === null ? [] : readFavoriteQuestionIds(activeQuestionSet.id);
 
     setState({
       activeQuestionSet,
@@ -52,6 +56,26 @@ export function FavoritesPageContent() {
       isReady: true
     });
   }, []);
+
+  function handleRemoveFavorite(questionId: QuestionId): void {
+    if (state.activeQuestionSet === null) {
+      return;
+    }
+
+    const nextFavoriteQuestionIds = removeFavoriteQuestionId(
+      state.activeQuestionSet.id,
+      questionId
+    );
+
+    setState((currentValue) => ({
+      ...currentValue,
+      favoriteQuestionIds: nextFavoriteQuestionIds,
+      favoriteQuestions: resolveFavoriteQuestions(
+        currentValue.activeQuestionSet,
+        nextFavoriteQuestionIds
+      )
+    }));
+  }
 
   if (!state.isReady) {
     return (
@@ -79,8 +103,8 @@ export function FavoritesPageContent() {
             저장된 즐겨찾기 문제가 아직 없습니다.
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-            문제 화면에서 다시 보고 싶은 문제를 즐겨찾기에 추가하면 이곳에서
-            모아서 확인할 수 있습니다.
+            {state.activeQuestionSet?.title ?? "현재 문제 세트"}에서 다시 보고 싶은 문제를
+            즐겨찾기에 추가하면 이곳에서 모아서 확인할 수 있습니다.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
@@ -112,8 +136,9 @@ export function FavoritesPageContent() {
             저장한 문제를 다시 볼 수 있습니다.
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-            현재 활성 문제 세트 기준으로 즐겨찾기한 문제를 모았습니다. 다시 보고
-            싶은 문제를 골라 바로 풀이 흐름으로 돌아갈 수 있습니다.
+            {state.activeQuestionSet?.title ?? "현재 활성 문제 세트"} 기준으로 즐겨찾기한
+            문제만 모았습니다. 다시 보고 싶은 문제를 골라 바로 풀이 흐름으로
+            돌아가거나 목록에서 바로 제거할 수 있습니다.
           </p>
           <p className="mt-3 text-sm leading-6 text-ink/65 sm:text-base">
             총 {state.favoriteQuestions.length}개의 즐겨찾기 문제를 확인할 수 있습니다.
@@ -144,6 +169,15 @@ export function FavoritesPageContent() {
                 >
                   이 문제 다시 보기
                 </Link>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFavorite(question.id)}
+                  className="inline-flex items-center justify-center rounded-full border border-coral/25 px-4 py-2 text-sm font-semibold text-coral transition-colors hover:bg-coral/6"
+                >
+                  즐겨찾기에서 삭제
+                </button>
               </div>
             </article>
           ))}

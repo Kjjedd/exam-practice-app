@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
@@ -15,7 +15,7 @@ import {
 import { shuffleQuestionIds } from "../../lib/quiz/shuffle-questions";
 import {
   clearInProgressQuizSession,
-  readInProgressQuizSession,
+  findInProgressQuizSession,
   writeInProgressQuizSession,
   writeLatestQuizSession
 } from "../../lib/quiz/session-storage";
@@ -24,9 +24,11 @@ import {
   readFavoriteQuestionIds,
   toggleFavoriteQuestionId
 } from "../../lib/storage/favorites";
+import { syncWrongQuestionIdsFromQuizSession } from "../../lib/storage/wrong-answers";
 import type {
   ChoiceIndex,
   ExamTemplate,
+  InProgressQuizSession,
   Question,
   QuestionId,
   QuestionResult,
@@ -178,7 +180,7 @@ function createQuestionResult(
 function isResumableQuizSession(
   activeQuestionSet: QuestionSet,
   quizMode: QuizMode,
-  quizSession: ReturnType<typeof readInProgressQuizSession>,
+  quizSession: InProgressQuizSession | null,
   examTemplateId: string | null,
   selectedQuestionRange: QuestionNumberRange | null
 ): boolean {
@@ -260,39 +262,68 @@ export function QuizPageContent() {
   const modeLabel = getModeLabel(quizMode);
   const isExamMode = quizMode === "exam";
   const isFreeNavigationMode = quizMode === "normal";
-  const activeQuestionSetRange =
-    state.activeQuestionSet === null ? null : getQuestionSetNumberRange(state.activeQuestionSet);
-  const selectedQuestionRange =
-    activeQuestionSetRange !== null &&
-    requestedRangeStart !== null &&
-    requestedRangeEnd !== null &&
-    requestedRangeStart >= activeQuestionSetRange.start &&
-    requestedRangeEnd <= activeQuestionSetRange.end &&
-    requestedRangeStart <= requestedRangeEnd
-      ? {
-          start: requestedRangeStart,
-          end: requestedRangeEnd
-        }
-      : activeQuestionSetRange;
+  const activeQuestionSetRange = useMemo(
+    () =>
+      state.activeQuestionSet === null ? null : getQuestionSetNumberRange(state.activeQuestionSet),
+    [state.activeQuestionSet]
+  );
+  const selectedQuestionRange = useMemo<QuestionNumberRange | null>(() => {
+    if (
+      activeQuestionSetRange !== null &&
+      requestedRangeStart !== null &&
+      requestedRangeEnd !== null &&
+      requestedRangeStart >= activeQuestionSetRange.start &&
+      requestedRangeEnd <= activeQuestionSetRange.end &&
+      requestedRangeStart <= requestedRangeEnd
+    ) {
+      return { start: requestedRangeStart, end: requestedRangeEnd };
+    }
+    return activeQuestionSetRange;
+  }, [activeQuestionSetRange, requestedRangeStart, requestedRangeEnd]);
   const selectedQuestionRangeLabel = getQuestionNumberRangeLabel(selectedQuestionRange);
-  const hasExplicitInvalidRange =
-    state.activeQuestionSet !== null &&
-    activeQuestionSetRange !== null &&
-    ((requestedRangeStart !== null && requestedRangeEnd === null) ||
-      (requestedRangeStart === null && requestedRangeEnd !== null) ||
-      (requestedRangeStart !== null &&
-        requestedRangeEnd !== null &&
-        (requestedRangeStart < activeQuestionSetRange.start ||
-          requestedRangeEnd > activeQuestionSetRange.end ||
-          requestedRangeStart > requestedRangeEnd)));
+  const hasExplicitInvalidRange = useMemo(
+    () =>
+      state.activeQuestionSet !== null &&
+      activeQuestionSetRange !== null &&
+      ((requestedRangeStart !== null && requestedRangeEnd === null) ||
+        (requestedRangeStart === null && requestedRangeEnd !== null) ||
+        (requestedRangeStart !== null &&
+          requestedRangeEnd !== null &&
+          (requestedRangeStart < activeQuestionSetRange.start ||
+            requestedRangeEnd > activeQuestionSetRange.end ||
+            requestedRangeStart > requestedRangeEnd))),
+    [state.activeQuestionSet, activeQuestionSetRange, requestedRangeStart, requestedRangeEnd]
+  );
+  const currentSessionMatcher = useMemo(
+    () => ({
+      mode: quizMode,
+      questionSetId: state.activeQuestionSet?.id ?? "",
+      questionRangeStart: selectedQuestionRange?.start ?? null,
+      questionRangeEnd: selectedQuestionRange?.end ?? null,
+      examTemplateId: examTemplate?.id ?? null
+    }),
+    [quizMode, state.activeQuestionSet?.id, selectedQuestionRange, examTemplate?.id]
+  );
 
   useEffect(() => {
+    const activeQuestionSet = loadActiveQuestionSet();
+
     setState({
-      activeQuestionSet: loadActiveQuestionSet(),
+      activeQuestionSet,
       isReady: true
     });
-    setFavoriteQuestionIds(readFavoriteQuestionIds());
+    setFavoriteQuestionIds(
+      activeQuestionSet === null ? [] : readFavoriteQuestionIds(activeQuestionSet.id)
+    );
   }, []);
+
+  useEffect(() => {
+    setFavoriteQuestionIds(
+      state.activeQuestionSet === null
+        ? []
+        : readFavoriteQuestionIds(state.activeQuestionSet.id)
+    );
+  }, [state.activeQuestionSet?.id]);
 
   const questions = resolveSessionQuestions(state.activeQuestionSet, sessionQuestionIds);
   const currentQuestion = questions[currentQuestionIndex];
@@ -356,7 +387,7 @@ export function QuizPageContent() {
     }
 
     if (shouldRestartSession) {
-      clearInProgressQuizSession();
+      clearInProgressQuizSession(currentSessionMatcher);
       startFreshSession(state.activeQuestionSet, quizMode, examTemplate);
       return;
     }
@@ -391,14 +422,7 @@ export function QuizPageContent() {
       return;
     }
 
-    const inProgressQuizSession = readInProgressQuizSession();
-
-    if (
-      inProgressQuizSession !== null &&
-      inProgressQuizSession.questionSetId !== state.activeQuestionSet.id
-    ) {
-      clearInProgressQuizSession();
-    }
+    const inProgressQuizSession = findInProgressQuizSession(currentSessionMatcher);
 
     const resumableQuizSession =
       state.activeQuestionSet !== null &&
@@ -426,12 +450,13 @@ export function QuizPageContent() {
     setSessionStartedAt(new Date().toISOString());
   }, [
     entryQuestionId,
-    examTemplate,
+    currentSessionMatcher.examTemplateId,
+    currentSessionMatcher.mode,
+    currentSessionMatcher.questionRangeEnd,
+    currentSessionMatcher.questionRangeStart,
+    currentSessionMatcher.questionSetId,
     hasExplicitInvalidRange,
-    quizMode,
-    selectedQuestionRange,
     shouldRestartSession,
-    state.activeQuestionSet,
     state.isReady
   ]);
 
@@ -533,11 +558,13 @@ export function QuizPageContent() {
   }
 
   function handleToggleFavorite(): void {
-    if (currentQuestion === undefined) {
+    if (currentQuestion === undefined || state.activeQuestionSet === null) {
       return;
     }
 
-    setFavoriteQuestionIds(toggleFavoriteQuestionId(currentQuestion.id));
+    setFavoriteQuestionIds(
+      toggleFavoriteQuestionId(state.activeQuestionSet.id, currentQuestion.id)
+    );
   }
 
   function handleProceedToNextStep(): void {
@@ -566,8 +593,9 @@ export function QuizPageContent() {
         completedAt: new Date().toISOString()
       };
 
-      clearInProgressQuizSession();
+      clearInProgressQuizSession(currentSessionMatcher);
       writeLatestQuizSession(completedQuizSession);
+      syncWrongQuestionIdsFromQuizSession(completedQuizSession);
       router.push("/result");
       return;
     }
@@ -629,7 +657,7 @@ export function QuizPageContent() {
       return;
     }
 
-    clearInProgressQuizSession();
+    clearInProgressQuizSession(currentSessionMatcher);
     startFreshSession(state.activeQuestionSet, quizMode, examTemplate);
   }
 

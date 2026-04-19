@@ -7,7 +7,7 @@ import { setActiveQuestionSet } from "../../lib/data/save-question-set";
 import { canUseExamModeForQuestionSet } from "../../lib/exams/exam-mode-availability";
 import {
   clearInProgressQuizSession,
-  readInProgressQuizSession
+  readInProgressQuizSessions
 } from "../../lib/quiz/session-storage";
 import type { InProgressQuizSession, QuestionSetSummary } from "../../lib/types";
 import { ActiveQuestionSetSummary } from "./ActiveQuestionSetSummary";
@@ -169,7 +169,12 @@ export function HomeEntrySection() {
     const questionSetSummaries = loadQuestionSetSummaries();
     const activeQuestionSet =
       questionSetSummaries.find((summary) => summary.isActive) ?? null;
-    const inProgressQuizSession = readInProgressQuizSession();
+    const inProgressQuizSession =
+      activeQuestionSet === null
+        ? null
+        : readInProgressQuizSessions()
+            .filter((quizSession) => quizSession.questionSetId === activeQuestionSet.id)
+            .sort((left, right) => right.savedAt.localeCompare(left.savedAt))[0] ?? null;
     const resumableQuizSession = isResumableQuizSession(
       activeQuestionSet,
       inProgressQuizSession
@@ -214,13 +219,22 @@ export function HomeEntrySection() {
   ]);
 
   function handleClearResume(): void {
-    clearInProgressQuizSession();
+    if (state.resumableQuizSession === null) {
+      return;
+    }
+
+    clearInProgressQuizSession({
+      mode: state.resumableQuizSession.mode,
+      questionSetId: state.resumableQuizSession.questionSetId,
+      questionRangeStart: state.resumableQuizSession.questionRangeStart,
+      questionRangeEnd: state.resumableQuizSession.questionRangeEnd,
+      examTemplateId: state.resumableQuizSession.examTemplateId
+    });
     refreshHomeEntryState();
   }
 
   function handleChangeActiveQuestionSet(questionSetId: string): void {
     setActiveQuestionSet(questionSetId);
-    clearInProgressQuizSession();
     refreshHomeEntryState();
   }
 
@@ -306,7 +320,7 @@ export function HomeEntrySection() {
   );
 
   return (
-    <section className="grid gap-5 xl:grid-cols-[1.28fr_0.72fr]">
+    <section className="grid items-stretch gap-5 xl:grid-cols-[1.28fr_0.72fr]">
       <PrimaryActions
         hasActiveQuestionSet={state.activeQuestionSet !== null}
         canUseExamMode={canUseExamModeForQuestionSet(state.activeQuestionSet)}

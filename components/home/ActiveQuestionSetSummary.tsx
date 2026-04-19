@@ -43,7 +43,7 @@ export function ActiveQuestionSetSummary({
   const hasActiveQuestionSet = activeQuestionSet !== null;
 
   return (
-    <section className="rounded-[1.75rem] bg-[linear-gradient(180deg,_rgba(244,247,251,1),_rgba(255,255,255,1))] p-6 sm:p-7">
+    <section className="flex h-full flex-col rounded-[1.75rem] bg-[linear-gradient(180deg,_rgba(244,247,251,1),_rgba(255,255,255,1))] p-6 sm:p-7">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/45">
@@ -65,7 +65,7 @@ export function ActiveQuestionSetSummary({
       ) : null}
 
       {isReady && hasActiveQuestionSet ? (
-        <div className="mt-6 space-y-4">
+        <div className="mt-6 flex flex-1 flex-col gap-4">
           <div className="rounded-[1.5rem] border border-ink/10 bg-white px-5 py-5 shadow-sm">
             <h3 className="text-2xl font-semibold text-ink">
               {activeQuestionSet.title}
@@ -101,7 +101,7 @@ export function ActiveQuestionSetSummary({
                   </p>
                   <p className="mt-2 text-sm leading-6 text-ink/68">
                     이 세트는 {activeQuestionSet.minimumQuestionNumber}~
-                    {activeQuestionSet.maximumQuestionNumber} 범위에서 시작 번호와 끝 번호를 직접 지정할 수 있습니다.
+                    {activeQuestionSet.maximumQuestionNumber} 범위에서 시작 번호와 끝 번호를 지정할 수 있습니다.
                   </p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -171,6 +171,45 @@ export function ActiveQuestionSetSummary({
               </div>
             </div>
           ) : null}
+          <div className="mt-auto overflow-hidden rounded-[1.5rem] border border-[#dce7f8] bg-[linear-gradient(135deg,_rgba(20,43,74,0.96),_rgba(52,84,138,0.92),_rgba(122,165,232,0.84))] px-5 py-5 text-white shadow-[0_16px_36px_rgba(26,46,84,0.18)]">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/62">
+                  Set Focus
+                </p>
+                <h3 className="mt-2 text-xl font-semibold tracking-tight">
+                  현재 세트 흐름을 바로 확인할 수 있습니다.
+                </h3>
+              </div>
+              <div className="flex gap-2 pt-1">
+                <span className="h-2.5 w-2.5 rounded-full bg-white/80" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#8bd2ff]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#ffd39e]" />
+              </div>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-[1.25rem] bg-white/10 px-4 py-4 backdrop-blur">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/62">
+                  Range
+                </p>
+                <p className="mt-2 text-base font-semibold">
+                  {activeQuestionSet.minimumQuestionNumber ?? "-"} ~{" "}
+                  {activeQuestionSet.maximumQuestionNumber ?? "-"}
+                </p>
+              </div>
+              <div className="rounded-[1.25rem] bg-white/10 px-4 py-4 backdrop-blur">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/62">
+                  Ready Modes
+                </p>
+                <p className="mt-2 text-base font-semibold leading-6">
+                  일반 · 랜덤
+                  <span className="text-white/72">
+                    {questionSetSummaries.length > 0 ? " · 세트 전환 가능" : ""}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       ) : null}
 

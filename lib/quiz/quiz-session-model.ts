@@ -249,3 +249,17 @@ export function parseStoredInProgressQuizSession(rawValue: string): InProgressQu
 
   return validateInProgressQuizSession(inProgressQuizSession);
 }
+
+export function parseStoredInProgressQuizSessions(
+  rawValue: string
+): readonly InProgressQuizSession[] {
+  const parsed = JSON.parse(rawValue) as unknown;
+
+  if (Array.isArray(parsed)) {
+    return parsed.map((session) =>
+      parseStoredInProgressQuizSession(JSON.stringify(session))
+    );
+  }
+
+  return [parseStoredInProgressQuizSession(rawValue)];
+}

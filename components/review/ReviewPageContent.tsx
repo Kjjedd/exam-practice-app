@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { loadActiveQuestionSet } from "../../lib/data";
-import { getWrongQuestions } from "../../lib/quiz/get-wrong-questions";
-import { readLatestQuizSession } from "../../lib/quiz/session-storage";
-import { hasCompleteQuizSession } from "../../lib/quiz/quiz-session-model";
 import { checkAnswer } from "../../lib/quiz/check-answer";
-import type { ChoiceIndex, Question, QuestionResult, QuestionSet, QuizSession } from "../../lib/types";
+import {
+  readWrongQuestionIds,
+  removeWrongQuestionId,
+  writeWrongQuestionIds
+} from "../../lib/storage/wrong-answers";
+import type { ChoiceIndex, Question, QuestionId, QuestionResult, QuestionSet } from "../../lib/types";
 import { ChoiceList } from "../question/ChoiceList";
 import { ExplanationPanel } from "../question/ExplanationPanel";
 import { ProgressIndicator } from "../question/ProgressIndicator";
@@ -19,14 +21,21 @@ import { QuizNavigation } from "../question/QuizNavigation";
 
 type ReviewPageState = Readonly<{
   activeQuestionSet: QuestionSet | null;
-  quizSession: QuizSession | null;
+  wrongQuestionIds: readonly QuestionId[];
   wrongQuestions: readonly Question[];
   isReady: boolean;
 }>;
 
+type ReviewCompletionSummary = Readonly<{
+  reviewedCount: number;
+  correctedCount: number;
+  remainingWrongQuestionIds: readonly QuestionId[];
+  remainingWrongQuestions: readonly Question[];
+}>;
+
 const INITIAL_REVIEW_PAGE_STATE: ReviewPageState = {
   activeQuestionSet: null,
-  quizSession: null,
+  wrongQuestionIds: [],
   wrongQuestions: [],
   isReady: false
 };
@@ -38,6 +47,33 @@ const INITIAL_IS_SUBMITTED = false;
 const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
 const INITIAL_REVIEW_RESULTS: readonly QuestionResult[] = [];
+const INITIAL_REVIEW_COMPLETION_SUMMARY: ReviewCompletionSummary | null = null;
+
+function resolveWrongQuestions(
+  activeQuestionSet: QuestionSet | null,
+  wrongQuestionIds: readonly QuestionId[]
+): readonly Question[] {
+  if (activeQuestionSet === null) {
+    return [];
+  }
+
+  const questionById = new Map<QuestionId, Question>(
+    activeQuestionSet.questions.map((question) => [question.id, question])
+  );
+
+  return wrongQuestionIds
+    .map((questionId) => questionById.get(questionId))
+    .filter((question): question is Question => question !== undefined);
+}
+
+function toggleChoiceSelection(
+  currentValue: readonly ChoiceIndex[],
+  choiceIndex: ChoiceIndex
+): readonly ChoiceIndex[] {
+  return currentValue.includes(choiceIndex)
+    ? currentValue.filter((currentIndex) => currentIndex !== choiceIndex)
+    : [...currentValue, choiceIndex].sort((left, right) => left - right);
+}
 
 export function ReviewPageContent() {
   const [state, setState] = useState<ReviewPageState>(INITIAL_REVIEW_PAGE_STATE);
@@ -46,9 +82,7 @@ export function ReviewPageContent() {
   );
   const [selectedChoiceIndexes, setSelectedChoiceIndexes] = useState<
     readonly ChoiceIndex[]
-  >(
-    INITIAL_SELECTED_CHOICE_INDEXES
-  );
+  >(INITIAL_SELECTED_CHOICE_INDEXES);
   const [submittedChoiceIndexes, setSubmittedChoiceIndexes] = useState<
     readonly ChoiceIndex[]
   >(INITIAL_SUBMITTED_CHOICE_INDEXES);
@@ -59,19 +93,19 @@ export function ReviewPageContent() {
   );
   const [reviewResults, setReviewResults] =
     useState<readonly QuestionResult[]>(INITIAL_REVIEW_RESULTS);
+  const [reviewCompletionSummary, setReviewCompletionSummary] =
+    useState<ReviewCompletionSummary | null>(INITIAL_REVIEW_COMPLETION_SUMMARY);
   const router = useRouter();
 
   useEffect(() => {
     const activeQuestionSet = loadActiveQuestionSet();
-    const quizSession = readLatestQuizSession();
-    const wrongQuestions =
-      activeQuestionSet !== null && hasCompleteQuizSession(quizSession)
-        ? getWrongQuestions(quizSession, activeQuestionSet.questions)
-        : [];
+    const wrongQuestionIds =
+      activeQuestionSet === null ? [] : readWrongQuestionIds(activeQuestionSet.id);
+    const wrongQuestions = resolveWrongQuestions(activeQuestionSet, wrongQuestionIds);
 
     setState({
       activeQuestionSet,
-      quizSession,
+      wrongQuestionIds,
       wrongQuestions,
       isReady: true
     });
@@ -82,26 +116,12 @@ export function ReviewPageContent() {
   const isLastQuestion = currentQuestionIndex === state.wrongQuestions.length - 1;
 
   useEffect(() => {
-    setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
-    setReviewResults(INITIAL_REVIEW_RESULTS);
-  }, [state.quizSession?.completedAt]);
-
-  useEffect(() => {
     setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
     setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
     setIsSubmitted(INITIAL_IS_SUBMITTED);
     setIsCorrect(INITIAL_IS_CORRECT);
     setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
   }, [currentQuestion?.id]);
-
-  function toggleChoiceSelection(
-    currentValue: readonly ChoiceIndex[],
-    choiceIndex: ChoiceIndex
-  ): readonly ChoiceIndex[] {
-    return currentValue.includes(choiceIndex)
-      ? currentValue.filter((currentIndex) => currentIndex !== choiceIndex)
-      : [...currentValue, choiceIndex].sort((left, right) => left - right);
-  }
 
   function handleSelectChoice(choiceIndex: ChoiceIndex): void {
     if (currentQuestion === undefined || isSubmitted) {
@@ -115,7 +135,10 @@ export function ReviewPageContent() {
 
     setSelectedChoiceIndexes(nextSelectedChoiceIndexes);
 
-    if (currentQuestion.answers.length > 1 && nextSelectedChoiceIndexes.length < currentQuestion.answers.length) {
+    if (
+      currentQuestion.answers.length > 1 &&
+      nextSelectedChoiceIndexes.length < currentQuestion.answers.length
+    ) {
       setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
       setIsSubmitted(false);
       setIsCorrect(INITIAL_IS_CORRECT);
@@ -155,7 +178,34 @@ export function ReviewPageContent() {
     }
 
     if (isLastQuestion) {
-      router.push("/result");
+      if (state.activeQuestionSet === null) {
+        return;
+      }
+
+      const remainingWrongQuestionIds = state.wrongQuestions
+        .filter((question) =>
+          reviewResults.some(
+            (result) => result.questionId === question.id && !result.isCorrect
+          )
+        )
+        .map((question) => question.id);
+      const remainingWrongQuestions = resolveWrongQuestions(
+        state.activeQuestionSet,
+        remainingWrongQuestionIds
+      );
+
+      writeWrongQuestionIds(state.activeQuestionSet.id, remainingWrongQuestionIds);
+      setState((currentValue) => ({
+        ...currentValue,
+        wrongQuestionIds: remainingWrongQuestionIds,
+        wrongQuestions: remainingWrongQuestions
+      }));
+      setReviewCompletionSummary({
+        reviewedCount: state.wrongQuestions.length,
+        correctedCount: state.wrongQuestions.length - remainingWrongQuestionIds.length,
+        remainingWrongQuestionIds,
+        remainingWrongQuestions
+      });
       return;
     }
 
@@ -166,6 +216,57 @@ export function ReviewPageContent() {
     });
   }
 
+  function handleRemoveWrongQuestion(): void {
+    if (state.activeQuestionSet === null || currentQuestion === undefined) {
+      return;
+    }
+
+    const nextWrongQuestionIds = removeWrongQuestionId(
+      state.activeQuestionSet.id,
+      currentQuestion.id
+    );
+    const nextWrongQuestions = resolveWrongQuestions(
+      state.activeQuestionSet,
+      nextWrongQuestionIds
+    );
+
+    setState((currentValue) => ({
+      ...currentValue,
+      wrongQuestionIds: nextWrongQuestionIds,
+      wrongQuestions: nextWrongQuestions
+    }));
+    setReviewResults((currentValue) =>
+      currentValue.filter((result) => result.questionId !== currentQuestion.id)
+    );
+    setCurrentQuestionIndex((currentValue) => {
+      if (nextWrongQuestions.length === 0) {
+        return INITIAL_CURRENT_QUESTION_INDEX;
+      }
+
+      return Math.min(currentValue, nextWrongQuestions.length - 1);
+    });
+  }
+
+  function handleRetryRemainingWrongQuestions(): void {
+    if (reviewCompletionSummary === null) {
+      return;
+    }
+
+    setState((currentValue) => ({
+      ...currentValue,
+      wrongQuestionIds: reviewCompletionSummary.remainingWrongQuestionIds,
+      wrongQuestions: reviewCompletionSummary.remainingWrongQuestions
+    }));
+    setCurrentQuestionIndex(INITIAL_CURRENT_QUESTION_INDEX);
+    setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
+    setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
+    setIsSubmitted(INITIAL_IS_SUBMITTED);
+    setIsCorrect(INITIAL_IS_CORRECT);
+    setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
+    setReviewResults(INITIAL_REVIEW_RESULTS);
+    setReviewCompletionSummary(INITIAL_REVIEW_COMPLETION_SUMMARY);
+  }
+
   if (!state.isReady) {
     return (
       <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
@@ -174,18 +275,123 @@ export function ReviewPageContent() {
             오답 복습을 준비하는 중입니다.
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-            직전 세션 결과와 활성 문제 세트를 확인한 뒤 복습 문제를 구성합니다.
+            현재 활성 문제 세트에 저장된 오답 목록을 확인한 뒤 복습 화면을 준비합니다.
           </p>
         </div>
       </main>
     );
   }
 
-  if (
-    state.activeQuestionSet === null ||
-    state.quizSession === null ||
-    state.wrongQuestions.length === 0
-  ) {
+  if (reviewCompletionSummary !== null) {
+    const hasRemainingWrongQuestions =
+      reviewCompletionSummary.remainingWrongQuestionIds.length > 0;
+
+    return (
+      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
+        <div className="mx-auto max-w-4xl rounded-[1.9rem] border border-ink/10 bg-[linear-gradient(135deg,_rgba(255,255,255,0.98),_rgba(247,250,255,0.96),_rgba(255,246,240,0.94))] px-6 py-8 shadow-[0_24px_60px_rgba(16,36,62,0.08)] sm:px-8">
+          <span
+            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
+              hasRemainingWrongQuestions
+                ? "bg-coral/12 text-coral"
+                : "bg-tide/12 text-tide"
+            }`}
+          >
+            Review Result
+          </span>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+            {hasRemainingWrongQuestions
+              ? "오답 복습 1차를 마쳤습니다."
+              : "오답 복습을 모두 마쳤습니다."}
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+            {state.activeQuestionSet?.title ?? "현재 문제 세트"} 기준으로{" "}
+            {reviewCompletionSummary.reviewedCount}문제를 다시 풀었고,{" "}
+            {reviewCompletionSummary.correctedCount}문제를 정리했습니다.
+          </p>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-[1.5rem] border border-ink/10 bg-white/88 px-5 py-5 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/48">
+                Reviewed
+              </p>
+              <p className="mt-3 text-3xl font-semibold tracking-tight text-ink">
+                {reviewCompletionSummary.reviewedCount}
+              </p>
+            </div>
+            <div className="rounded-[1.5rem] border border-tide/18 bg-tide/8 px-5 py-5 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-tide/88">
+                Corrected
+              </p>
+              <p className="mt-3 text-3xl font-semibold tracking-tight text-tide">
+                {reviewCompletionSummary.correctedCount}
+              </p>
+            </div>
+            <div className="rounded-[1.5rem] border border-coral/18 bg-coral/8 px-5 py-5 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-coral/88">
+                Remaining Wrong
+              </p>
+              <p className="mt-3 text-3xl font-semibold tracking-tight text-coral">
+                {reviewCompletionSummary.remainingWrongQuestionIds.length}
+              </p>
+            </div>
+          </div>
+
+          {hasRemainingWrongQuestions ? (
+            <div className="mt-6 rounded-[1.5rem] border border-coral/16 bg-white/82 px-5 py-5 shadow-sm">
+              <h2 className="text-xl font-semibold tracking-tight text-ink">
+                남은 오답만 다시 풀 수 있습니다.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-ink/68 sm:text-base">
+                아직 틀린 문제 {reviewCompletionSummary.remainingWrongQuestionIds.length}개가
+                남아 있습니다. 같은 세트 안에서 2차 오답 복습을 바로 시작할 수 있습니다.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={handleRetryRemainingWrongQuestions}
+                  className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+                >
+                  2차 오답 풀이 시작
+                </button>
+                <Link
+                  href="/"
+                  className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
+                >
+                  홈으로 이동
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6 rounded-[1.5rem] border border-tide/16 bg-white/82 px-5 py-5 shadow-sm">
+              <h2 className="text-xl font-semibold tracking-tight text-ink">
+                이번 오답 복습에서 모두 정답 처리했습니다.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-ink/68 sm:text-base">
+                남아 있는 오답이 없어서 다음에는 빈 복습 화면이 보이게 됩니다.
+                다른 범위를 시작하거나 홈에서 새 학습 흐름으로 이어갈 수 있습니다.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/"
+                  className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+                >
+                  홈으로 이동
+                </Link>
+                <Link
+                  href="/quiz"
+                  className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
+                >
+                  새 문제 풀이 시작
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+    );
+  }
+
+  if (state.activeQuestionSet === null || state.wrongQuestions.length === 0) {
     return (
       <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
         <div className="mx-auto max-w-4xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
@@ -196,8 +402,8 @@ export function ReviewPageContent() {
             복습할 오답이 아직 없습니다.
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-            결과 화면에서 오답이 있는 세션을 마친 뒤 이곳으로 오면, 틀린 문제만
-            다시 학습할 수 있습니다.
+            {state.activeQuestionSet?.title ?? "현재 문제 세트"} 기준으로 남아 있는 오답이
+            없습니다. 새 오답이 생기면 이곳에서 세트별로 다시 학습할 수 있습니다.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
@@ -227,6 +433,21 @@ export function ReviewPageContent() {
           modeLabel="Review Mode"
           questionSetTitle={`${state.activeQuestionSet.title} · 오답 복습`}
         />
+        <section className="rounded-[1.5rem] border border-coral/15 bg-white px-5 py-4 shadow-sm sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm leading-6 text-ink/72">
+              현재 세트에 남아 있는 오답 {state.wrongQuestionIds.length}개 중{" "}
+              {currentQuestionNumber}번째 문제를 복습 중입니다.
+            </p>
+            <button
+              type="button"
+              onClick={handleRemoveWrongQuestion}
+              className="inline-flex items-center justify-center rounded-full border border-coral/25 px-4 py-2 text-sm font-semibold text-coral transition-colors hover:bg-coral/6"
+            >
+              이 문제 오답 목록에서 삭제
+            </button>
+          </div>
+        </section>
         <ProgressIndicator
           currentQuestionNumber={currentQuestionNumber}
           totalQuestions={state.wrongQuestions.length}

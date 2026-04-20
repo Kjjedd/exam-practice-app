@@ -156,7 +156,7 @@ export function PrimaryActions({
           </div>
         </div>
       ) : null}
-      <div className="grid flex-1 grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {primaryActions.map((action) => {
           const isDisabled =
             action.availability === "active-set"
@@ -189,18 +189,20 @@ export function PrimaryActions({
                   className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-80 sm:h-28 ${action.glowClassName}`}
                 />
                 <div className="flex items-start justify-between gap-4">
-                  <span className="inline-flex rounded-2xl border border-ink/10 bg-mist px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/55 sm:px-3 sm:py-2 sm:text-xs">
+                  <span className="inline-flex rounded-2xl border border-ink/10 bg-white/85 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/65 shadow-sm sm:px-3 sm:py-2 sm:text-xs">
                     {action.badge}
                   </span>
                 </div>
-                <div className="relative mt-4 flex h-full flex-col sm:mt-5">
-                  <h3 className="text-base font-semibold leading-6 text-ink sm:text-xl">{action.title}</h3>
+                <div className="relative mt-4 flex h-full min-h-[104px] flex-col justify-between sm:mt-5 sm:min-h-[132px]">
+                  <h3 className="max-w-[14rem] text-lg font-semibold leading-7 tracking-tight text-ink sm:max-w-none sm:text-[1.45rem] sm:leading-8">
+                    {action.title}
+                  </h3>
                   <div className="mt-auto pt-4 sm:pt-6">
-                  <div className="rounded-[1rem] border border-dashed border-ink/10 bg-white/75 px-3 py-2.5 backdrop-blur sm:rounded-[1.25rem] sm:px-4 sm:py-3">
-                    <span className="inline-flex rounded-full bg-mist px-2.5 py-1 text-[11px] font-semibold text-ink/48 sm:px-3 sm:text-xs">
-                      {disabledText}
-                    </span>
-                  </div>
+                    <div className="rounded-[1rem] border border-dashed border-ink/10 bg-white/75 px-3 py-2.5 backdrop-blur sm:rounded-[1.25rem] sm:px-4 sm:py-3">
+                      <span className="inline-flex rounded-full bg-mist px-2.5 py-1 text-[11px] font-semibold text-ink/48 sm:px-3 sm:text-xs">
+                        {disabledText}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -218,16 +220,18 @@ export function PrimaryActions({
               />
               <div className="flex items-start justify-between gap-4">
                 <span
-                  className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-3 sm:py-2 sm:text-xs ${action.accentClassName}`}
+                  className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${action.accentClassName}`}
                 >
                   {action.badge}
                 </span>
-                <span className="text-base text-ink/28 transition-colors group-hover:text-ink/55 sm:text-lg">
+                <span className="text-lg text-ink/28 transition-colors group-hover:text-ink/55 sm:text-xl">
                   →
                 </span>
               </div>
-              <div className="relative mt-4 flex h-full flex-col sm:mt-6">
-                <h3 className="text-base font-semibold leading-6 text-ink sm:text-xl">{action.title}</h3>
+              <div className="relative mt-4 flex h-full min-h-[104px] flex-col justify-end sm:mt-6 sm:min-h-[132px]">
+                <h3 className="max-w-[14rem] text-lg font-semibold leading-7 tracking-tight text-ink sm:max-w-none sm:text-[1.45rem] sm:leading-8">
+                  {action.title}
+                </h3>
                 <div className="mt-auto pt-4 sm:pt-6" />
               </div>
             </Link>

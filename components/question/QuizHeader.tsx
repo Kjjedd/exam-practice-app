@@ -1,53 +1,30 @@
 type QuizHeaderProps = Readonly<{
-  currentQuestionNumber: number;
-  totalQuestions: number;
-  modeLabel: string;
   questionSetTitle: string;
   questionRangeLabel?: string | null;
-  isExamMode?: boolean;
-  examTemplateCode?: string | null;
-  examTemplateTitle?: string | null;
   onExitToHome?: () => void;
   onRestartSession?: () => void;
 }>;
 
 export function QuizHeader({
-  currentQuestionNumber,
-  totalQuestions,
-  modeLabel,
   questionSetTitle,
   questionRangeLabel = null,
-  isExamMode = false,
-  examTemplateCode = null,
-  examTemplateTitle = null,
   onExitToHome,
   onRestartSession
 }: QuizHeaderProps) {
+  const currentSetLabel =
+    questionRangeLabel === null
+      ? questionSetTitle
+      : `${questionSetTitle} · ${questionRangeLabel}`;
+
   return (
     <header className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-3 shadow-sm sm:rounded-[1.75rem] sm:px-8 sm:py-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-        <div className="space-y-2">
-          <span className="inline-flex rounded-full bg-coral/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-coral sm:px-3 sm:text-xs">
-            {modeLabel}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            <div className="rounded-2xl border border-ink/10 bg-mist px-3 py-2 text-sm font-medium text-ink/80 sm:px-4 sm:py-3">
-              {currentQuestionNumber} / {totalQuestions}
-            </div>
-            <div className="rounded-2xl border border-ink/10 bg-mist px-3 py-2 text-xs leading-5 text-ink/80 sm:px-4 sm:py-3 sm:text-sm sm:leading-6">
-              {questionSetTitle}
-            </div>
-            {questionRangeLabel !== null ? (
-              <div className="rounded-2xl border border-ink/10 bg-mist px-3 py-2 text-xs leading-5 text-ink/80 sm:px-4 sm:py-3 sm:text-sm sm:leading-6">
-                {questionRangeLabel}
-              </div>
-            ) : null}
-            {isExamMode && examTemplateTitle !== null ? (
-              <div className="rounded-2xl border border-coral/15 bg-coral/5 px-3 py-2 text-xs leading-5 text-ink/80 sm:px-4 sm:py-3 sm:text-sm sm:leading-6">
-                {examTemplateCode !== null ? `${examTemplateCode} · ` : ""}
-                {examTemplateTitle}
-              </div>
-            ) : null}
+        <div className="space-y-1.5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/45 sm:text-xs">
+            현재 문제세트
+          </p>
+          <div className="rounded-2xl border border-ink/10 bg-mist px-3 py-2 text-xs leading-5 text-ink/80 sm:px-4 sm:py-3 sm:text-sm sm:leading-6">
+            {currentSetLabel}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">

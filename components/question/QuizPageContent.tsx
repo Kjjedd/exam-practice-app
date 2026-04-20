@@ -77,22 +77,6 @@ function getQuizMode(mode: string | null): QuizMode {
   return "normal";
 }
 
-function getModeLabel(mode: QuizMode): string {
-  if (mode === "random") {
-    return "Random Mode";
-  }
-
-  if (mode === "exam") {
-    return "Exam Mode";
-  }
-
-  if (mode === "review") {
-    return "Review Mode";
-  }
-
-  return "Normal Mode";
-}
-
 function resolveSessionQuestionIds(
   activeQuestionSet: QuestionSet | null,
   mode: QuizMode,
@@ -259,7 +243,6 @@ export function QuizPageContent() {
   const examTemplate = getAwsExamTemplateById(searchParams.get("exam"));
   const requestedRangeStart = parseRangeValue(searchParams.get("start"));
   const requestedRangeEnd = parseRangeValue(searchParams.get("end"));
-  const modeLabel = getModeLabel(quizMode);
   const isExamMode = quizMode === "exam";
   const isFreeNavigationMode = quizMode === "normal" || quizMode === "random";
   const activeQuestionSetRange = useMemo(
@@ -716,14 +699,8 @@ export function QuizPageContent() {
         {state.isReady && currentQuestion ? (
           <>
             <QuizHeader
-              currentQuestionNumber={currentQuestionNumber}
-              totalQuestions={questions.length}
-              modeLabel={modeLabel}
               questionSetTitle={state.activeQuestionSet?.title ?? "활성 문제 세트"}
               questionRangeLabel={selectedQuestionRangeLabel}
-              isExamMode={isExamMode}
-              examTemplateCode={examTemplate?.code ?? null}
-              examTemplateTitle={examTemplate?.title ?? null}
               onExitToHome={handleExitToHome}
               onRestartSession={handleRestartSession}
             />

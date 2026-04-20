@@ -55,14 +55,34 @@ export function ActiveQuestionSetSummary({
               {activeQuestionSet.title}
             </h3>
           </div>
-          <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
-              Questions
-            </p>
-            <p className="mt-1.5 text-xl font-semibold text-ink sm:mt-2 sm:text-2xl">
-              {activeQuestionSet.questionCount}
-            </p>
-          </div>
+          {questionSetSummaries.length > 1 ? (
+            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                    Set Switcher
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {questionSetSummaries.map((summary) => (
+                  <button
+                    key={summary.id}
+                    type="button"
+                    onClick={() => onSelectQuestionSet?.(summary.id)}
+                    disabled={summary.isActive}
+                    className={`rounded-full px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
+                      summary.isActive
+                        ? "cursor-default bg-ink text-white"
+                        : "border border-ink/12 bg-mist text-ink hover:border-coral/30 hover:bg-white"
+                    }`}
+                  >
+                    {summary.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
           {isRangeSelectable ? (
             <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
               <div className="flex flex-col gap-3">
@@ -101,34 +121,14 @@ export function ActiveQuestionSetSummary({
               </div>
             </div>
           ) : null}
-          {questionSetSummaries.length > 1 ? (
-            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
-                    Set Switcher
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {questionSetSummaries.map((summary) => (
-                  <button
-                    key={summary.id}
-                    type="button"
-                    onClick={() => onSelectQuestionSet?.(summary.id)}
-                    disabled={summary.isActive}
-                    className={`rounded-full px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
-                      summary.isActive
-                        ? "cursor-default bg-ink text-white"
-                        : "border border-ink/12 bg-mist text-ink hover:border-coral/30 hover:bg-white"
-                    }`}
-                  >
-                    {summary.title}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
+          <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+              Questions
+            </p>
+            <p className="mt-1.5 text-xl font-semibold text-ink sm:mt-2 sm:text-2xl">
+              {activeQuestionSet.questionCount}
+            </p>
+          </div>
         </div>
       ) : null}
 

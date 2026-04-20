@@ -460,9 +460,6 @@ export function ReviewPageContent() {
     <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
       <div className="mx-auto flex max-w-4xl flex-col gap-6">
         <QuizHeader
-          currentQuestionNumber={currentQuestionNumber}
-          totalQuestions={state.wrongQuestions.length}
-          modeLabel="Review Mode"
           questionSetTitle={`${state.activeQuestionSet.title} · 오답 복습`}
         />
         <section className="rounded-[1.5rem] border border-coral/15 bg-white px-5 py-4 shadow-sm sm:px-6">

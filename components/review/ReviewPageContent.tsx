@@ -370,6 +370,32 @@ export function ReviewPageContent() {
                 남아 있는 오답이 없어서 다음에는 빈 복습 화면이 보이게 됩니다.
                 다른 범위를 시작하거나 홈에서 새 학습 흐름으로 이어갈 수 있습니다.
               </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                <div className="rounded-[1.25rem] border border-ink/10 bg-mist/60 px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45">
+                    Status
+                  </p>
+                  <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
+                    오답 0개
+                  </p>
+                </div>
+                <div className="rounded-[1.25rem] border border-ink/10 bg-mist/60 px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45">
+                    Next
+                  </p>
+                  <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
+                    새 범위 시작
+                  </p>
+                </div>
+                <div className="rounded-[1.25rem] border border-ink/10 bg-mist/60 px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45">
+                    Action
+                  </p>
+                  <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
+                    홈으로 복귀
+                  </p>
+                </div>
+              </div>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
                   href="/"
@@ -381,7 +407,13 @@ export function ReviewPageContent() {
                   href="/quiz"
                   className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
                 >
-                  새 문제 풀이 시작
+                  현재 세트 다시 풀기
+                </Link>
+                <Link
+                  href="/quiz?restart=1"
+                  className="inline-flex items-center justify-center rounded-full border border-tide/20 bg-tide/8 px-5 py-3 text-sm font-semibold text-tide transition-colors hover:bg-tide/12"
+                >
+                  처음부터 다시 시작
                 </Link>
               </div>
             </div>

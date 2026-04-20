@@ -11,13 +11,13 @@ export function FavoriteToggle({
     <button
       type="button"
       onClick={onToggle}
-      className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+      className={`inline-flex items-center justify-center rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
         isFavorite
           ? "border-coral/30 bg-coral/10 text-coral hover:bg-coral/15"
           : "border-ink/15 bg-white text-ink hover:border-ink/25 hover:bg-mist"
       }`}
     >
-      {isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+      {isFavorite ? "저장됨" : "저장"}
     </button>
   );
 }

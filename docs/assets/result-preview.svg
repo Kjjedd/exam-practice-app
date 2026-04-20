@@ -1,0 +1,48 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="36" fill="#F4F7FB"/>
+  <rect x="38" y="38" width="1124" height="644" rx="32" fill="white" stroke="#E5ECF5" stroke-width="2"/>
+  <rect x="74" y="74" width="1052" height="184" rx="28" fill="url(#paint0_linear)"/>
+  <text x="114" y="122" fill="#EA580C" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">RESULT</text>
+  <text x="114" y="178" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700">세션 결과 대시보드</text>
+  <text x="114" y="222" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="22">정답률, 모드, 세트, 오답 수를 한 화면에서 바로 확인하고 복습으로 이어집니다.</text>
+  <rect x="830" y="106" width="246" height="112" rx="24" fill="white" fill-opacity="0.9"/>
+  <text x="860" y="144" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">QUICK VIEW</text>
+  <text x="860" y="188" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700">83%</text>
+  <text x="932" y="188" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="18">accuracy</text>
+  <rect x="74" y="290" width="238" height="122" rx="26" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+  <rect x="336" y="290" width="238" height="122" rx="26" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+  <rect x="598" y="290" width="238" height="122" rx="26" fill="#ECFDF5" stroke="#86EFAC" stroke-width="2"/>
+  <rect x="860" y="290" width="266" height="122" rx="26" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="2"/>
+  <text x="104" y="334" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">TOTAL</text>
+  <text x="104" y="388" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">30</text>
+  <text x="366" y="334" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">ANSWERED</text>
+  <text x="366" y="388" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">30</text>
+  <text x="628" y="334" fill="#047857" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">CORRECT</text>
+  <text x="628" y="388" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">25</text>
+  <text x="890" y="334" fill="#B91C1C" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">WRONG</text>
+  <text x="890" y="388" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">5</text>
+  <rect x="74" y="444" width="490" height="194" rx="28" fill="#FFF7ED" stroke="#FED7AA" stroke-width="2"/>
+  <rect x="596" y="444" width="530" height="194" rx="28" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="2"/>
+  <text x="110" y="492" fill="#C2410C" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">REVIEW CTA</text>
+  <text x="110" y="540" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">오답 복습으로 바로 이동</text>
+  <text x="110" y="580" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="20">남은 오답만 다시 묶어 2차 복습 세션으로 이어집니다.</text>
+  <rect x="110" y="592" width="172" height="40" rx="20" fill="#EA580C"/>
+  <text x="150" y="618" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">오답 다시 풀기</text>
+  <text x="632" y="492" fill="#2563EB" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">QUESTION LIST</text>
+  <rect x="632" y="518" width="458" height="32" rx="16" fill="white"/>
+  <rect x="632" y="564" width="458" height="32" rx="16" fill="white"/>
+  <rect x="632" y="610" width="458" height="32" rx="16" fill="white"/>
+  <circle cx="660" cy="534" r="8" fill="#10B981"/>
+  <circle cx="660" cy="580" r="8" fill="#EF4444"/>
+  <circle cx="660" cy="626" r="8" fill="#10B981"/>
+  <text x="680" y="540" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Q14 · Correct</text>
+  <text x="680" y="586" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Q18 · Wrong</text>
+  <text x="680" y="632" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Q21 · Correct</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="74" y1="74" x2="1126" y2="258" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7ED"/>
+      <stop offset="0.45" stop-color="#EFF6FF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+</svg>

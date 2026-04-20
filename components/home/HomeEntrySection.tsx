@@ -320,38 +320,42 @@ export function HomeEntrySection() {
   );
 
   return (
-    <section className="grid items-stretch gap-5 xl:grid-cols-[1.28fr_0.72fr]">
-      <PrimaryActions
-        hasActiveQuestionSet={state.activeQuestionSet !== null}
-        canUseExamMode={canUseExamModeForQuestionSet(state.activeQuestionSet)}
-        isRangeValid={rangeValidation.isValid}
-        rangeValidationMessage={rangeValidation.message}
-        isReady={state.isReady}
-        normalModeHref={normalModeHref}
-        randomModeHref={randomModeHref}
-        examModeHref={examModeHref}
-        resumeHref={getResumeHref(state.resumableQuizSession)}
-        restartHref={getRestartHref(state.resumableQuizSession)}
-        resumeMode={state.resumableQuizSession?.mode ?? null}
-        resumeQuestionNumber={
-          state.resumableQuizSession !== null
-            ? state.resumableQuizSession.currentQuestionIndex + 1
-            : null
-        }
-        onClearResume={state.resumableQuizSession !== null ? handleClearResume : undefined}
-      />
-      <ActiveQuestionSetSummary
-        activeQuestionSet={state.activeQuestionSet}
-        questionSetSummaries={state.questionSetSummaries}
-        isReady={state.isReady}
-        onSelectQuestionSet={handleChangeActiveQuestionSet}
-        rangeStartInput={rangeStartInput}
-        rangeEndInput={rangeEndInput}
-        onChangeRangeStart={setRangeStartInput}
-        onChangeRangeEnd={setRangeEndInput}
-        isRangeSelectable={rangeValidation.isRangeSelectable}
-        rangeValidationMessage={rangeValidation.message}
-      />
+    <section className="grid items-stretch gap-4 xl:grid-cols-[0.72fr_1.28fr] xl:gap-5">
+      <div className="order-1">
+        <ActiveQuestionSetSummary
+          activeQuestionSet={state.activeQuestionSet}
+          questionSetSummaries={state.questionSetSummaries}
+          isReady={state.isReady}
+          onSelectQuestionSet={handleChangeActiveQuestionSet}
+          rangeStartInput={rangeStartInput}
+          rangeEndInput={rangeEndInput}
+          onChangeRangeStart={setRangeStartInput}
+          onChangeRangeEnd={setRangeEndInput}
+          isRangeSelectable={rangeValidation.isRangeSelectable}
+          rangeValidationMessage={rangeValidation.message}
+        />
+      </div>
+      <div className="order-2">
+        <PrimaryActions
+          hasActiveQuestionSet={state.activeQuestionSet !== null}
+          canUseExamMode={canUseExamModeForQuestionSet(state.activeQuestionSet)}
+          isRangeValid={rangeValidation.isValid}
+          rangeValidationMessage={rangeValidation.message}
+          isReady={state.isReady}
+          normalModeHref={normalModeHref}
+          randomModeHref={randomModeHref}
+          examModeHref={examModeHref}
+          resumeHref={getResumeHref(state.resumableQuizSession)}
+          restartHref={getRestartHref(state.resumableQuizSession)}
+          resumeMode={state.resumableQuizSession?.mode ?? null}
+          resumeQuestionNumber={
+            state.resumableQuizSession !== null
+              ? state.resumableQuizSession.currentQuestionIndex + 1
+              : null
+          }
+          onClearResume={state.resumableQuizSession !== null ? handleClearResume : undefined}
+        />
+      </div>
     </section>
   );
 }

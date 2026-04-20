@@ -40,20 +40,8 @@ export function ChoiceList({
   const isMultiAnswer = requiredSelectionCount > 1;
 
   return (
-    <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-6 shadow-sm sm:px-8 sm:py-8">
-      <div className="mb-5">
-        <h3 className="text-xl font-semibold tracking-tight text-ink">보기 목록</h3>
-        <p className="mt-2 text-sm leading-6 text-ink/70 sm:text-base">
-          {isExamMode
-            ? isMultiAnswer
-              ? `시험 모드입니다. 정답 ${requiredSelectionCount}개를 답안으로 저장할 수 있고, 채점은 마지막 결과 화면에서 확인합니다.`
-              : "시험 모드에서는 보기를 클릭하면 답안만 저장되고, 채점은 마지막 결과 화면에서 확인합니다."
-            : isMultiAnswer
-              ? `복수정답 문제입니다. 정답 ${requiredSelectionCount}개를 모두 선택하면 자동으로 채점됩니다.`
-              : "보기 하나를 클릭하면 즉시 정답 여부가 판정되며, 내가 고른 답과 실제 정답을 이 목록에서 바로 구분해 볼 수 있습니다."}
-        </p>
-      </div>
-      <ol className="grid gap-4 lg:grid-cols-2">
+    <section className="rounded-[1.5rem] border border-ink/10 bg-white px-3 py-3 shadow-sm sm:rounded-[1.75rem] sm:px-8 sm:py-8">
+      <ol className="grid gap-2 sm:gap-3 lg:grid-cols-2 lg:gap-4">
         {choices.map((choice, index) => {
           const choiceParagraphs = getChoiceParagraphs(choice);
           const label = choiceLabels[index] ?? `${index + 1}`;
@@ -70,9 +58,7 @@ export function ChoiceList({
           let labelClassName = "bg-white text-ink";
           let statusClassName = "bg-white/80 text-ink/55";
           let statusText = isSelected ? "Selected" : "Choice";
-          let hintText = isSelected
-            ? "현재 선택된 보기입니다."
-            : "아직 결과가 확정되지 않은 보기입니다.";
+          let hintText = "";
 
           if (isExamMode && isSelected) {
             containerClassName =
@@ -81,8 +67,8 @@ export function ChoiceList({
             statusClassName = "bg-white text-[#4766d4]";
             statusText = "Saved";
             hintText = isMultiAnswer
-              ? "시험 답안으로 저장한 선택지입니다."
-              : "현재 선택한 답안입니다. 채점은 결과 화면에서 확인합니다.";
+              ? "답안 저장"
+              : "답안 선택";
           }
 
           if (isSelected && !isSubmitted && !isExamMode) {
@@ -92,8 +78,8 @@ export function ChoiceList({
             statusClassName = "bg-white text-amber-700";
             statusText = "Selected";
             hintText = isMultiAnswer
-              ? `선택 중인 보기입니다. 정답 ${requiredSelectionCount}개를 모두 고르면 자동 채점됩니다.`
-              : "클릭한 선택지입니다. 아직 정답 판정 전 상태입니다.";
+              ? `${requiredSelectionCount}개 선택`
+              : "선택";
           }
 
           if (!isExamMode && isSubmitted && isCorrectChoice) {
@@ -103,8 +89,8 @@ export function ChoiceList({
             statusClassName = "bg-white text-emerald-700";
             statusText = isAnsweredCorrectly ? "Correct" : "Answer";
             hintText = isAnsweredCorrectly
-              ? "정답으로 맞힌 선택지입니다."
-              : "이 보기가 실제 정답입니다.";
+              ? "정답"
+              : "정답 보기";
           }
 
           if (isWrongSubmittedChoice) {
@@ -113,7 +99,7 @@ export function ChoiceList({
             labelClassName = "bg-rose-600 text-white";
             statusClassName = "bg-white text-rose-700";
             statusText = "Your Pick";
-            hintText = "선택한 답이지만 오답입니다.";
+            hintText = "오답";
           }
 
           return (
@@ -123,32 +109,34 @@ export function ChoiceList({
                 aria-pressed={isSelected}
                 disabled={isSubmitted && !isExamMode}
                 onClick={() => onSelectChoice(index)}
-                className={`h-full w-full rounded-2xl border px-4 py-5 text-left transition-colors disabled:cursor-not-allowed sm:px-5 sm:py-6 ${containerClassName}`}
+                className={`h-full w-full rounded-2xl border px-3 py-3.5 text-left transition-colors disabled:cursor-not-allowed sm:px-5 sm:py-5 ${containerClassName}`}
               >
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   <span
-                    className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold shadow-sm ${labelClassName}`}
+                    className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold shadow-sm sm:h-9 sm:w-9 sm:text-sm ${labelClassName}`}
                   >
                     {label}
                   </span>
                   <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex-1">
-                      <div className="space-y-3 pt-1">
+                      <div className="space-y-1.5 pt-0.5 sm:space-y-2.5 sm:pt-1">
                         {choiceParagraphs.map((paragraph, paragraphIndex) => (
                           <p
                             key={`${label}-${paragraphIndex + 1}`}
-                            className="whitespace-pre-wrap text-sm leading-7 text-ink/90 sm:text-[1rem] sm:leading-8"
+                            className="whitespace-pre-wrap text-[0.92rem] leading-5.5 text-ink/90 sm:text-[1rem] sm:leading-7"
                           >
                             {paragraph}
                           </p>
                         ))}
                       </div>
-                      <p className="mt-2 text-xs font-medium leading-5 text-ink/60 sm:text-sm">
-                        {hintText}
-                      </p>
+                      {hintText.length > 0 ? (
+                        <p className="mt-1 hidden text-xs font-medium leading-5 text-ink/60 sm:block">
+                          {hintText}
+                        </p>
+                      ) : null}
                     </div>
                     <span
-                      className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${statusClassName}`}
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-3 sm:text-xs ${statusClassName}`}
                     >
                       {statusText}
                     </span>

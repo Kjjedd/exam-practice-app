@@ -1,60 +1,302 @@
 # ExamMate
 
+> AWS SAA 학습을 위해 만든 범위 지정형 문제풀이 웹앱  
+> PDF 가져오기, 세트별 이어풀기, 오답 복습, 즐겨찾기, 시험 모드까지 한 흐름으로 제공합니다.
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-111827?logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-0f172a?logo=react&logoColor=61dafb)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-1d4ed8?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-0f172a?logo=tailwindcss&logoColor=38bdf8)](https://tailwindcss.com/)
+[![Deploy](https://img.shields.io/badge/Deploy-S3%20%2B%20CloudFront-ff9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/cloudfront/)
+
+## Live
+
+- Production: [https://kjjedd.cloud](https://kjjedd.cloud)
+- Alternate: [https://www.kjjedd.cloud](https://www.kjjedd.cloud)
+
+## Product Preview
+
+### Home
+
+![ExamMate Home Preview](./docs/assets/home-preview.svg)
+
+### Quiz
+
+![ExamMate Quiz Preview](./docs/assets/quiz-preview.svg)
+
+### Result
+
+![ExamMate Result Preview](./docs/assets/result-preview.svg)
+
+## Demo GIF
+
+짧은 제품 흐름을 README 안에서 바로 볼 수 있도록 애니메이션 프리뷰를 넣었습니다.
+
+![ExamMate Demo Flow](./docs/assets/demo-loop.svg)
+
 ## Overview
 
-ExamMate는 시험 대비를 위한 예상문제풀이 웹앱 프로젝트입니다.  
-사용자는 객관식 문제를 풀고, 정답 여부를 확인하고, 해설을 읽고, 오답을 다시 복습할 수 있도록 설계되어 있습니다.
+ExamMate는 단순한 퀴즈 페이지가 아니라, **실제 학습 루프를 끝까지 이어주는 시험 대비 앱**입니다.
 
-## Status
+사용자는 다음 흐름으로 학습할 수 있습니다.
 
-현재 이 저장소는 기획과 초기 구조 설계 단계에 있습니다.  
-아직 실제 앱 구현은 시작 전이며, 요구사항 문서화와 개발 계획 정리가 먼저 진행된 상태입니다.
+1. 기본 문제 세트 또는 PDF 기반 문제 세트 선택
+2. 문제 번호 범위를 직접 지정해서 학습 시작
+3. 일반 / 랜덤 / 시험 모드로 풀이
+4. 결과 요약 확인
+5. 오답만 다시 복습
+6. 즐겨찾기와 대시보드로 학습 상태 점검
 
-## Features
+특히 이 프로젝트는 **브라우저 개인 저장 기반**으로 설계되어, 서버 비용 없이도 세트별 이어풀기, 즐겨찾기, 오답 복습 흐름을 유지합니다.
 
-이 프로젝트에서 구현하려는 핵심 기능은 다음과 같습니다.
+## What It Does
 
-- 객관식 문제풀이
-- 보기 선택과 제출
-- 정답/오답 판정
-- 해설 확인
-- 결과 요약
-- 오답 복습
-- 랜덤 모드
-- 시험 모드
-- 즐겨찾기
-- 학습 통계
-- LocalStorage 기반 학습 기록 유지
+### 1. 문제 세트 기반 학습
 
-## Stack
+- 기본 내장 AWS SAA 문제 세트 제공
+- 추가 PDF 업로드 후 문제 후보 자동 변환 및 검수
+- 활성 문제 세트 전환 지원
+- 문제 세트별 독립 학습 상태 유지
 
-프로젝트는 아래 기술 스택을 기준으로 진행합니다.
+### 2. 범위 지정 학습
 
-- Next.js
-- TypeScript
-- Tailwind CSS
-- LocalStorage
+- 예: `1 ~ 142`, `600 ~ 725`
+- 일반 / 랜덤 / 시험 모드 모두 범위 지정 적용
+- 세트 전체가 아니라 **선택한 범위 기준**으로 세션 생성
 
-## Documents
+### 3. 세 가지 풀이 모드
 
-저장소에는 현재 아래 문서들이 정리되어 있습니다.
+- **일반 모드**
+  - 자유롭게 이전/다음 문제 이동
+  - 바로 풀이하고 학습하기 좋은 모드
+- **랜덤 모드**
+  - 선택한 범위 안에서만 문제 셔플
+  - 복습용 반복 학습에 적합
+- **시험 모드**
+  - 기본 AWS SAA 세트에서만 사용 가능
+  - 즉시 채점 없이 마지막 결과에서 한 번에 확인
+  - 실제 시험처럼 답안 저장 중심의 흐름 제공
 
-- `codex-project-guidelines-exam-webapp.md`: 프로젝트 요구사항과 작업 원칙
-- `research.md`: 프로젝트 구조와 동작 방식에 대한 분석 문서
-- `plan.md`: 현재 브랜치에서 수행할 작업 계획 문서
+### 4. 학습 상태 복원
 
-## Branch Strategy
+- 문제 세트별 이어풀기 세션
+- 세트/범위/모드별 독립 복원
+- 홈으로 나갔다가 다시 들어와도 진행 상태 유지
+- 필요하면 현재 세션만 삭제 또는 처음부터 다시 시작 가능
 
-이 프로젝트는 작은 단위의 브랜치 전략을 사용합니다.
+### 5. 결과, 오답 복습, 즐겨찾기
 
-- `main`: 비교적 안정적인 상태 유지
-- `feature/*`: 기능 단위 개발
-- `fix/*`: 버그 수정
-- `refactor/*`: 구조 개선
+- 결과 요약 대시보드
+- 문제별 정답 / 오답 / 미응답 상태 확인
+- 세트별 오답만 다시 복습
+- 2차 오답 복습 흐름 지원
+- 세트별 즐겨찾기 목록 확인 및 개별 삭제 가능
 
-현재 작업은 `feature/project-bootstrap` 브랜치 기준으로 진행됩니다.
+### 6. PDF 가져오기 흐름
 
-## Direction
+- PDF 선택
+- 파일 검증
+- 자동 변환
+- 검수 및 수정
+- 문제 세트 저장
 
-이 프로젝트는 단순한 퀴즈 페이지가 아니라,  
-문제풀이 흐름, 오답 복습, 학습 기록 저장, 통계 확인까지 포함하는 학습용 웹앱을 목표로 합니다.
+현재 PDF 업로드는 브라우저 환경에서 처리하기 때문에 **25MB 이하 PDF**만 지원합니다.
+
+## Key Features
+
+| Feature | Description |
+| --- | --- |
+| Default Question Sets | AWS SAA 전체 세트, AWS SAA 600~1019 세트 제공 |
+| Range-based Sessions | 시작/끝 번호를 지정해 필요한 범위만 학습 |
+| Per-set Progress | 문제 세트별 이어풀기 세션 독립 저장 |
+| Per-set Favorites | 문제 세트별 즐겨찾기 저장 및 삭제 |
+| Per-set Wrong Answers | 문제 세트별 오답 저장, 복습, 삭제 |
+| Exam Flow | 시험형 풀이, 즉시 채점 비활성화 |
+| Result Dashboard | 정답률, 응답 수, 오답 수 요약 |
+| Mobile Optimization | 모바일에서 한 화면에 핵심 정보가 먼저 보이도록 최적화 |
+
+## Screens and User Flow
+
+### Home
+
+- 현재 활성 문제 세트 확인
+- 범위 지정
+- 일반 / 랜덤 / 시험 시작
+- 이어풀기 / 다시 시작
+
+### Quiz
+
+- 긴 문제를 읽기 쉽게 정리한 문제 카드
+- 정답/오답 하이라이트
+- 시험 모드에서는 즉시 채점 없이 답안만 저장
+- 모바일 화면 밀도 최적화
+
+### Result
+
+- 세션 요약 카드
+- 정답률, 정답 수, 오답 수, 미응답 수
+- 문제별 결과 리스트
+- 오답 복습 CTA
+
+### Review / Favorites / Dashboard
+
+- 현재 세트 기준 복습
+- 현재 세트 기준 즐겨찾기
+- 최근 완료 세션 기준 통계 확인
+
+## Personal Storage Model
+
+이 앱은 서버 DB 대신 **브라우저 저장소(localStorage / sessionStorage)** 를 사용합니다.
+
+이 구조의 의미는 다음과 같습니다.
+
+- 기본 문제 세트는 모든 사용자에게 동일하게 제공됩니다.
+- 사용자가 업로드한 PDF 기반 문제 세트는 **해당 브라우저에만 저장**됩니다.
+- 같은 계정이라도 **다른 기기 / 다른 브라우저에는 자동 동기화되지 않습니다.**
+- 브라우저 데이터를 삭제하면 개인 업로드 세트와 학습 상태도 함께 사라질 수 있습니다.
+
+즉, **공통 기본 세트 + 사용자별 개인 브라우저 저장** 구조입니다.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **UI**: React 19
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Storage**: localStorage, sessionStorage
+- **Deploy**: AWS S3 + CloudFront + ACM + Route 53
+
+## Project Structure
+
+```text
+app/
+  dashboard/
+  exam/
+  favorites/
+  import/
+  quiz/
+  result/
+  review/
+
+components/
+  dashboard/
+  exam/
+  favorites/
+  home/
+  import/
+  question/
+  result/
+  review/
+
+data/
+  default-question-set.json
+  default-question-set-saa-600-plus.json
+
+lib/
+  data/
+  dashboard/
+  exam/
+  import/
+  quiz/
+  storage/
+  types/
+
+plans/
+  feature-*/
+  fix-*/
+  refactor-*/
+```
+
+## Local Development
+
+### Install
+
+```bash
+npm install
+```
+
+### Run
+
+```bash
+npm run dev
+```
+
+### Type Check
+
+```bash
+npm run typecheck
+```
+
+### Production Build
+
+```bash
+npm run build
+```
+
+## Deployment
+
+이 프로젝트는 정적 export 결과물을 AWS에 배포합니다.
+
+배포 구성:
+
+- S3
+- CloudFront
+- ACM
+- Route 53
+
+빌드 후 배포 예시:
+
+```bash
+npm run build
+aws s3 sync out/ s3://YOUR_BUCKET_NAME --delete
+aws cloudfront create-invalidation --distribution-id YOUR_DISTRIBUTION_ID --paths "/*"
+```
+
+## Deployment Architecture
+
+```mermaid
+flowchart LR
+    User["User Browser<br/>Desktop / Mobile"] --> DNS["Route 53<br/>kjjedd.cloud / www.kjjedd.cloud"]
+    DNS --> CDN["CloudFront"]
+    CDN --> CERT["ACM TLS Certificate<br/>kjjedd.cloud + *.kjjedd.cloud"]
+    CDN --> S3["S3 Static Bucket<br/>exported out/ assets"]
+    User -. "Personal study state" .-> BrowserStore["localStorage / sessionStorage"]
+    BrowserStore -. "Per browser only" .-> User
+```
+
+배포 구성의 핵심은 다음과 같습니다.
+
+- **S3**: 정적 export 결과물 보관
+- **CloudFront**: HTTPS, 캐시, 전 세계 배포
+- **ACM**: 커스텀 도메인 TLS 인증서
+- **Route 53**: `kjjedd.cloud`, `www.kjjedd.cloud` 연결
+- **Browser Storage**: 사용자별 문제 세트, 즐겨찾기, 이어풀기, 오답 상태 저장
+
+## Current Product Notes
+
+- 시험 모드는 현재 **기본 AWS SAA 세트**에서만 사용 가능합니다.
+- 업로드한 PDF 문제 세트는 **일반 모드 / 랜덤 모드** 중심으로 사용하도록 설계되어 있습니다.
+- PDF 자동 변환은 휴리스틱 기반이라, 파일 형식에 따라 검수 단계에서 수동 보정이 필요할 수 있습니다.
+
+## Why This Project
+
+이 프로젝트는 다음 문제를 해결하기 위해 만들었습니다.
+
+- 큰 문제 세트를 원하는 범위만 나눠서 학습하고 싶다
+- 한 번 틀린 문제를 다시 다시 반복해서 보고 싶다
+- 문제 세트별로 학습 상태를 따로 유지하고 싶다
+- 서버 비용 없이 개인 학습용 웹앱을 운영하고 싶다
+
+결국 ExamMate는 **문제풀이 자체보다 학습 지속성과 복습 흐름**에 더 집중한 앱입니다.
+
+## Roadmap
+
+- PDF 변환 정확도 개선
+- 더 안정적인 모바일 UX
+- 업로드 세트용 메타데이터/분류 개선
+- 결과 화면 시각화 고도화
+
+## License
+
+개인 학습 및 프로젝트 용도로 관리 중입니다.  
+필요 시 별도 라이선스 정책을 추가할 수 있습니다.

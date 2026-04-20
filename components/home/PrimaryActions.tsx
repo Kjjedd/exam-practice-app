@@ -10,9 +10,6 @@ type PrimaryAction = Readonly<{
   accentClassName: string;
   panelClassName: string;
   glowClassName: string;
-  description: string;
-  points: readonly string[];
-  footerLabel: string;
 }>;
 
 const primaryActions: readonly PrimaryAction[] = [
@@ -23,10 +20,7 @@ const primaryActions: readonly PrimaryAction[] = [
     availability: "always",
     accentClassName: "border-[#8bb3ff] bg-[#eef4ff] text-[#3f6de0]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f5f8ff)]",
-    glowClassName: "from-[#d7e5ff] via-[#edf4ff] to-transparent",
-    description: "PDF를 올리고 자동 변환 뒤 검수해서 새 문제 세트를 만듭니다.",
-    points: ["새 세트 생성", "검수 후 저장", "개인 브라우저 보관"],
-    footerLabel: "새 문제 세트 만들기"
+    glowClassName: "from-[#d7e5ff] via-[#edf4ff] to-transparent"
   },
   {
     title: "일반 문제풀이",
@@ -35,10 +29,7 @@ const primaryActions: readonly PrimaryAction[] = [
     availability: "active-set",
     accentClassName: "border-[#ffb39f] bg-[#fff1ed] text-[#dd6a4b]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff7f3)]",
-    glowClassName: "from-[#ffd7c8] via-[#fff0e9] to-transparent",
-    description: "범위를 정해 차례대로 풀고, 필요한 문제는 자유롭게 다시 이동할 수 있습니다.",
-    points: ["순차 풀이", "이전·다음 이동", "즉시 정답 확인"],
-    footerLabel: "범위 기반 학습 시작"
+    glowClassName: "from-[#ffd7c8] via-[#fff0e9] to-transparent"
   },
   {
     title: "랜덤 모드",
@@ -47,10 +38,7 @@ const primaryActions: readonly PrimaryAction[] = [
     availability: "active-set",
     accentClassName: "border-[#ffc982] bg-[#fff5e6] text-[#d98b18]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff9ef)]",
-    glowClassName: "from-[#ffe0ad] via-[#fff5df] to-transparent",
-    description: "선택한 범위 안에서 문제 순서를 섞어 실전 감각으로 반복 학습합니다.",
-    points: ["범위 후 셔플", "순서 고정 세션", "오답 복습 연결"],
-    footerLabel: "무작위 세션 시작"
+    glowClassName: "from-[#ffe0ad] via-[#fff5df] to-transparent"
   },
   {
     title: "시험 모드",
@@ -59,10 +47,7 @@ const primaryActions: readonly PrimaryAction[] = [
     availability: "default-saa",
     accentClassName: "border-[#9adfcc] bg-[#ebfbf5] text-[#25956d]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f2fbf7)]",
-    glowClassName: "from-[#c7f1df] via-[#eefbf5] to-transparent",
-    description: "실제 시험 템플릿 기준으로 문항 수와 평가 흐름을 맞춘 연습 세션입니다.",
-    points: ["시험 템플릿 적용", "즉시 채점 없음", "마지막 결과 확인"],
-    footerLabel: "시험형 세션 선택"
+    glowClassName: "from-[#c7f1df] via-[#eefbf5] to-transparent"
   }
 ] as const;
 
@@ -114,45 +99,34 @@ export function PrimaryActions({
   onClearResume
 }: PrimaryActionsProps) {
   return (
-    <section className="flex h-full flex-col rounded-[1.75rem] bg-[#f9fbfe] px-5 py-5 sm:px-6 sm:py-6">
-      <div className="mb-5 flex items-center justify-between gap-4">
+    <section className="flex h-full flex-col rounded-[1.5rem] bg-[#f9fbfe] px-4 py-4 sm:rounded-[1.75rem] sm:px-6 sm:py-6">
+      <div className="mb-4 flex items-center justify-between gap-3 sm:mb-5 sm:gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink/45">
             Start
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink">
-            학습 시작
-          </h2>
+          <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-ink sm:mt-2 sm:text-2xl">시작</h2>
         </div>
-        <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-ink/60">
-          4가지 모드
-        </span>
       </div>
       {!hasActiveQuestionSet && isReady ? (
-        <div className="mb-5 rounded-[1.5rem] border border-dashed border-coral/35 bg-coral/6 px-5 py-4">
-          <p className="text-sm leading-6 text-ink/75 sm:text-base">
-            활성 문제 세트가 없습니다. 먼저 PDF를 가져오세요.
-          </p>
+        <div className="mb-4 rounded-[1.25rem] border border-dashed border-coral/35 bg-coral/6 px-4 py-3">
+          <p className="text-sm font-medium text-ink/75">문제 세트가 없습니다.</p>
         </div>
       ) : null}
       {hasActiveQuestionSet && isReady && !isRangeValid && rangeValidationMessage !== null ? (
-        <div className="mb-5 rounded-[1.5rem] border border-dashed border-[#d8a647] bg-[#fff7ea] px-5 py-4">
-          <p className="text-sm leading-6 text-ink/75 sm:text-base">
-            {rangeValidationMessage}
-          </p>
+        <div className="mb-4 rounded-[1.25rem] border border-dashed border-[#d8a647] bg-[#fff7ea] px-4 py-3">
+          <p className="text-sm font-medium text-ink/75">{rangeValidationMessage}</p>
         </div>
       ) : null}
       {resumeHref !== null && resumeQuestionNumber !== null ? (
-        <div className="mb-5 rounded-[1.5rem] border border-[#d8e4ff] bg-[#f2f6ff] px-5 py-5">
+        <div className="mb-4 rounded-[1.25rem] border border-[#d8e4ff] bg-[#f2f6ff] px-4 py-4 sm:mb-5 sm:rounded-[1.5rem] sm:px-5 sm:py-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5273c9]">
                 Resume
               </p>
-              <h3 className="mt-2 text-lg font-semibold text-ink">풀던 세션이 남아 있습니다.</h3>
-              <p className="mt-2 text-sm leading-6 text-ink/75 sm:text-base">
-                {getResumeModeLabel(resumeMode)} {resumeQuestionNumber}번부터 이어서 풉니다.
-              </p>
+              <h3 className="mt-1.5 text-base font-semibold text-ink sm:mt-2 sm:text-lg">이어풀기</h3>
+              <p className="mt-1.5 text-sm leading-5 text-ink/75 sm:mt-2 sm:leading-6 sm:text-base">{getResumeModeLabel(resumeMode)} {resumeQuestionNumber}번</p>
             </div>
             <div className="flex flex-col gap-3 sm:items-end">
               <Link
@@ -182,7 +156,7 @@ export function PrimaryActions({
           </div>
         </div>
       ) : null}
-      <div className="grid flex-1 gap-4 md:grid-cols-2">
+      <div className="grid flex-1 grid-cols-2 gap-3 sm:gap-4">
         {primaryActions.map((action) => {
           const isDisabled =
             action.availability === "active-set"
@@ -209,39 +183,24 @@ export function PrimaryActions({
             return (
               <div
                 key={action.title}
-                className={`relative overflow-hidden rounded-[1.75rem] border border-ink/10 p-5 shadow-sm ${action.panelClassName}`}
+                className={`relative overflow-hidden rounded-[1.35rem] border border-ink/10 p-4 shadow-sm sm:rounded-[1.75rem] sm:p-5 ${action.panelClassName}`}
               >
                 <div
-                  className={`pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b opacity-80 ${action.glowClassName}`}
+                  className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-80 sm:h-28 ${action.glowClassName}`}
                 />
                 <div className="flex items-start justify-between gap-4">
-                  <span className="inline-flex rounded-2xl border border-ink/10 bg-mist px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                  <span className="inline-flex rounded-2xl border border-ink/10 bg-mist px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/55 sm:px-3 sm:py-2 sm:text-xs">
                     {action.badge}
                   </span>
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/35">
-                    Locked
-                  </span>
                 </div>
-                <div className="relative mt-5 flex h-full flex-col">
-                  <h3 className="text-xl font-semibold text-ink">{action.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-ink/62">
-                    {action.description}
-                  </p>
-                  <div className="mt-5 space-y-2">
-                    {action.points.map((point) => (
-                      <div
-                        key={point}
-                        className="flex items-center gap-2 text-sm font-medium text-ink/66"
-                      >
-                        <span className="h-2 w-2 rounded-full bg-ink/25" />
-                        <span>{point}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-6 rounded-[1.25rem] border border-dashed border-ink/10 bg-white/75 px-4 py-3 backdrop-blur">
-                    <span className="inline-flex rounded-full bg-mist px-3 py-1 text-xs font-semibold text-ink/48">
+                <div className="relative mt-4 flex h-full flex-col sm:mt-5">
+                  <h3 className="text-base font-semibold leading-6 text-ink sm:text-xl">{action.title}</h3>
+                  <div className="mt-auto pt-4 sm:pt-6">
+                  <div className="rounded-[1rem] border border-dashed border-ink/10 bg-white/75 px-3 py-2.5 backdrop-blur sm:rounded-[1.25rem] sm:px-4 sm:py-3">
+                    <span className="inline-flex rounded-full bg-mist px-2.5 py-1 text-[11px] font-semibold text-ink/48 sm:px-3 sm:text-xs">
                       {disabledText}
                     </span>
+                  </div>
                   </div>
                 </div>
               </div>
@@ -252,44 +211,24 @@ export function PrimaryActions({
             <Link
               key={action.title}
               href={resolvedHref}
-              className={`group relative overflow-hidden rounded-[1.75rem] border border-ink/10 p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-ink/15 hover:shadow-[0_16px_36px_rgba(16,36,62,0.08)] ${action.panelClassName}`}
+              className={`group relative overflow-hidden rounded-[1.35rem] border border-ink/10 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-ink/15 hover:shadow-[0_16px_36px_rgba(16,36,62,0.08)] sm:rounded-[1.75rem] sm:p-5 ${action.panelClassName}`}
             >
               <div
-                className={`pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b opacity-85 transition-opacity group-hover:opacity-100 ${action.glowClassName}`}
+                className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-85 transition-opacity group-hover:opacity-100 sm:h-28 ${action.glowClassName}`}
               />
               <div className="flex items-start justify-between gap-4">
                 <span
-                  className={`inline-flex rounded-2xl border px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] ${action.accentClassName}`}
+                  className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] sm:px-3 sm:py-2 sm:text-xs ${action.accentClassName}`}
                 >
                   {action.badge}
                 </span>
-                <span className="text-lg text-ink/28 transition-colors group-hover:text-ink/55">
+                <span className="text-base text-ink/28 transition-colors group-hover:text-ink/55 sm:text-lg">
                   →
                 </span>
               </div>
-              <div className="relative mt-6 flex h-full flex-col">
-                <h3 className="text-xl font-semibold text-ink">{action.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-ink/65">
-                  {action.description}
-                </p>
-                <div className="mt-5 grid gap-2">
-                  {action.points.map((point) => (
-                    <div
-                      key={point}
-                      className="flex items-center gap-2 text-sm font-medium text-ink/70"
-                    >
-                      <span
-                        className={`h-2.5 w-2.5 rounded-full border ${action.accentClassName}`}
-                      />
-                      <span>{point}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 rounded-[1.25rem] border border-white/60 bg-white/80 px-4 py-3 backdrop-blur">
-                  <span className="text-sm font-semibold text-ink/82">
-                    {action.footerLabel}
-                  </span>
-                </div>
+              <div className="relative mt-4 flex h-full flex-col sm:mt-6">
+                <h3 className="text-base font-semibold leading-6 text-ink sm:text-xl">{action.title}</h3>
+                <div className="mt-auto pt-4 sm:pt-6" />
               </div>
             </Link>
           );

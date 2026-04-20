@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import type { QuestionSetSummary } from "../../lib/types";
 
 type ActiveQuestionSetSummaryProps = Readonly<{
@@ -14,19 +12,6 @@ type ActiveQuestionSetSummaryProps = Readonly<{
   isRangeSelectable: boolean;
   rangeValidationMessage: string | null;
 }>;
-
-function formatCreatedAt(createdAt: string): string {
-  const date = new Date(createdAt);
-
-  if (Number.isNaN(date.getTime())) {
-    return "저장 시각 확인 필요";
-  }
-
-  return new Intl.DateTimeFormat("ko-KR", {
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(date);
-}
 
 export function ActiveQuestionSetSummary({
   activeQuestionSet,
@@ -43,17 +28,16 @@ export function ActiveQuestionSetSummary({
   const hasActiveQuestionSet = activeQuestionSet !== null;
 
   return (
-    <section className="flex h-full flex-col rounded-[1.75rem] bg-[linear-gradient(180deg,_rgba(244,247,251,1),_rgba(255,255,255,1))] p-6 sm:p-7">
-      <div className="flex items-start justify-between gap-4">
+    <section className="flex h-full flex-col rounded-[1.5rem] bg-[linear-gradient(180deg,_rgba(244,247,251,1),_rgba(255,255,255,1))] p-4 sm:rounded-[1.75rem] sm:p-7">
+      <div className="flex items-start justify-between gap-3 sm:gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/45">
             Active Set
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink">현재 문제 세트</h2>
+          <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-ink sm:mt-2 sm:text-2xl">
+            문제 세트
+          </h2>
         </div>
-        <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-ink/70 shadow-sm">
-          {hasActiveQuestionSet ? "준비됨" : "비어 있음"}
-        </span>
       </div>
 
       {!isReady ? (
@@ -65,48 +49,29 @@ export function ActiveQuestionSetSummary({
       ) : null}
 
       {isReady && hasActiveQuestionSet ? (
-        <div className="mt-6 flex flex-1 flex-col gap-4">
-          <div className="rounded-[1.5rem] border border-ink/10 bg-white px-5 py-5 shadow-sm">
-            <h3 className="text-2xl font-semibold text-ink">
+        <div className="mt-4 flex flex-1 flex-col gap-3 sm:mt-6 sm:gap-4">
+          <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem] sm:px-5 sm:py-5">
+            <h3 className="text-lg font-semibold text-ink sm:text-2xl">
               {activeQuestionSet.title}
             </h3>
-            <p className="mt-2 text-sm leading-6 text-ink/70">
-              {activeQuestionSet.sourceLabel}
+          </div>
+          <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+              Questions
+            </p>
+            <p className="mt-1.5 text-xl font-semibold text-ink sm:mt-2 sm:text-2xl">
+              {activeQuestionSet.questionCount}
             </p>
           </div>
-          <dl className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-4 shadow-sm">
-              <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
-                Questions
-              </dt>
-              <dd className="mt-2 text-2xl font-semibold text-ink">
-                {activeQuestionSet.questionCount}
-              </dd>
-            </div>
-            <div className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-4 shadow-sm">
-              <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
-                Saved At
-              </dt>
-              <dd className="mt-2 text-sm font-medium leading-6 text-ink/80">
-                {formatCreatedAt(activeQuestionSet.createdAt)}
-              </dd>
-            </div>
-          </dl>
           {isRangeSelectable ? (
-            <div className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-4 shadow-sm">
+            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
               <div className="flex flex-col gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
-                    Question Range
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-ink/68">
-                    이 세트는 {activeQuestionSet.minimumQuestionNumber}~
-                    {activeQuestionSet.maximumQuestionNumber} 범위에서 시작 번호와 끝 번호를 지정할 수 있습니다.
-                  </p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                  Range
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
                   <label className="flex flex-col gap-2 text-sm font-medium text-ink/72">
-                    시작 번호
+                    시작
                     <input
                       type="number"
                       inputMode="numeric"
@@ -114,11 +79,11 @@ export function ActiveQuestionSetSummary({
                       max={activeQuestionSet.maximumQuestionNumber ?? undefined}
                       value={rangeStartInput}
                       onChange={(event) => onChangeRangeStart?.(event.target.value)}
-                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-base text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white"
+                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white sm:text-base"
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-sm font-medium text-ink/72">
-                    끝 번호
+                    끝
                     <input
                       type="number"
                       inputMode="numeric"
@@ -126,29 +91,22 @@ export function ActiveQuestionSetSummary({
                       max={activeQuestionSet.maximumQuestionNumber ?? undefined}
                       value={rangeEndInput}
                       onChange={(event) => onChangeRangeEnd?.(event.target.value)}
-                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-base text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white"
+                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white sm:text-base"
                     />
                   </label>
                 </div>
                 {rangeValidationMessage !== null ? (
                   <p className="text-sm leading-6 text-[#b36926]">{rangeValidationMessage}</p>
-                ) : (
-                  <p className="text-sm leading-6 text-ink/62">
-                    지정한 범위가 일반, 랜덤, 시험 모드 시작에 함께 적용됩니다.
-                  </p>
-                )}
+                ) : null}
               </div>
             </div>
           ) : null}
           {questionSetSummaries.length > 1 ? (
-            <div className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-4 shadow-sm">
+            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
                     Set Switcher
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-ink/68">
-                    두 개의 기본 세트 중 하나를 고른 뒤 범위를 지정해 시작할 수 있습니다.
                   </p>
                 </div>
               </div>
@@ -159,7 +117,7 @@ export function ActiveQuestionSetSummary({
                     type="button"
                     onClick={() => onSelectQuestionSet?.(summary.id)}
                     disabled={summary.isActive}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                    className={`rounded-full px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
                       summary.isActive
                         ? "cursor-default bg-ink text-white"
                         : "border border-ink/12 bg-mist text-ink hover:border-coral/30 hover:bg-white"
@@ -171,62 +129,18 @@ export function ActiveQuestionSetSummary({
               </div>
             </div>
           ) : null}
-          <div className="mt-auto overflow-hidden rounded-[1.5rem] border border-[#dce7f8] bg-[linear-gradient(135deg,_rgba(20,43,74,0.96),_rgba(52,84,138,0.92),_rgba(122,165,232,0.84))] px-5 py-5 text-white shadow-[0_16px_36px_rgba(26,46,84,0.18)]">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/62">
-                  Set Focus
-                </p>
-                <h3 className="mt-2 text-xl font-semibold tracking-tight">
-                  현재 세트 흐름을 바로 확인할 수 있습니다.
-                </h3>
-              </div>
-              <div className="flex gap-2 pt-1">
-                <span className="h-2.5 w-2.5 rounded-full bg-white/80" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#8bd2ff]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#ffd39e]" />
-              </div>
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-[1.25rem] bg-white/10 px-4 py-4 backdrop-blur">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/62">
-                  Range
-                </p>
-                <p className="mt-2 text-base font-semibold">
-                  {activeQuestionSet.minimumQuestionNumber ?? "-"} ~{" "}
-                  {activeQuestionSet.maximumQuestionNumber ?? "-"}
-                </p>
-              </div>
-              <div className="rounded-[1.25rem] bg-white/10 px-4 py-4 backdrop-blur">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/62">
-                  Ready Modes
-                </p>
-                <p className="mt-2 text-base font-semibold leading-6">
-                  일반 · 랜덤
-                  <span className="text-white/72">
-                    {questionSetSummaries.length > 0 ? " · 세트 전환 가능" : ""}
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       ) : null}
 
       {isReady && !hasActiveQuestionSet ? (
         <div className="mt-6 rounded-[1.5rem] border border-dashed border-coral/30 bg-white px-5 py-5">
-          <h3 className="text-lg font-semibold text-ink">
-            아직 활성 문제 세트가 없습니다.
-          </h3>
-          <p className="mt-2 text-sm leading-6 text-ink/70 sm:text-base">
-            PDF를 가져오면 바로 시작할 수 있습니다.
-          </p>
-          <Link
+          <h3 className="text-lg font-semibold text-ink">세트가 없습니다.</h3>
+          <a
             href="/import"
             className="mt-5 inline-flex items-center rounded-full bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral/90"
           >
-            PDF 가져오기 시작
-          </Link>
+            PDF 가져오기
+          </a>
         </div>
       ) : null}
     </section>

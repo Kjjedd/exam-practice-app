@@ -261,7 +261,7 @@ export function QuizPageContent() {
   const requestedRangeEnd = parseRangeValue(searchParams.get("end"));
   const modeLabel = getModeLabel(quizMode);
   const isExamMode = quizMode === "exam";
-  const isFreeNavigationMode = quizMode === "normal";
+  const isFreeNavigationMode = quizMode === "normal" || quizMode === "random";
   const activeQuestionSetRange = useMemo(
     () =>
       state.activeQuestionSet === null ? null : getQuestionSetNumberRange(state.activeQuestionSet),
@@ -662,16 +662,13 @@ export function QuizPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
+    <main className="min-h-screen bg-mist px-3 py-4 text-ink sm:px-10 sm:py-14">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:gap-6">
         {!state.isReady ? (
-          <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
-            <h1 className="text-2xl font-semibold tracking-tight text-ink">
-              문제 세트를 불러오는 중입니다.
+          <section className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-5 shadow-sm sm:rounded-[1.75rem] sm:px-8 sm:py-8">
+            <h1 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+              불러오는 중입니다.
             </h1>
-            <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-              저장된 활성 문제 세트 상태를 확인한 뒤 문제 화면을 준비합니다.
-            </p>
           </section>
         ) : null}
 

@@ -14,6 +14,12 @@
 - Production: [https://kjjedd.cloud](https://kjjedd.cloud)
 - Alternate: [https://www.kjjedd.cloud](https://www.kjjedd.cloud)
 
+## Deployment Status
+
+- Production deployment: **healthy**
+- Latest production source: [`main`](https://github.com/Kjjedd/exam-practice-app/tree/main)
+- Latest verified deploy run: [GitHub Actions #24661793143](https://github.com/Kjjedd/exam-practice-app/actions/runs/24661793143)
+
 ## Product Preview
 
 ### Home
@@ -244,6 +250,23 @@ npm run build
 - ACM
 - Route 53
 
+### CI/CD
+
+이 저장소는 GitHub Actions로 자동 배포됩니다.
+
+- `pull_request -> main`
+  - `typecheck`
+  - `build`
+- `push -> main`
+  - `typecheck`
+  - `build`
+  - `aws s3 sync`
+  - `CloudFront invalidation`
+
+워크플로우 파일:
+
+- [`deploy.yml`](/Users/jongeon/Desktop/Study/exam-practice-app/.github/workflows/deploy.yml)
+
 빌드 후 배포 예시:
 
 ```bash
@@ -271,6 +294,28 @@ flowchart LR
 - **ACM**: 커스텀 도메인 TLS 인증서
 - **Route 53**: `kjjedd.cloud`, `www.kjjedd.cloud` 연결
 - **Browser Storage**: 사용자별 문제 세트, 즐겨찾기, 이어풀기, 오답 상태 저장
+
+## Branch Strategy
+
+이 프로젝트는 단순한 운영 흐름을 유지합니다.
+
+- `main`
+  - 배포 기준 브랜치
+  - 머지되면 GitHub Actions가 자동 배포
+- `feature/*`
+  - 기능 개발 브랜치
+  - 예: `feature/range-based-set-flow`
+- `fix/*`
+  - 버그 수정 브랜치
+- `refactor/*`
+  - 내부 구조 정리 브랜치
+
+권장 흐름:
+
+1. `feature/*`, `fix/*`, `refactor/*` 브랜치에서 작업
+2. PR로 검증
+3. `main` 머지
+4. 자동 배포
 
 ## Current Product Notes
 

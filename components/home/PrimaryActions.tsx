@@ -8,6 +8,8 @@ type PrimaryAction = Readonly<{
   badge: string;
   availability: "always" | "active-set" | "default-saa";
   accentClassName: string;
+  mutedAccentClassName: string;
+  arrowClassName: string;
   panelClassName: string;
   glowClassName: string;
 }>;
@@ -19,6 +21,8 @@ const primaryActions: readonly PrimaryAction[] = [
     badge: "Import",
     availability: "always",
     accentClassName: "border-[#6d93ff] bg-[#eaf1ff] text-[#1f4fd4]",
+    mutedAccentClassName: "border-[#b7cbff] bg-white/92 text-[#6b88da]",
+    arrowClassName: "text-[#7395ea] group-hover:text-[#4066d8]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f5f8ff)]",
     glowClassName: "from-[#d7e5ff] via-[#edf4ff] to-transparent"
   },
@@ -28,6 +32,8 @@ const primaryActions: readonly PrimaryAction[] = [
     badge: "Normal",
     availability: "active-set",
     accentClassName: "border-[#f29a86] bg-[#fff0eb] text-[#c65234]",
+    mutedAccentClassName: "border-[#f7c4b7] bg-white/92 text-[#cf866f]",
+    arrowClassName: "text-[#de947a] group-hover:text-[#c65234]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff7f3)]",
     glowClassName: "from-[#ffd7c8] via-[#fff0e9] to-transparent"
   },
@@ -37,6 +43,8 @@ const primaryActions: readonly PrimaryAction[] = [
     badge: "Random",
     availability: "active-set",
     accentClassName: "border-[#efb85f] bg-[#fff4de] text-[#b87408]",
+    mutedAccentClassName: "border-[#f3d49d] bg-white/92 text-[#c29750]",
+    arrowClassName: "text-[#d1a252] group-hover:text-[#b87408]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff9ef)]",
     glowClassName: "from-[#ffe0ad] via-[#fff5df] to-transparent"
   },
@@ -46,6 +54,8 @@ const primaryActions: readonly PrimaryAction[] = [
     badge: "Exam",
     availability: "default-saa",
     accentClassName: "border-[#84d4bb] bg-[#e8faf2] text-[#1d7b5b]",
+    mutedAccentClassName: "border-[#bae7d8] bg-white/92 text-[#67a892]",
+    arrowClassName: "text-[#79baa5] group-hover:text-[#1d7b5b]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f2fbf7)]",
     glowClassName: "from-[#c7f1df] via-[#eefbf5] to-transparent"
   }
@@ -195,7 +205,9 @@ export function PrimaryActions({
                   className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-80 sm:h-28 ${action.glowClassName}`}
                 />
                 <div className="flex items-start justify-between gap-4">
-                  <span className="inline-flex rounded-2xl border border-ink/10 bg-white/90 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/65 shadow-sm sm:px-3 sm:py-2 sm:text-xs">
+                  <span
+                    className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${action.mutedAccentClassName}`}
+                  >
                     {action.badge}
                   </span>
                 </div>
@@ -230,7 +242,7 @@ export function PrimaryActions({
                 >
                   {action.badge}
                 </span>
-                <span className="text-base text-ink/28 transition-colors group-hover:text-ink/55 sm:text-xl">
+                <span className={`text-base transition-colors sm:text-xl ${action.arrowClassName}`}>
                   →
                 </span>
               </div>

@@ -54,17 +54,21 @@ export function ChoiceList({
             !isExamMode && isSubmitted && isSubmittedChoice && isCorrectChoice;
 
           let containerClassName =
-            "border-ink/10 bg-mist hover:border-coral/30 hover:bg-white";
-          let labelClassName = "bg-white text-ink";
-          let statusClassName = "bg-white/80 text-ink/55";
+            "border-[color:var(--choice-default-border)] bg-[color:var(--choice-default-surface)] hover:border-[color:var(--choice-default-border-hover)] hover:bg-[color:var(--choice-default-surface-hover)]";
+          let labelClassName =
+            "bg-[color:var(--choice-label-surface)] text-[color:var(--choice-label-text)]";
+          let statusClassName =
+            "bg-[color:var(--choice-status-surface)] text-[color:var(--choice-status-text)]";
           let statusText = isSelected ? "Selected" : "Choice";
           let hintText = "";
 
           if (isExamMode && isSelected) {
             containerClassName =
-              "border-[#5f82ff] bg-[#edf2ff] shadow-sm ring-2 ring-[#cad7ff]";
-            labelClassName = "bg-[#5f82ff] text-white";
-            statusClassName = "bg-white text-[#4766d4]";
+              "border-[color:var(--choice-exam-border)] bg-[color:var(--choice-exam-surface)] shadow-sm ring-2 ring-[color:var(--choice-exam-ring)]";
+            labelClassName =
+              "bg-[color:var(--choice-exam-label)] text-[color:var(--app-surface-muted)]";
+            statusClassName =
+              "bg-[color:var(--choice-status-surface)] text-[color:var(--choice-exam-status)]";
             statusText = "Saved";
             hintText = isMultiAnswer
               ? "답안 저장"
@@ -73,9 +77,11 @@ export function ChoiceList({
 
           if (isSelected && !isSubmitted && !isExamMode) {
             containerClassName =
-              "border-amber-400 bg-amber-50 shadow-sm ring-2 ring-amber-200/70";
-            labelClassName = "bg-amber-500 text-white";
-            statusClassName = "bg-white text-amber-700";
+              "border-[color:var(--choice-selected-border)] bg-[color:var(--choice-selected-surface)] shadow-sm ring-2 ring-[color:var(--choice-selected-ring)]";
+            labelClassName =
+              "bg-[color:var(--choice-selected-label)] text-[color:var(--app-surface-muted)]";
+            statusClassName =
+              "bg-[color:var(--choice-status-surface)] text-[color:var(--choice-selected-status)]";
             statusText = "Selected";
             hintText = isMultiAnswer
               ? `${requiredSelectionCount}개 선택`
@@ -84,9 +90,11 @@ export function ChoiceList({
 
           if (!isExamMode && isSubmitted && isCorrectChoice) {
             containerClassName =
-              "border-emerald-500 bg-emerald-50 shadow-sm ring-2 ring-emerald-200/80";
-            labelClassName = "bg-emerald-600 text-white";
-            statusClassName = "bg-white text-emerald-700";
+              "border-[color:var(--choice-correct-border)] bg-[color:var(--choice-correct-surface)] shadow-sm ring-2 ring-[color:var(--choice-correct-ring)]";
+            labelClassName =
+              "bg-[color:var(--choice-correct-label)] text-[color:var(--app-surface-muted)]";
+            statusClassName =
+              "bg-[color:var(--choice-status-surface)] text-[color:var(--choice-correct-status)]";
             statusText = isAnsweredCorrectly ? "Correct" : "Answer";
             hintText = isAnsweredCorrectly
               ? "정답"
@@ -95,9 +103,11 @@ export function ChoiceList({
 
           if (isWrongSubmittedChoice) {
             containerClassName =
-              "border-rose-500 bg-rose-50 shadow-sm ring-2 ring-rose-200/80";
-            labelClassName = "bg-rose-600 text-white";
-            statusClassName = "bg-white text-rose-700";
+              "border-[color:var(--choice-wrong-border)] bg-[color:var(--choice-wrong-surface)] shadow-sm ring-2 ring-[color:var(--choice-wrong-ring)]";
+            labelClassName =
+              "bg-[color:var(--choice-wrong-label)] text-[color:var(--app-surface-muted)]";
+            statusClassName =
+              "bg-[color:var(--choice-status-surface)] text-[color:var(--choice-wrong-status)]";
             statusText = "Your Pick";
             hintText = "오답";
           }

@@ -32,38 +32,94 @@
   --theme-toggle-text: rgba(16, 36, 62, 0.72);
   --theme-toggle-active-surface: #10243e;
   --theme-toggle-active-text: #ffffff;
+  --choice-default-surface: #f3f7fd;
+  --choice-default-surface-hover: #ffffff;
+  --choice-default-border: rgba(16, 36, 62, 0.1);
+  --choice-default-border-hover: rgba(216, 102, 75, 0.3);
+  --choice-label-surface: #ffffff;
+  --choice-label-text: #10243e;
+  --choice-status-surface: rgba(255, 255, 255, 0.82);
+  --choice-status-text: rgba(16, 36, 62, 0.55);
+  --choice-selected-surface: #fff4e4;
+  --choice-selected-border: #f0b74a;
+  --choice-selected-ring: rgba(240, 183, 74, 0.3);
+  --choice-selected-label: #f59e0b;
+  --choice-selected-status: #a16207;
+  --choice-correct-surface: #eafbf1;
+  --choice-correct-border: #2bb673;
+  --choice-correct-ring: rgba(43, 182, 115, 0.24);
+  --choice-correct-label: #059669;
+  --choice-correct-status: #047857;
+  --choice-wrong-surface: #fff0f3;
+  --choice-wrong-border: #ef476f;
+  --choice-wrong-ring: rgba(239, 71, 111, 0.22);
+  --choice-wrong-label: #e11d48;
+  --choice-wrong-status: #be123c;
+  --choice-exam-surface: #edf2ff;
+  --choice-exam-border: #5f82ff;
+  --choice-exam-ring: rgba(95, 130, 255, 0.28);
+  --choice-exam-label: #5f82ff;
+  --choice-exam-status: #4766d4;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --app-body-background: linear-gradient(180deg, #0a1321 0%, #101b2d 52%, #152237 100%);
-  --app-text: #edf5ff;
-  --app-text-muted: rgba(237, 245, 255, 0.76);
-  --app-text-faint: rgba(237, 245, 255, 0.54);
-  --app-border: rgba(196, 214, 244, 0.14);
-  --app-border-strong: rgba(196, 214, 244, 0.2);
-  --app-surface: rgba(17, 28, 44, 0.9);
-  --app-surface-strong: #162235;
-  --app-surface-soft: #1b2a42;
-  --app-surface-muted: #101a2b;
-  --app-shadow: 0 22px 68px rgba(0, 0, 0, 0.34);
-  --app-navbar-surface: rgba(11, 18, 30, 0.8);
+  --app-body-background: linear-gradient(180deg, #1f2029 0%, #232530 48%, #282a36 100%);
+  --app-text: #f8f8f2;
+  --app-text-muted: rgba(248, 248, 242, 0.78);
+  --app-text-faint: rgba(189, 147, 249, 0.74);
+  --app-border: rgba(189, 147, 249, 0.14);
+  --app-border-strong: rgba(139, 233, 253, 0.2);
+  --app-surface: rgba(50, 53, 68, 0.94);
+  --app-surface-strong: #313341;
+  --app-surface-soft: #3a3d4e;
+  --app-surface-muted: #272935;
+  --app-shadow: 0 24px 72px rgba(10, 10, 18, 0.44);
+  --app-navbar-surface: rgba(33, 35, 46, 0.86);
   --app-home-overview: linear-gradient(
     135deg,
-    rgba(22, 34, 53, 0.94),
-    rgba(41, 28, 24, 0.72),
-    rgba(16, 31, 49, 0.96)
+    rgba(49, 51, 65, 0.98),
+    rgba(68, 71, 90, 0.96),
+    rgba(42, 44, 56, 0.98)
   );
   --app-home-section: linear-gradient(
     180deg,
-    rgba(19, 31, 48, 0.96),
-    rgba(15, 25, 40, 0.96)
+    rgba(49, 51, 65, 0.98),
+    rgba(39, 41, 53, 0.98)
   );
-  --theme-toggle-surface: rgba(14, 23, 37, 0.92);
-  --theme-toggle-border: rgba(196, 214, 244, 0.18);
-  --theme-toggle-text: rgba(237, 245, 255, 0.78);
-  --theme-toggle-active-surface: #edf5ff;
-  --theme-toggle-active-text: #10243e;
+  --theme-toggle-surface: rgba(39, 41, 53, 0.95);
+  --theme-toggle-border: rgba(139, 233, 253, 0.16);
+  --theme-toggle-text: rgba(248, 248, 242, 0.82);
+  --theme-toggle-active-surface: #bd93f9;
+  --theme-toggle-active-text: #1f2029;
+  --choice-default-surface: #343746;
+  --choice-default-surface-hover: #3b3e4f;
+  --choice-default-border: rgba(139, 233, 253, 0.16);
+  --choice-default-border-hover: rgba(139, 233, 253, 0.34);
+  --choice-label-surface: #44475a;
+  --choice-label-text: #f8f8f2;
+  --choice-status-surface: rgba(68, 71, 90, 0.88);
+  --choice-status-text: #bd93f9;
+  --choice-selected-surface: #4b3d22;
+  --choice-selected-border: #ffb86c;
+  --choice-selected-ring: rgba(255, 184, 108, 0.22);
+  --choice-selected-label: #ffb86c;
+  --choice-selected-status: #ffd7ad;
+  --choice-correct-surface: #1f4a3a;
+  --choice-correct-border: #50fa7b;
+  --choice-correct-ring: rgba(80, 250, 123, 0.22);
+  --choice-correct-label: #50fa7b;
+  --choice-correct-status: #cbffd9;
+  --choice-wrong-surface: #4a2536;
+  --choice-wrong-border: #ff5555;
+  --choice-wrong-ring: rgba(255, 85, 85, 0.22);
+  --choice-wrong-label: #ff79c6;
+  --choice-wrong-status: #ffd1df;
+  --choice-exam-surface: #213d52;
+  --choice-exam-border: #8be9fd;
+  --choice-exam-ring: rgba(139, 233, 253, 0.24);
+  --choice-exam-label: #8be9fd;
+  --choice-exam-status: #d7fbff;
 }
 
 * {

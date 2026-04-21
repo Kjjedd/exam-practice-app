@@ -3,7 +3,7 @@
   "phase1": {
     "rangeStart": 1,
     "rangeEnd": 725,
-    "presentCount": 723,
+    "presentCount": 725,
     "defaultPresentNumbers": [
       1,
       2,
@@ -666,6 +666,7 @@
       659,
       660,
       661,
+      662,
       663,
       664,
       665,
@@ -713,6 +714,7 @@
       707,
       708,
       709,
+      710,
       711,
       712,
       713,
@@ -729,14 +731,8 @@
       724,
       725
     ],
-    "defaultMissingNumbersWithin1To725": [
-      662,
-      710
-    ],
-    "candidateBackfillNumbers": [
-      662,
-      710
-    ],
+    "defaultMissingNumbersWithin1To725": [],
+    "candidateBackfillNumbers": [],
     "unresolvedMissingNumbers": []
   },
   "phase2": {
@@ -1688,13 +1684,15 @@
       },
       {
         "questionNumber": 662,
-        "status": "missing_in_default",
-        "defaultQuestionId": null,
+        "status": "match_exact",
+        "defaultQuestionId": "aws-saa-662",
         "plusQuestionId": "aws-saa-pdf-662",
-        "sameNormalizedQuestion": false,
-        "sameNormalizedChoices": false,
-        "sameAnswers": false,
-        "defaultAnswers": [],
+        "sameNormalizedQuestion": true,
+        "sameNormalizedChoices": true,
+        "sameAnswers": true,
+        "defaultAnswers": [
+          3
+        ],
         "plusAnswers": [
           3
         ]
@@ -2422,13 +2420,15 @@
       },
       {
         "questionNumber": 710,
-        "status": "missing_in_default",
-        "defaultQuestionId": null,
+        "status": "match_exact",
+        "defaultQuestionId": "aws-saa-710",
         "plusQuestionId": "aws-saa-pdf-710",
-        "sameNormalizedQuestion": false,
-        "sameNormalizedChoices": false,
-        "sameAnswers": false,
-        "defaultAnswers": [],
+        "sameNormalizedQuestion": true,
+        "sameNormalizedChoices": true,
+        "sameAnswers": true,
+        "defaultAnswers": [
+          0
+        ],
         "plusAnswers": [
           0
         ]
@@ -2660,7 +2660,10 @@
         ]
       }
     ],
-    "overlapVerifiedMatches": [],
+    "overlapVerifiedMatches": [
+      662,
+      710
+    ],
     "overlapAnswerConflicts": [
       604,
       605,
@@ -2797,7 +2800,6 @@
       659,
       660,
       661,
-      662,
       663,
       664,
       665,
@@ -2845,7 +2847,6 @@
       707,
       708,
       709,
-      710,
       711,
       712,
       713,
@@ -2863,36 +2864,22 @@
       725
     ],
     "overlapReliabilitySummary": {
-      "comparedQuestionCount": 124,
-      "exactMatchCount": 0,
+      "comparedQuestionCount": 126,
+      "exactMatchCount": 2,
       "normalizedSameAnswerCount": 0,
       "normalizedDifferentAnswerCount": 0,
       "questionMismatchCount": 124,
-      "missingInDefaultCount": 2,
+      "missingInDefaultCount": 0,
       "missingIn600PlusCount": 0,
-      "answerAgreementCount": 53,
-      "answerAgreementRate": 0.4274,
+      "answerAgreementCount": 55,
+      "answerAgreementRate": 0.4365,
       "trustDecision": "do_not_globally_trust_600_plus_answers"
     }
   },
   "phase3": {
     "canonicalQuestionCount": 725,
-    "backfilledQuestions": [
-      {
-        "questionNumber": 662,
-        "fromQuestionId": "aws-saa-pdf-662",
-        "newQuestionId": "aws-saa-canonical-662"
-      },
-      {
-        "questionNumber": 710,
-        "fromQuestionId": "aws-saa-pdf-710",
-        "newQuestionId": "aws-saa-canonical-710"
-      }
-    ],
-    "backfilledQuestionNumbers": [
-      662,
-      710
-    ],
+    "backfilledQuestions": [],
+    "backfilledQuestionNumbers": [],
     "unresolvedMissingQuestionNumbers": []
   }
 }

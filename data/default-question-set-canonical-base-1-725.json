@@ -10098,7 +10098,7 @@
       "category": "AWS SAA"
     },
     {
-      "id": "aws-saa-canonical-662",
+      "id": "aws-saa-662",
       "question": "한 회사가 AWS Cost Explorer를 사용하여 AWS 비용을 모니터링합니다. 이 회사는 Amazon Elastic Block Store(Amazon EBS) 스토리지 및 스냅샷 비\n용이 매달 증가한다는 것을 알게 됩니다. 하지만 이 회사는 매달 추가 EBS 스토리지를 구매하지 않습니다. 이 회사는 현재 스토리지 사용량에 대한 월별\n비용을 최적화하려고 합니다.\n어떤 솔루션이 가장 적은 운영 오버헤드로 이러한 요구 사항을 충족할까요?",
       "choices": [
         "Amazon CloudWatch Logs의 로그를 사용하여 Amazon EBS의 스토리지 활용도를 모니터링합니다. Amazon EBS Elastic Volumes를 사용하여\nEBS 볼륨의 크기를 줄입니다.",
@@ -10828,7 +10828,7 @@
       "category": "AWS SAA"
     },
     {
-      "id": "aws-saa-canonical-710",
+      "id": "aws-saa-710",
       "question": "Amazon EC2 인스턴스에 호스팅된 회사 웹사이트는 Amazon S3에 저장된 기밀 데이터를 처리합니다. 보안 문제로 인해 회사는 EC2 리소스와 Amazon\nS3 간에 비공개적이고 안전한 연결이 필요합니다.\n어떤 솔루션이 이러한 요구 사항을 충족합니까?",
       "choices": [
         "VPC 엔드포인트에서 액세스를 허용하도록 S3 버킷 정책을 설정합니다.",

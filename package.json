@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit --incremental false"
+    "typecheck": "tsc --noEmit --incremental false",
+    "generate:canonical-saa-phase1-3": "node ./scripts/generate-canonical-saa-phase1-3.mjs"
   },
   "dependencies": {
     "next": "^15.3.0",

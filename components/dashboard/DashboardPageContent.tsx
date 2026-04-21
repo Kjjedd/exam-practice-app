@@ -42,12 +42,12 @@ export function DashboardPageContent() {
 
   if (!state.isReady || state.summary === null) {
     return (
-      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-5xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
-          <h1 className="text-3xl font-semibold tracking-tight text-ink">
+      <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
+        <div className="theme-card mx-auto max-w-5xl rounded-[1.75rem] px-6 py-8 sm:px-8">
+          <h1 className="text-3xl font-semibold tracking-tight text-[var(--app-text)]">
             학습 통계를 불러오는 중입니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             저장된 최신 세션과 문제 세트 상태를 확인한 뒤 대시보드를 준비합니다.
           </p>
         </div>
@@ -59,15 +59,15 @@ export function DashboardPageContent() {
 
   if (!summary.hasLatestQuizSession) {
     return (
-      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-5xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
+      <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
+        <div className="theme-card mx-auto max-w-5xl rounded-[1.75rem] px-6 py-8 sm:px-8">
           <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
             Dashboard
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--app-text)] sm:text-4xl">
             아직 학습 기록이 없습니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             문제풀이를 완료하면 이곳에서 정답률, 풀이 수, 즐겨찾기 수, 마지막
             학습 시점을 한눈에 확인할 수 있습니다.
           </p>
@@ -88,13 +88,13 @@ export function DashboardPageContent() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/quiz"
-              className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+              className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               퀴즈로 이동
             </Link>
             <Link
               href="/"
-              className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
+              className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
             >
               홈으로 이동
             </Link>
@@ -105,16 +105,16 @@ export function DashboardPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
+    <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
       <div className="mx-auto flex max-w-5xl flex-col gap-6">
-        <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
+        <section className="theme-card rounded-[1.75rem] px-6 py-8 sm:px-8">
           <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
             Dashboard
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--app-text)] sm:text-4xl">
             현재 학습 상태를 요약했습니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             최신 세션과 저장된 사용자 상태를 기준으로 핵심 학습 지표를 정리했습니다.
             장기 누적 분석이 아니라 현재 저장된 상태에 대한 정직한 요약입니다.
           </p>

@@ -40,7 +40,7 @@ export function ChoiceList({
   const isMultiAnswer = requiredSelectionCount > 1;
 
   return (
-    <section className="rounded-[1.5rem] border border-ink/10 bg-white px-3 py-3 shadow-sm sm:rounded-[1.75rem] sm:px-8 sm:py-8">
+    <section className="theme-card rounded-[1.5rem] px-3 py-3 sm:rounded-[1.75rem] sm:px-8 sm:py-8">
       <ol className="grid gap-2 sm:gap-3 lg:grid-cols-2 lg:gap-4">
         {choices.map((choice, index) => {
           const choiceParagraphs = getChoiceParagraphs(choice);
@@ -109,7 +109,7 @@ export function ChoiceList({
                 aria-pressed={isSelected}
                 disabled={isSubmitted && !isExamMode}
                 onClick={() => onSelectChoice(index)}
-                className={`h-full w-full rounded-2xl border px-3 py-3.5 text-left transition-colors disabled:cursor-not-allowed sm:px-5 sm:py-5 ${containerClassName}`}
+            className={`h-full w-full rounded-2xl border px-3 py-3.5 text-left transition-colors disabled:cursor-not-allowed sm:px-5 sm:py-5 ${containerClassName}`}
               >
                 <div className="flex items-start gap-3 sm:gap-4">
                   <span
@@ -123,14 +123,14 @@ export function ChoiceList({
                         {choiceParagraphs.map((paragraph, paragraphIndex) => (
                           <p
                             key={`${label}-${paragraphIndex + 1}`}
-                            className="whitespace-pre-wrap text-[0.92rem] leading-5.5 text-ink/90 sm:text-[1rem] sm:leading-7"
+                            className="whitespace-pre-wrap text-[0.92rem] leading-5.5 text-[color:var(--app-text)] sm:text-[1rem] sm:leading-7"
                           >
                             {paragraph}
                           </p>
                         ))}
                       </div>
                       {hintText.length > 0 ? (
-                        <p className="mt-1 hidden text-xs font-medium leading-5 text-ink/60 sm:block">
+                        <p className="mt-1 hidden text-xs font-medium leading-5 text-[color:var(--app-text-faint)] sm:block">
                           {hintText}
                         </p>
                       ) : null}

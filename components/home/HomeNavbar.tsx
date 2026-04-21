@@ -44,11 +44,11 @@ export function HomeNavbar() {
       <div
         className={`mx-auto flex w-full max-w-[1400px] items-center justify-between rounded-full px-4 py-3 transition-all duration-300 sm:px-6 ${
           isScrolled
-            ? "bg-white/70 shadow-[0_18px_45px_rgba(16,36,62,0.1)] backdrop-blur-xl"
+            ? "theme-nav-shell backdrop-blur-xl"
             : "bg-transparent"
         }`}
       >
-        <Link href="/" className="text-lg font-semibold tracking-[-0.04em] text-ink">
+        <Link href="/" className="text-lg font-semibold tracking-[-0.04em] text-[var(--app-text)]">
           Exam Mate
         </Link>
 
@@ -57,7 +57,7 @@ export function HomeNavbar() {
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-ink/68 transition-colors hover:text-ink"
+              className="text-sm font-medium text-[color:var(--app-text-muted)] transition-colors hover:text-[var(--app-text)]"
             >
               {link.label}
             </Link>
@@ -66,7 +66,7 @@ export function HomeNavbar() {
 
         <Link
           href="/import"
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+          className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
         >
           Try now
         </Link>

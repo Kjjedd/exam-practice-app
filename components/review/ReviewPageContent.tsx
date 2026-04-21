@@ -337,15 +337,15 @@ export function ReviewPageContent() {
           </p>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-[1.5rem] border border-ink/10 bg-white/88 px-5 py-5 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/48">
+            <div className="theme-card rounded-[1.5rem] px-5 py-5">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--app-text-faint)]">
                 Reviewed
               </p>
-              <p className="mt-3 text-3xl font-semibold tracking-tight text-ink">
+              <p className="mt-3 text-3xl font-semibold tracking-tight text-[var(--app-text)]">
                 {reviewCompletionSummary.reviewedCount}
               </p>
             </div>
-            <div className="rounded-[1.5rem] border border-tide/18 bg-tide/8 px-5 py-5 shadow-sm">
+            <div className="rounded-[1.5rem] border border-emerald-400/20 bg-emerald-500/10 px-5 py-5 shadow-sm">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-tide/88">
                 Corrected
               </p>
@@ -353,7 +353,7 @@ export function ReviewPageContent() {
                 {reviewCompletionSummary.correctedCount}
               </p>
             </div>
-            <div className="rounded-[1.5rem] border border-coral/18 bg-coral/8 px-5 py-5 shadow-sm">
+            <div className="rounded-[1.5rem] border border-coral/18 bg-coral/10 px-5 py-5 shadow-sm">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-coral/88">
                 Remaining Wrong
               </p>
@@ -364,11 +364,11 @@ export function ReviewPageContent() {
           </div>
 
           {hasRemainingWrongQuestions ? (
-            <div className="mt-6 rounded-[1.5rem] border border-coral/16 bg-white/82 px-5 py-5 shadow-sm">
-              <h2 className="text-xl font-semibold tracking-tight text-ink">
+            <div className="theme-card mt-6 rounded-[1.5rem] px-5 py-5">
+              <h2 className="text-xl font-semibold tracking-tight text-[var(--app-text)]">
                 남은 오답만 다시 풀 수 있습니다.
               </h2>
-              <p className="mt-3 text-sm leading-6 text-ink/68 sm:text-base">
+              <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
                 아직 틀린 문제 {reviewCompletionSummary.remainingWrongQuestionIds.length}개가
                 남아 있습니다. 같은 세트 안에서 2차 오답 복습을 바로 시작할 수 있습니다.
               </p>
@@ -376,49 +376,49 @@ export function ReviewPageContent() {
                 <button
                   type="button"
                   onClick={handleRetryRemainingWrongQuestions}
-                  className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+                  className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
                 >
                   {reviewCompletionSummary.round + 1}차 오답 풀이 시작
                 </button>
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
+                  className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
                 >
                   홈으로 이동
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 rounded-[1.5rem] border border-tide/16 bg-white/82 px-5 py-5 shadow-sm">
-              <h2 className="text-xl font-semibold tracking-tight text-ink">
+            <div className="theme-card mt-6 rounded-[1.5rem] px-5 py-5">
+              <h2 className="text-xl font-semibold tracking-tight text-[var(--app-text)]">
                 이번 오답 복습에서 모두 정답 처리했습니다.
               </h2>
-              <p className="mt-3 text-sm leading-6 text-ink/68 sm:text-base">
+              <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
                 남아 있는 오답이 없어서 다음에는 빈 복습 화면이 보이게 됩니다.
                 다른 범위를 시작하거나 홈에서 새 학습 흐름으로 이어갈 수 있습니다.
               </p>
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-[1.25rem] border border-ink/10 bg-mist/60 px-4 py-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45">
+                <div className="theme-subtle-surface rounded-[1.25rem] px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--app-text-faint)]">
                     Status
                   </p>
-                  <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
+                  <p className="mt-2 text-lg font-semibold tracking-tight text-[var(--app-text)]">
                     오답 0개
                   </p>
                 </div>
-                <div className="rounded-[1.25rem] border border-ink/10 bg-mist/60 px-4 py-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45">
+                <div className="theme-subtle-surface rounded-[1.25rem] px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--app-text-faint)]">
                     Next
                   </p>
-                  <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
+                  <p className="mt-2 text-lg font-semibold tracking-tight text-[var(--app-text)]">
                     새 범위 시작
                   </p>
                 </div>
-                <div className="rounded-[1.25rem] border border-ink/10 bg-mist/60 px-4 py-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45">
+                <div className="theme-subtle-surface rounded-[1.25rem] px-4 py-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--app-text-faint)]">
                     Action
                   </p>
-                  <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
+                  <p className="mt-2 text-lg font-semibold tracking-tight text-[var(--app-text)]">
                     홈으로 복귀
                   </p>
                 </div>
@@ -426,13 +426,13 @@ export function ReviewPageContent() {
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+                  className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
                 >
                   홈으로 이동
                 </Link>
                 <Link
                   href="/quiz"
-                  className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
+                  className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
                 >
                   현재 세트 다시 풀기
                 </Link>

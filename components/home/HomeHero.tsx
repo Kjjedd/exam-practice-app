@@ -1,9 +1,11 @@
 export function HomeHero() {
   return (
-    <section className="theme-card-soft rounded-[1.75rem] px-6 py-6 sm:px-8 sm:py-8">
+    <section className="theme-card-soft relative overflow-hidden rounded-[1.75rem] px-6 py-6 sm:px-8 sm:py-8">
+      <div className="pointer-events-none absolute -left-8 top-0 h-28 w-28 rounded-full bg-[#8be9fd]/10 blur-3xl sm:h-36 sm:w-36" />
+      <div className="pointer-events-none absolute right-0 top-6 h-24 w-24 rounded-full bg-[#bd93f9]/12 blur-3xl sm:h-32 sm:w-32" />
       <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="max-w-3xl">
-          <span className="inline-flex rounded-full bg-coral/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-coral">
+          <span className="inline-flex rounded-full border border-[#8be9fd]/30 bg-[linear-gradient(90deg,_rgba(139,233,253,0.14),_rgba(189,147,249,0.14))] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--app-text)]">
             AWS SAA STUDY HUB
           </span>
           <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-[var(--app-text)] sm:text-5xl lg:text-6xl">

@@ -15,6 +15,9 @@ type PrimaryAction = Readonly<{
   arrowClassName: string;
   panelClassName: string;
   glowClassName: string;
+  darkPanelClassName: string;
+  darkGlowClassName: string;
+  darkStripeClassName: string;
 }>;
 
 const primaryActions: readonly PrimaryAction[] = [
@@ -27,7 +30,12 @@ const primaryActions: readonly PrimaryAction[] = [
     mutedAccentClassName: "border-[#a9c1ff] bg-white text-[#5376d6]",
     arrowClassName: "text-[#5f83e6] group-hover:text-[#274fb5]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f5f8ff)]",
-    glowClassName: "from-[#d7e5ff] via-[#edf4ff] to-transparent"
+    glowClassName: "from-[#d7e5ff] via-[#edf4ff] to-transparent",
+    darkPanelClassName:
+      "bg-[linear-gradient(180deg,_rgba(48,56,86,0.98),_rgba(39,42,62,0.98))]",
+    darkGlowClassName: "from-[#8be9fd]/30 via-[#56a4ff]/18 to-transparent",
+    darkStripeClassName:
+      "bg-[linear-gradient(180deg,_rgba(139,233,253,0.96),_rgba(84,156,255,0.92))]"
   },
   {
     title: "일반 문제풀이",
@@ -38,7 +46,12 @@ const primaryActions: readonly PrimaryAction[] = [
     mutedAccentClassName: "border-[#f1b8ab] bg-white text-[#cb8068]",
     arrowClassName: "text-[#d27d63] group-hover:text-[#ad4f35]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff7f3)]",
-    glowClassName: "from-[#ffd7c8] via-[#fff0e9] to-transparent"
+    glowClassName: "from-[#ffd7c8] via-[#fff0e9] to-transparent",
+    darkPanelClassName:
+      "bg-[linear-gradient(180deg,_rgba(67,52,64,0.98),_rgba(45,40,58,0.98))]",
+    darkGlowClassName: "from-[#ff79c6]/24 via-[#ffb86c]/16 to-transparent",
+    darkStripeClassName:
+      "bg-[linear-gradient(180deg,_rgba(255,121,198,0.96),_rgba(255,184,108,0.94))]"
   },
   {
     title: "랜덤 모드",
@@ -49,7 +62,12 @@ const primaryActions: readonly PrimaryAction[] = [
     mutedAccentClassName: "border-[#ecd3a3] bg-white text-[#b48c45]",
     arrowClassName: "text-[#bc8e36] group-hover:text-[#966503]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff9ef)]",
-    glowClassName: "from-[#ffe0ad] via-[#fff5df] to-transparent"
+    glowClassName: "from-[#ffe0ad] via-[#fff5df] to-transparent",
+    darkPanelClassName:
+      "bg-[linear-gradient(180deg,_rgba(67,58,42,0.98),_rgba(47,42,36,0.98))]",
+    darkGlowClassName: "from-[#ffb86c]/28 via-[#f1fa8c]/16 to-transparent",
+    darkStripeClassName:
+      "bg-[linear-gradient(180deg,_rgba(255,184,108,0.96),_rgba(241,250,140,0.88))]"
   },
   {
     title: "시험 모드",
@@ -60,7 +78,12 @@ const primaryActions: readonly PrimaryAction[] = [
     mutedAccentClassName: "border-[#b7e5d6] bg-white text-[#5f9f89]",
     arrowClassName: "text-[#61ab90] group-hover:text-[#1f6f53]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f2fbf7)]",
-    glowClassName: "from-[#c7f1df] via-[#eefbf5] to-transparent"
+    glowClassName: "from-[#c7f1df] via-[#eefbf5] to-transparent",
+    darkPanelClassName:
+      "bg-[linear-gradient(180deg,_rgba(38,62,66,0.98),_rgba(35,46,58,0.98))]",
+    darkGlowClassName: "from-[#50fa7b]/24 via-[#8be9fd]/18 to-transparent",
+    darkStripeClassName:
+      "bg-[linear-gradient(180deg,_rgba(80,250,123,0.96),_rgba(139,233,253,0.94))]"
   }
 ] as const;
 
@@ -181,11 +204,11 @@ export function PrimaryActions({
         {primaryActions.map((action) => {
           const resolvedPanelClassName =
             theme === "dark"
-              ? "bg-[linear-gradient(180deg,_rgba(23,35,54,0.96),_rgba(18,29,45,0.98))]"
+              ? action.darkPanelClassName
               : action.panelClassName;
           const resolvedGlowClassName =
             theme === "dark"
-              ? "from-white/10 via-white/0 to-transparent"
+              ? action.darkGlowClassName
               : action.glowClassName;
           const isDisabled =
             action.availability === "active-set"
@@ -218,10 +241,15 @@ export function PrimaryActions({
                 key={action.title}
                 className={`theme-card relative overflow-hidden rounded-[1.2rem] p-3.5 sm:rounded-[1.75rem] sm:p-5 xl:px-4 xl:py-3.5 ${resolvedPanelClassName}`}
               >
+              <div
+                className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-80 sm:h-28 ${resolvedGlowClassName}`}
+              />
+              {theme === "dark" ? (
                 <div
-                  className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-80 sm:h-28 ${resolvedGlowClassName}`}
+                  className={`pointer-events-none absolute left-3 top-3 h-12 w-1 rounded-full opacity-90 sm:left-5 sm:top-5 sm:h-16 ${action.darkStripeClassName}`}
                 />
-                <div className="flex items-start justify-between gap-4">
+              ) : null}
+              <div className="flex items-start justify-between gap-4">
                   <span
                     className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${mutedBadgeClassName}`}
                   >
@@ -262,6 +290,11 @@ export function PrimaryActions({
               <div
                 className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-85 transition-opacity group-hover:opacity-100 sm:h-28 ${resolvedGlowClassName}`}
               />
+              {theme === "dark" ? (
+                <div
+                  className={`pointer-events-none absolute left-3 top-3 h-12 w-1 rounded-full opacity-95 sm:left-5 sm:top-5 sm:h-16 ${action.darkStripeClassName}`}
+                />
+              ) : null}
               <div className="flex items-start justify-between gap-4">
                 <span
                   className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${activeBadgeClassName}`}

@@ -246,7 +246,7 @@ export function PrimaryActions({
               />
               {theme === "dark" ? (
                 <div
-                  className={`pointer-events-none absolute left-3 top-3 h-12 w-1 rounded-full opacity-90 sm:left-5 sm:top-5 sm:h-16 ${action.darkStripeClassName}`}
+                  className={`pointer-events-none absolute left-3 top-3 h-8 w-1 rounded-full opacity-90 sm:left-5 sm:top-5 sm:h-10 ${action.darkStripeClassName}`}
                 />
               ) : null}
               <div className="flex items-start justify-between gap-4">
@@ -292,7 +292,7 @@ export function PrimaryActions({
               />
               {theme === "dark" ? (
                 <div
-                  className={`pointer-events-none absolute left-3 top-3 h-12 w-1 rounded-full opacity-95 sm:left-5 sm:top-5 sm:h-16 ${action.darkStripeClassName}`}
+                  className={`pointer-events-none absolute left-3 top-3 h-8 w-1 rounded-full opacity-95 sm:left-5 sm:top-5 sm:h-10 ${action.darkStripeClassName}`}
                 />
               ) : null}
               <div className="flex items-start justify-between gap-4">

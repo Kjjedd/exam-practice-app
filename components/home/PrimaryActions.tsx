@@ -18,7 +18,7 @@ const primaryActions: readonly PrimaryAction[] = [
     href: "/import",
     badge: "Import",
     availability: "always",
-    accentClassName: "border-[#8bb3ff] bg-[#eef4ff] text-[#3f6de0]",
+    accentClassName: "border-[#6d93ff] bg-[#eaf1ff] text-[#1f4fd4]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f5f8ff)]",
     glowClassName: "from-[#d7e5ff] via-[#edf4ff] to-transparent"
   },
@@ -27,7 +27,7 @@ const primaryActions: readonly PrimaryAction[] = [
     href: "/quiz",
     badge: "Normal",
     availability: "active-set",
-    accentClassName: "border-[#ffb39f] bg-[#fff1ed] text-[#dd6a4b]",
+    accentClassName: "border-[#f29a86] bg-[#fff0eb] text-[#c65234]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff7f3)]",
     glowClassName: "from-[#ffd7c8] via-[#fff0e9] to-transparent"
   },
@@ -36,7 +36,7 @@ const primaryActions: readonly PrimaryAction[] = [
     href: "/quiz?mode=random",
     badge: "Random",
     availability: "active-set",
-    accentClassName: "border-[#ffc982] bg-[#fff5e6] text-[#d98b18]",
+    accentClassName: "border-[#efb85f] bg-[#fff4de] text-[#b87408]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#fff9ef)]",
     glowClassName: "from-[#ffe0ad] via-[#fff5df] to-transparent"
   },
@@ -45,7 +45,7 @@ const primaryActions: readonly PrimaryAction[] = [
     href: "/exam",
     badge: "Exam",
     availability: "default-saa",
-    accentClassName: "border-[#9adfcc] bg-[#ebfbf5] text-[#25956d]",
+    accentClassName: "border-[#84d4bb] bg-[#e8faf2] text-[#1d7b5b]",
     panelClassName: "bg-[linear-gradient(180deg,_#ffffff,_#f2fbf7)]",
     glowClassName: "from-[#c7f1df] via-[#eefbf5] to-transparent"
   }
@@ -100,7 +100,7 @@ export function PrimaryActions({
 }: PrimaryActionsProps) {
   return (
     <section className="flex h-full flex-col rounded-[1.5rem] bg-[#f9fbfe] px-4 py-4 sm:rounded-[1.75rem] sm:px-6 sm:py-6">
-      <div className="mb-4 flex items-center justify-between gap-3 sm:mb-5 sm:gap-4">
+      <div className="mb-3 flex items-center justify-between gap-3 sm:mb-5 sm:gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink/45">
             Start
@@ -156,7 +156,7 @@ export function PrimaryActions({
           </div>
         </div>
       ) : null}
-      <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+      <div className="grid flex-1 grid-cols-2 gap-3 sm:gap-4">
         {primaryActions.map((action) => {
           const isDisabled =
             action.availability === "active-set"
@@ -183,23 +183,23 @@ export function PrimaryActions({
             return (
               <div
                 key={action.title}
-                className={`relative overflow-hidden rounded-[1.35rem] border border-ink/10 p-4 shadow-sm sm:rounded-[1.75rem] sm:p-5 ${action.panelClassName}`}
+                className={`relative overflow-hidden rounded-[1.2rem] border border-ink/10 p-3.5 shadow-sm sm:rounded-[1.75rem] sm:p-5 ${action.panelClassName}`}
               >
                 <div
                   className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-80 sm:h-28 ${action.glowClassName}`}
                 />
                 <div className="flex items-start justify-between gap-4">
-                  <span className="inline-flex rounded-2xl border border-ink/10 bg-white/85 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/65 shadow-sm sm:px-3 sm:py-2 sm:text-xs">
+                  <span className="inline-flex rounded-2xl border border-ink/10 bg-white/90 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/65 shadow-sm sm:px-3 sm:py-2 sm:text-xs">
                     {action.badge}
                   </span>
                 </div>
-                <div className="relative mt-4 flex h-full min-h-[104px] flex-col justify-between sm:mt-5 sm:min-h-[132px]">
-                  <h3 className="max-w-[14rem] text-lg font-semibold leading-7 tracking-tight text-ink sm:max-w-none sm:text-[1.45rem] sm:leading-8">
+                <div className="relative mt-3 flex h-full min-h-[88px] flex-col justify-between sm:mt-5 sm:min-h-[132px]">
+                  <h3 className="max-w-[12rem] text-base font-semibold leading-6 tracking-tight text-ink sm:max-w-none sm:text-[1.45rem] sm:leading-8">
                     {action.title}
                   </h3>
-                  <div className="mt-auto pt-4 sm:pt-6">
-                    <div className="rounded-[1rem] border border-dashed border-ink/10 bg-white/75 px-3 py-2.5 backdrop-blur sm:rounded-[1.25rem] sm:px-4 sm:py-3">
-                      <span className="inline-flex rounded-full bg-mist px-2.5 py-1 text-[11px] font-semibold text-ink/48 sm:px-3 sm:text-xs">
+                  <div className="mt-auto pt-3 sm:pt-6">
+                    <div className="rounded-[1rem] border border-dashed border-ink/10 bg-white/75 px-3 py-2 backdrop-blur sm:rounded-[1.25rem] sm:px-4 sm:py-3">
+                      <span className="inline-flex rounded-full bg-mist px-2.5 py-1 text-[10px] font-semibold text-ink/48 sm:px-3 sm:text-xs">
                         {disabledText}
                       </span>
                     </div>
@@ -213,26 +213,26 @@ export function PrimaryActions({
             <Link
               key={action.title}
               href={resolvedHref}
-              className={`group relative overflow-hidden rounded-[1.35rem] border border-ink/10 p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-ink/15 hover:shadow-[0_16px_36px_rgba(16,36,62,0.08)] sm:rounded-[1.75rem] sm:p-5 ${action.panelClassName}`}
+              className={`group relative overflow-hidden rounded-[1.2rem] border border-ink/10 p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-ink/15 hover:shadow-[0_16px_36px_rgba(16,36,62,0.08)] sm:rounded-[1.75rem] sm:p-5 ${action.panelClassName}`}
             >
               <div
                 className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-85 transition-opacity group-hover:opacity-100 sm:h-28 ${action.glowClassName}`}
               />
               <div className="flex items-start justify-between gap-4">
                 <span
-                  className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${action.accentClassName}`}
+                  className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${action.accentClassName}`}
                 >
                   {action.badge}
                 </span>
-                <span className="text-lg text-ink/28 transition-colors group-hover:text-ink/55 sm:text-xl">
+                <span className="text-base text-ink/28 transition-colors group-hover:text-ink/55 sm:text-xl">
                   →
                 </span>
               </div>
-              <div className="relative mt-4 flex h-full min-h-[104px] flex-col justify-end sm:mt-6 sm:min-h-[132px]">
-                <h3 className="max-w-[14rem] text-lg font-semibold leading-7 tracking-tight text-ink sm:max-w-none sm:text-[1.45rem] sm:leading-8">
+              <div className="relative mt-3 flex h-full min-h-[88px] flex-col justify-end sm:mt-6 sm:min-h-[132px]">
+                <h3 className="max-w-[12rem] text-base font-semibold leading-6 tracking-tight text-ink sm:max-w-none sm:text-[1.45rem] sm:leading-8">
                   {action.title}
                 </h3>
-                <div className="mt-auto pt-4 sm:pt-6" />
+                <div className="mt-auto pt-2 sm:pt-6" />
               </div>
             </Link>
           );

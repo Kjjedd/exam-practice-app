@@ -37,20 +37,20 @@ const INITIAL_RESULT_PAGE_STATE: ResultPageState = {
   isReady: false
 };
 
-function getSessionModeDescription(quizSession: QuizSession): string {
+function getSessionModeLabel(quizSession: QuizSession): string {
   if (quizSession.mode === "random") {
-    return "이번 세션은 랜덤 모드로 진행되어 섞인 순서대로 문제를 풀었습니다.";
+    return "랜덤";
   }
 
   if (quizSession.mode === "review") {
-    return "이번 세션은 오답 복습 모드로 진행되었습니다.";
+    return "복습";
   }
 
   if (quizSession.mode === "exam") {
-    return "이번 세션은 시험 모드로 진행되었습니다.";
+    return "시험";
   }
 
-  return "이번 세션은 일반 모드로 진행되었습니다.";
+  return "일반";
 }
 
 function getPracticeExamStatusText(accuracyRate: number, passingPercentage: number): string {
@@ -135,132 +135,51 @@ export function ResultPageContent() {
   const examTemplate = getAwsExamTemplateById(state.quizSession.examTemplateId);
 
   return (
-    <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <section className="overflow-hidden rounded-[1.9rem] border border-ink/10 bg-[linear-gradient(135deg,_rgba(255,255,255,0.98),_rgba(247,250,255,0.96),_rgba(255,246,240,0.94))] px-6 py-8 shadow-[0_24px_60px_rgba(16,36,62,0.08)] sm:px-8">
-          <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+    <main className="min-h-screen bg-mist px-4 py-6 text-ink sm:px-8 sm:py-10">
+      <div className="mx-auto flex max-w-5xl flex-col gap-4 sm:gap-6">
+        <section className="overflow-hidden rounded-[1.5rem] border border-ink/10 bg-[linear-gradient(135deg,_rgba(255,255,255,0.98),_rgba(247,250,255,0.96),_rgba(255,246,240,0.94))] px-4 py-5 shadow-[0_16px_40px_rgba(16,36,62,0.07)] sm:rounded-[1.9rem] sm:px-8 sm:py-8">
+          <span className="inline-flex rounded-full bg-coral/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-coral sm:text-xs">
+            Result
+          </span>
+          <div className="mt-3 flex flex-col gap-3 sm:mt-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <span className="inline-flex rounded-full bg-coral/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-coral">
-                Result
-              </span>
-              <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-                세션 결과를 요약했습니다.
+              <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-4xl">
+                결과
               </h1>
-              <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-                {state.quizSession.questionSetTitle} 기준으로 이번 세션의 전체 흐름을
-                정리했습니다. 숫자 요약을 먼저 확인한 뒤, 아래에서 문제별 정답/오답을
-                살펴볼 수 있습니다.
+              <p className="mt-1 text-sm font-medium text-ink/68 sm:mt-2 sm:text-base">
+                {state.quizSession.questionSetTitle} · {getSessionModeLabel(state.quizSession)}
               </p>
-              <p className="mt-3 text-sm leading-6 text-ink/65 sm:text-base">
-                {getSessionModeDescription(state.quizSession)}
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="inline-flex rounded-full border border-ink/10 bg-white/75 px-4 py-2 text-sm font-semibold text-ink/72">
-                  세트: {state.quizSession.questionSetTitle}
-                </span>
-                <span className="inline-flex rounded-full border border-ink/10 bg-white/75 px-4 py-2 text-sm font-semibold text-ink/72">
-                  모드: {state.quizSession.mode === "random"
-                    ? "랜덤"
-                    : state.quizSession.mode === "exam"
-                      ? "시험"
-                      : state.quizSession.mode === "review"
-                        ? "복습"
-                        : "일반"}
-                </span>
-                <span className="inline-flex rounded-full border border-ink/10 bg-white/75 px-4 py-2 text-sm font-semibold text-ink/72">
-                  정답률: {state.resultSummary.accuracyRate}%
-                </span>
-              </div>
             </div>
-            <div className="grid gap-3 self-start sm:grid-cols-3 xl:grid-cols-1">
-              <div className="rounded-[1.5rem] border border-[#dce5f5] bg-white/85 px-5 py-5 shadow-sm backdrop-blur">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45">
-                  Quick View
-                </p>
-                <p className="mt-3 text-3xl font-semibold tracking-tight text-ink">
-                  {state.resultSummary.correctCount}/{state.resultSummary.totalQuestions}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-ink/62">
-                  정답 수와 전체 문항 수를 한 번에 확인할 수 있습니다.
-                </p>
-              </div>
-              <div className="rounded-[1.5rem] border border-coral/15 bg-coral/5 px-5 py-5 shadow-sm">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-coral/80">
-                  Review Count
-                </p>
-                <p className="mt-3 text-3xl font-semibold tracking-tight text-coral">
-                  {state.wrongCount}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-ink/62">
-                  현재 세트 기준으로 다시 복습할 오답 문제 수입니다.
-                </p>
-              </div>
-              <div className="rounded-[1.5rem] border border-[#dce5f5] bg-[linear-gradient(135deg,_rgba(20,43,74,0.96),_rgba(52,84,138,0.92))] px-5 py-5 text-white shadow-sm">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/58">
-                  Session Flow
-                </p>
-                <p className="mt-3 text-lg font-semibold tracking-tight">
-                  결과 확인 → 오답 복습 → 다음 범위 학습
-                </p>
-                <p className="mt-2 text-sm leading-6 text-white/68">
-                  이번 결과를 바로 다음 학습 흐름으로 연결할 수 있습니다.
-                </p>
-              </div>
-            </div>
+            <span className="inline-flex w-fit rounded-full border border-ink/10 bg-white/80 px-4 py-2 text-sm font-semibold text-ink/72">
+              정답률 {state.resultSummary.accuracyRate}%
+            </span>
           </div>
           {state.quizSession.mode === "exam" && examTemplate !== null ? (
-            <div className="mt-4 rounded-2xl border border-coral/15 bg-coral/5 px-4 py-4 text-sm leading-6 text-ink/78">
-              <p>
-                <span className="font-semibold text-ink">시험:</span> {examTemplate.code} ·{" "}
-                {examTemplate.title}
-              </p>
-              <p className="mt-2">
-                <span className="font-semibold text-ink">문항 수:</span>{" "}
-                {examTemplate.totalQuestionCount}문항
-              </p>
-              <p className="mt-2">
-                <span className="font-semibold text-ink">공식 기준:</span>{" "}
-                {examTemplate.officialScoringSummary}
-              </p>
-              <p className="mt-2">
-                <span className="font-semibold text-ink">앱 연습 기준:</span>{" "}
-                {examTemplate.practiceScoringSummary}
-              </p>
+            <div className="mt-4 rounded-[1.2rem] border border-coral/15 bg-coral/5 px-4 py-3 text-sm leading-6 text-ink/78 sm:rounded-2xl sm:px-5">
+              {examTemplate.code} · {examTemplate.title} · {examTemplate.totalQuestionCount}문항
             </div>
           ) : null}
           {!state.isQuestionSetMatched ? (
-            <p className="mt-3 rounded-2xl border border-coral/15 bg-coral/5 px-4 py-4 text-sm leading-6 text-coral">
-              현재 활성 문제 세트가 이 세션과 다르기 때문에, 일부 문제 본문은 세션
-              기준 기본 라벨로 표시됩니다. 그래도 결과 숫자와 정답/오답 상태는 저장된
-              세션 기준으로 유지됩니다.
+            <p className="mt-3 rounded-[1.2rem] border border-coral/15 bg-coral/5 px-4 py-3 text-sm leading-6 text-coral sm:rounded-2xl">
+              현재 활성 세트가 달라 일부 문항 제목은 기본 라벨로 표시됩니다.
             </p>
           ) : null}
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <ResultSummaryCard
-            label="Total Questions"
+            label="Total"
             value={`${state.resultSummary.totalQuestions}`}
             tone="neutral"
           />
           <ResultSummaryCard
-            label="Answered"
-            value={`${state.resultSummary.answeredCount}`}
-            tone="neutral"
-          />
-          <ResultSummaryCard
-            label="Correct Answers"
+            label="Correct"
             value={`${state.resultSummary.correctCount}`}
             tone="success"
           />
           <ResultSummaryCard
-            label="Wrong Answers"
+            label="Wrong"
             value={`${state.resultSummary.wrongCount}`}
-            tone="warning"
-          />
-          <ResultSummaryCard
-            label="Unanswered"
-            value={`${state.resultSummary.unansweredCount}`}
             tone="warning"
           />
           <ResultSummaryCard
@@ -268,9 +187,16 @@ export function ResultPageContent() {
             value={`${state.resultSummary.accuracyRate}%`}
             tone="neutral"
           />
+          {state.resultSummary.unansweredCount > 0 ? (
+            <ResultSummaryCard
+              label="Pending"
+              value={`${state.resultSummary.unansweredCount}`}
+              tone="warning"
+            />
+          ) : null}
           {state.quizSession.mode === "exam" && examTemplate !== null ? (
             <ResultSummaryCard
-              label="Practice Result"
+              label="Practice"
               value={getPracticeExamStatusText(
                 state.resultSummary.accuracyRate,
                 examTemplate.practicePassingPercentage

@@ -27,6 +27,7 @@ type ReviewPageState = Readonly<{
 }>;
 
 type ReviewCompletionSummary = Readonly<{
+  round: number;
   reviewedCount: number;
   correctedCount: number;
   remainingWrongQuestionIds: readonly QuestionId[];
@@ -48,6 +49,7 @@ const INITIAL_IS_CORRECT: boolean | null = null;
 const INITIAL_IS_EXPLANATION_OPEN = false;
 const INITIAL_REVIEW_RESULTS: readonly QuestionResult[] = [];
 const INITIAL_REVIEW_COMPLETION_SUMMARY: ReviewCompletionSummary | null = null;
+const INITIAL_REVIEW_ROUND = 1;
 
 function resolveWrongQuestions(
   activeQuestionSet: QuestionSet | null,
@@ -95,6 +97,7 @@ export function ReviewPageContent() {
     useState<readonly QuestionResult[]>(INITIAL_REVIEW_RESULTS);
   const [reviewCompletionSummary, setReviewCompletionSummary] =
     useState<ReviewCompletionSummary | null>(INITIAL_REVIEW_COMPLETION_SUMMARY);
+  const [reviewRound, setReviewRound] = useState<number>(INITIAL_REVIEW_ROUND);
   const router = useRouter();
 
   useEffect(() => {
@@ -114,14 +117,38 @@ export function ReviewPageContent() {
   const currentQuestion = state.wrongQuestions[currentQuestionIndex];
   const currentQuestionNumber = currentQuestionIndex + 1;
   const isLastQuestion = currentQuestionIndex === state.wrongQuestions.length - 1;
+  const canGoPrevious = currentQuestionIndex > 0;
+  const canGoNext = isSubmitted && !isLastQuestion;
 
   useEffect(() => {
-    setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
-    setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
-    setIsSubmitted(INITIAL_IS_SUBMITTED);
-    setIsCorrect(INITIAL_IS_CORRECT);
-    setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
-  }, [currentQuestion?.id]);
+    if (currentQuestion === undefined) {
+      setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
+      setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
+      setIsSubmitted(INITIAL_IS_SUBMITTED);
+      setIsCorrect(INITIAL_IS_CORRECT);
+      setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
+      return;
+    }
+
+    const existingResult = reviewResults.find(
+      (result) => result.questionId === currentQuestion.id
+    );
+
+    if (existingResult === undefined) {
+      setSelectedChoiceIndexes(INITIAL_SELECTED_CHOICE_INDEXES);
+      setSubmittedChoiceIndexes(INITIAL_SUBMITTED_CHOICE_INDEXES);
+      setIsSubmitted(INITIAL_IS_SUBMITTED);
+      setIsCorrect(INITIAL_IS_CORRECT);
+      setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
+      return;
+    }
+
+    setSelectedChoiceIndexes(existingResult.selectedAnswers);
+    setSubmittedChoiceIndexes(existingResult.selectedAnswers);
+    setIsSubmitted(true);
+    setIsCorrect(existingResult.isCorrect);
+    setIsExplanationOpen(true);
+  }, [currentQuestion?.id, reviewResults]);
 
   function handleSelectChoice(choiceIndex: ChoiceIndex): void {
     if (currentQuestion === undefined || isSubmitted) {
@@ -201,6 +228,7 @@ export function ReviewPageContent() {
         wrongQuestions: remainingWrongQuestions
       }));
       setReviewCompletionSummary({
+        round: reviewRound,
         reviewedCount: state.wrongQuestions.length,
         correctedCount: state.wrongQuestions.length - remainingWrongQuestionIds.length,
         remainingWrongQuestionIds,
@@ -265,6 +293,7 @@ export function ReviewPageContent() {
     setIsExplanationOpen(INITIAL_IS_EXPLANATION_OPEN);
     setReviewResults(INITIAL_REVIEW_RESULTS);
     setReviewCompletionSummary(INITIAL_REVIEW_COMPLETION_SUMMARY);
+    setReviewRound(reviewCompletionSummary.round + 1);
   }
 
   if (!state.isReady) {
@@ -299,9 +328,7 @@ export function ReviewPageContent() {
             Review Result
           </span>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            {hasRemainingWrongQuestions
-              ? "오답 복습 1차를 마쳤습니다."
-              : "오답 복습을 모두 마쳤습니다."}
+            오답 복습 {reviewCompletionSummary.round}차를 마쳤습니다.
           </h1>
           <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
             {state.activeQuestionSet?.title ?? "현재 문제 세트"} 기준으로{" "}
@@ -351,7 +378,7 @@ export function ReviewPageContent() {
                   onClick={handleRetryRemainingWrongQuestions}
                   className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
                 >
-                  2차 오답 풀이 시작
+                  {reviewCompletionSummary.round + 1}차 오답 풀이 시작
                 </button>
                 <Link
                   href="/"
@@ -506,6 +533,21 @@ export function ReviewPageContent() {
           <QuizNavigation
             isLastQuestion={isLastQuestion}
             onProceed={handleProceed}
+            isFreeNavigationEnabled
+            canGoPrevious={canGoPrevious}
+            canGoNext={canGoNext}
+            canFinishSession={isSubmitted}
+            onGoPrevious={() =>
+              setCurrentQuestionIndex((currentValue) =>
+                currentValue > 0 ? currentValue - 1 : currentValue
+              )
+            }
+            onGoNext={() =>
+              setCurrentQuestionIndex((currentValue) =>
+                currentValue < state.wrongQuestions.length - 1 ? currentValue + 1 : currentValue
+              )
+            }
+            onExitToHome={() => router.push("/")}
           />
         ) : null}
       </div>

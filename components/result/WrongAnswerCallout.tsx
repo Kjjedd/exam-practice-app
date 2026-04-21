@@ -7,39 +7,43 @@ type WrongAnswerCalloutProps = Readonly<{
 export function WrongAnswerCallout({ wrongCount }: WrongAnswerCalloutProps) {
   if (wrongCount === 0) {
     return (
-      <section className="rounded-[1.75rem] border border-tide/20 bg-white px-6 py-6 shadow-sm sm:px-8 sm:py-8">
-        <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
-          Review Ready
-        </span>
-        <h2 className="mt-4 text-2xl font-semibold tracking-tight text-ink">
-          모든 문제를 맞혔습니다.
-        </h2>
-        <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-          이번 세션에는 다시 풀어야 할 오답이 없습니다. 홈으로 돌아가거나 다른
-          문제 세트를 시작해도 좋습니다.
-        </p>
+      <section className="rounded-[1.25rem] border border-tide/20 bg-white px-4 py-4 shadow-sm sm:rounded-[1.75rem] sm:px-6 sm:py-6">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-tide sm:text-xs">
+              Review
+            </span>
+            <h2 className="mt-2 text-lg font-semibold tracking-tight text-ink sm:mt-3 sm:text-2xl">
+              오답 없음
+            </h2>
+          </div>
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center rounded-full border border-ink/15 px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-mist"
+          >
+            홈
+          </Link>
+        </div>
       </section>
     );
   }
 
   return (
-    <section className="rounded-[1.75rem] border border-coral/20 bg-white px-6 py-6 shadow-sm sm:px-8 sm:py-8">
-      <span className="inline-flex rounded-full bg-coral/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-coral">
-        Wrong Answer Review
-      </span>
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-ink">
-        틀린 문제 {wrongCount}개를 바로 복습할 수 있습니다.
-      </h2>
-      <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
-        방금 틀린 문제만 다시 풀면서 놓친 개념을 바로 정리해 보세요. 복습
-        세션은 일반 퀴즈와 분리된 오답 전용 흐름으로 시작됩니다.
-      </p>
-      <div className="mt-6">
+    <section className="rounded-[1.25rem] border border-coral/20 bg-white px-4 py-4 shadow-sm sm:rounded-[1.75rem] sm:px-6 sm:py-6">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <span className="inline-flex rounded-full bg-coral/12 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-coral sm:text-xs">
+            Review
+          </span>
+          <h2 className="mt-2 text-lg font-semibold tracking-tight text-ink sm:mt-3 sm:text-2xl">
+            오답 {wrongCount}개
+          </h2>
+        </div>
         <Link
           href="/review"
-          className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+          className="inline-flex items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
         >
-          오답 복습 시작
+          복습
         </Link>
       </div>
     </section>

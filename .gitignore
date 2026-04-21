@@ -27,3 +27,21 @@ pnpm-debug.log*
 coverage/
 .turbo/
 
+# Local planning / research notes
+codex-project-guidelines-exam-webapp.md
+plan.md
+research.md
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# Misc local artifacts
+*.log
+*.swp
+*.swo
+*.orig

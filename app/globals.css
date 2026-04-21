@@ -4,6 +4,66 @@
 
 :root {
   color-scheme: light;
+  --app-body-background: linear-gradient(180deg, #f4f7fb 0%, #eaf1f7 100%);
+  --app-text: #10243e;
+  --app-text-muted: rgba(16, 36, 62, 0.74);
+  --app-text-faint: rgba(16, 36, 62, 0.5);
+  --app-border: rgba(16, 36, 62, 0.1);
+  --app-border-strong: rgba(16, 36, 62, 0.16);
+  --app-surface: rgba(255, 255, 255, 0.94);
+  --app-surface-strong: #ffffff;
+  --app-surface-soft: #edf3fb;
+  --app-surface-muted: #f7faff;
+  --app-shadow: 0 20px 64px rgba(16, 36, 62, 0.08);
+  --app-navbar-surface: rgba(255, 255, 255, 0.72);
+  --app-home-overview: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.86),
+    rgba(255, 245, 238, 0.84),
+    rgba(236, 244, 255, 0.82)
+  );
+  --app-home-section: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.82),
+    rgba(248, 251, 255, 0.9)
+  );
+  --theme-toggle-surface: rgba(255, 255, 255, 0.88);
+  --theme-toggle-border: rgba(16, 36, 62, 0.12);
+  --theme-toggle-text: rgba(16, 36, 62, 0.72);
+  --theme-toggle-active-surface: #10243e;
+  --theme-toggle-active-text: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --app-body-background: linear-gradient(180deg, #0a1321 0%, #101b2d 52%, #152237 100%);
+  --app-text: #edf5ff;
+  --app-text-muted: rgba(237, 245, 255, 0.76);
+  --app-text-faint: rgba(237, 245, 255, 0.54);
+  --app-border: rgba(196, 214, 244, 0.14);
+  --app-border-strong: rgba(196, 214, 244, 0.2);
+  --app-surface: rgba(17, 28, 44, 0.9);
+  --app-surface-strong: #162235;
+  --app-surface-soft: #1b2a42;
+  --app-surface-muted: #101a2b;
+  --app-shadow: 0 22px 68px rgba(0, 0, 0, 0.34);
+  --app-navbar-surface: rgba(11, 18, 30, 0.8);
+  --app-home-overview: linear-gradient(
+    135deg,
+    rgba(22, 34, 53, 0.94),
+    rgba(41, 28, 24, 0.72),
+    rgba(16, 31, 49, 0.96)
+  );
+  --app-home-section: linear-gradient(
+    180deg,
+    rgba(19, 31, 48, 0.96),
+    rgba(15, 25, 40, 0.96)
+  );
+  --theme-toggle-surface: rgba(14, 23, 37, 0.92);
+  --theme-toggle-border: rgba(196, 214, 244, 0.18);
+  --theme-toggle-text: rgba(237, 245, 255, 0.78);
+  --theme-toggle-active-surface: #edf5ff;
+  --theme-toggle-active-text: #10243e;
 }
 
 * {
@@ -21,7 +81,11 @@ body {
     "Apple SD Gothic Neo",
     "Noto Sans KR",
     sans-serif;
-  background: linear-gradient(180deg, #f4f7fb 0%, #eaf1f7 100%);
+  background: var(--app-body-background);
+  color: var(--app-text);
+  transition:
+    background 180ms ease,
+    color 180ms ease;
 }
 
 a {
@@ -104,4 +168,89 @@ a {
 
 .processing-dot-delay {
   animation-delay: 0.6s;
+}
+
+.theme-page-shell {
+  background: var(--app-body-background);
+  color: var(--app-text);
+}
+
+.theme-home-overview {
+  background: var(--app-home-overview);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+.theme-home-section {
+  background: var(--app-home-section);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+.theme-card {
+  background: var(--app-surface-strong);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+.theme-card-soft {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+.theme-subtle-surface {
+  background: var(--app-surface-soft);
+  border: 1px solid var(--app-border);
+}
+
+.theme-muted-surface {
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+}
+
+.theme-input {
+  background: var(--app-surface-soft);
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
+}
+
+.theme-input:focus {
+  background: var(--app-surface-strong);
+  border-color: rgba(216, 102, 75, 0.48);
+}
+
+.theme-outline-button {
+  background: var(--app-surface-strong);
+  border: 1px solid var(--app-border-strong);
+  color: var(--app-text);
+}
+
+.theme-outline-button:hover {
+  background: var(--app-surface-soft);
+}
+
+.theme-solid-button {
+  background: var(--app-text);
+  color: var(--app-surface-strong);
+}
+
+.theme-nav-shell {
+  background: var(--app-navbar-surface);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+.theme-toggle-shell {
+  background: var(--theme-toggle-surface);
+  border: 1px solid var(--theme-toggle-border);
+}
+
+.theme-toggle-button-idle {
+  color: var(--theme-toggle-text);
+}
+
+.theme-toggle-button-active {
+  background: var(--theme-toggle-active-surface);
+  color: var(--theme-toggle-active-text);
 }

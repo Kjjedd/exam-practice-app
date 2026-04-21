@@ -87,12 +87,12 @@ export function ResultPageContent() {
 
   if (!state.isReady) {
     return (
-      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-4xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
-          <h1 className="text-3xl font-semibold tracking-tight text-ink">
+      <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
+        <div className="theme-card mx-auto max-w-4xl rounded-[1.75rem] px-6 py-8 sm:px-8">
+          <h1 className="text-3xl font-semibold tracking-tight text-[var(--app-text)]">
             결과를 불러오는 중입니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             마지막 세션 결과와 활성 문제 세트를 확인한 뒤 요약 화면을 준비합니다.
           </p>
         </div>
@@ -102,28 +102,28 @@ export function ResultPageContent() {
 
   if (state.resultSummary === null || state.quizSession === null) {
     return (
-      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-4xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
+      <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
+        <div className="theme-card mx-auto max-w-4xl rounded-[1.75rem] px-6 py-8 sm:px-8">
           <span className="inline-flex rounded-full bg-coral/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-coral">
             Result
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink">
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--app-text)]">
             표시할 세션 결과가 아직 없습니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             퀴즈를 끝까지 진행하면 이 화면에서 총 문제 수, 정답 수, 오답 수,
             정답률과 문제별 결과를 확인할 수 있습니다.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/"
-              className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+              className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               홈으로 이동
             </Link>
             <Link
               href="/quiz"
-              className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
+              className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
             >
               퀴즈로 돌아가기
             </Link>
@@ -135,22 +135,22 @@ export function ResultPageContent() {
   const examTemplate = getAwsExamTemplateById(state.quizSession.examTemplateId);
 
   return (
-    <main className="min-h-screen bg-mist px-4 py-6 text-ink sm:px-8 sm:py-10">
+    <main className="theme-page-shell min-h-screen px-4 py-6 sm:px-8 sm:py-10">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 sm:gap-6">
-        <section className="overflow-hidden rounded-[1.5rem] border border-ink/10 bg-[linear-gradient(135deg,_rgba(255,255,255,0.98),_rgba(247,250,255,0.96),_rgba(255,246,240,0.94))] px-4 py-5 shadow-[0_16px_40px_rgba(16,36,62,0.07)] sm:rounded-[1.9rem] sm:px-8 sm:py-8">
+        <section className="theme-home-overview overflow-hidden rounded-[1.5rem] px-4 py-5 sm:rounded-[1.9rem] sm:px-8 sm:py-8">
           <span className="inline-flex rounded-full bg-coral/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-coral sm:text-xs">
             Result
           </span>
           <div className="mt-3 flex flex-col gap-3 sm:mt-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-4xl">
+              <h1 className="text-2xl font-semibold tracking-tight text-[var(--app-text)] sm:text-4xl">
                 결과
               </h1>
-              <p className="mt-1 text-sm font-medium text-ink/68 sm:mt-2 sm:text-base">
+              <p className="mt-1 text-sm font-medium text-[color:var(--app-text-muted)] sm:mt-2 sm:text-base">
                 {state.quizSession.questionSetTitle} · {getSessionModeLabel(state.quizSession)}
               </p>
             </div>
-            <span className="inline-flex w-fit rounded-full border border-ink/10 bg-white/80 px-4 py-2 text-sm font-semibold text-ink/72">
+            <span className="theme-subtle-surface inline-flex w-fit rounded-full px-4 py-2 text-sm font-semibold text-[color:var(--app-text-muted)]">
               정답률 {state.resultSummary.accuracyRate}%
             </span>
           </div>

@@ -26,13 +26,13 @@ const secondaryLinks: readonly SecondaryLink[] = [
 
 export function SecondaryLinks() {
   return (
-    <section className="rounded-[1.75rem] border border-ink/10 bg-[#fbfcfe] p-5 sm:p-6">
+    <section className="theme-muted-surface rounded-[1.75rem] p-5 sm:p-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/45">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
             Shortcuts
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink">바로가기</h2>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--app-text)]">바로가기</h2>
         </div>
       </div>
       <div className="mt-5 grid gap-3 md:grid-cols-3">
@@ -40,10 +40,10 @@ export function SecondaryLinks() {
           <Link
             key={link.title}
             href={link.href}
-            className="rounded-[1.5rem] border border-ink/10 bg-white px-5 py-4 shadow-sm transition-colors hover:border-coral/30 hover:bg-mist"
+            className="theme-card rounded-[1.5rem] px-5 py-4 transition-colors hover:border-coral/30 hover:bg-[var(--app-surface-soft)]"
           >
-            <h3 className="text-base font-semibold text-ink">{link.title}</h3>
-            <p className="mt-1 text-sm leading-6 text-ink/70">
+            <h3 className="text-base font-semibold text-[var(--app-text)]">{link.title}</h3>
+            <p className="mt-1 text-sm leading-6 text-[color:var(--app-text-muted)]">
               {link.description}
             </p>
           </Link>

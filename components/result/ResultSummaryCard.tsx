@@ -17,8 +17,8 @@ export function ResultSummaryCard({
         : "border-[#dce5f5] bg-mist text-ink";
 
   return (
-    <article className="rounded-[1.25rem] border border-ink/10 bg-white/92 px-4 py-4 shadow-sm backdrop-blur sm:rounded-[1.5rem] sm:px-5 sm:py-5">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/48 sm:text-[11px]">
+    <article className="theme-card rounded-[1.25rem] px-4 py-4 backdrop-blur sm:rounded-[1.5rem] sm:px-5 sm:py-5">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)] sm:text-[11px]">
         {label}
       </p>
       <div className="mt-3 flex items-end justify-between gap-3 sm:mt-5">
@@ -27,7 +27,7 @@ export function ResultSummaryCard({
         >
           {value}
         </div>
-        <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-ink/32 sm:text-xs">
+        <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-[color:var(--app-text-faint)] sm:text-xs">
           Score
         </span>
       </div>

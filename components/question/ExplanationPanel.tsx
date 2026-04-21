@@ -20,11 +20,11 @@ export function ExplanationPanel({
     : "현재 선택은 오답입니다. 아래 해설을 읽으면서 어떤 단서를 놓쳤는지 차분히 확인해 보세요.";
 
   return (
-    <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-6 shadow-sm sm:px-8 sm:py-8">
+    <section className="theme-card rounded-[1.75rem] px-6 py-6 sm:px-8 sm:py-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h3 className="text-xl font-semibold tracking-tight text-ink">
+            <h3 className="text-xl font-semibold tracking-tight text-[var(--app-text)]">
               해설
             </h3>
             <span
@@ -37,33 +37,33 @@ export function ExplanationPanel({
               {resultLabel}
             </span>
           </div>
-          <p className="mt-3 text-base font-medium leading-7 text-ink">
+          <p className="mt-3 text-base font-medium leading-7 text-[var(--app-text)]">
             {feedbackTitle}
           </p>
-          <p className="mt-2 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-2 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             {feedbackDescription}
           </p>
         </div>
         <button
           type="button"
           onClick={onToggle}
-          className="inline-flex items-center justify-center rounded-full border border-ink/15 px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-mist"
+          className="theme-outline-button inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-colors"
         >
           {isOpen ? "해설 접기" : "해설 펼치기"}
         </button>
       </div>
 
       {isOpen ? (
-        <div className="mt-6 rounded-3xl bg-mist px-5 py-5 sm:px-6">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-ink/55">
+        <div className="theme-subtle-surface mt-6 rounded-3xl px-5 py-5 sm:px-6">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
             Explanation
           </p>
-          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-ink/80 sm:text-base">
+          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[color:var(--app-text-muted)] sm:text-base">
             {explanation}
           </p>
         </div>
       ) : (
-        <p className="mt-6 text-sm leading-6 text-ink/65 sm:text-base">
+        <p className="mt-6 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
           해설은 준비되어 있습니다. 필요할 때 펼쳐서 근거를 다시 확인해 보세요.
         </p>
       )}

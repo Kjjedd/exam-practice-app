@@ -298,12 +298,12 @@ export function ReviewPageContent() {
 
   if (!state.isReady) {
     return (
-      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-4xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
-          <h1 className="text-3xl font-semibold tracking-tight text-ink">
+      <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
+        <div className="theme-card mx-auto max-w-4xl rounded-[1.75rem] px-6 py-8 sm:px-8">
+          <h1 className="text-3xl font-semibold tracking-tight text-[var(--app-text)]">
             오답 복습을 준비하는 중입니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             현재 활성 문제 세트에 저장된 오답 목록을 확인한 뒤 복습 화면을 준비합니다.
           </p>
         </div>
@@ -316,8 +316,8 @@ export function ReviewPageContent() {
       reviewCompletionSummary.remainingWrongQuestionIds.length > 0;
 
     return (
-      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-4xl rounded-[1.9rem] border border-ink/10 bg-[linear-gradient(135deg,_rgba(255,255,255,0.98),_rgba(247,250,255,0.96),_rgba(255,246,240,0.94))] px-6 py-8 shadow-[0_24px_60px_rgba(16,36,62,0.08)] sm:px-8">
+      <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
+        <div className="theme-home-overview mx-auto max-w-4xl rounded-[1.9rem] px-6 py-8 sm:px-8">
           <span
             className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
               hasRemainingWrongQuestions
@@ -327,10 +327,10 @@ export function ReviewPageContent() {
           >
             Review Result
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--app-text)] sm:text-4xl">
             오답 복습 {reviewCompletionSummary.round}차를 마쳤습니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             {state.activeQuestionSet?.title ?? "현재 문제 세트"} 기준으로{" "}
             {reviewCompletionSummary.reviewedCount}문제를 다시 풀었고,{" "}
             {reviewCompletionSummary.correctedCount}문제를 정리했습니다.
@@ -452,28 +452,28 @@ export function ReviewPageContent() {
 
   if (state.activeQuestionSet === null || state.wrongQuestions.length === 0) {
     return (
-      <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
-        <div className="mx-auto max-w-4xl rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
+      <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
+        <div className="theme-card mx-auto max-w-4xl rounded-[1.75rem] px-6 py-8 sm:px-8">
           <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
             Review
           </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-ink">
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--app-text)]">
             복습할 오답이 아직 없습니다.
           </h1>
-          <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             {state.activeQuestionSet?.title ?? "현재 문제 세트"} 기준으로 남아 있는 오답이
             없습니다. 새 오답이 생기면 이곳에서 세트별로 다시 학습할 수 있습니다.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/result"
-              className="inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+              className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               결과 화면으로 이동
             </Link>
             <Link
               href="/"
-              className="inline-flex items-center justify-center rounded-full border border-ink/15 px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-ink/25 hover:bg-white"
+              className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
             >
               홈으로 이동
             </Link>
@@ -484,14 +484,14 @@ export function ReviewPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-mist px-6 py-10 text-ink sm:px-10 sm:py-14">
+    <main className="theme-page-shell min-h-screen px-6 py-10 sm:px-10 sm:py-14">
       <div className="mx-auto flex max-w-4xl flex-col gap-6">
         <QuizHeader
           questionSetTitle={`${state.activeQuestionSet.title} · 오답 복습`}
         />
-        <section className="rounded-[1.5rem] border border-coral/15 bg-white px-5 py-4 shadow-sm sm:px-6">
+        <section className="theme-card rounded-[1.5rem] border-coral/15 px-5 py-4 sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm leading-6 text-ink/72">
+            <p className="text-sm leading-6 text-[color:var(--app-text-muted)]">
               현재 세트에 남아 있는 오답 {state.wrongQuestionIds.length}개 중{" "}
               {currentQuestionNumber}번째 문제를 복습 중입니다.
             </p>

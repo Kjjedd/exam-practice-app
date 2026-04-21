@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "../components/theme/ThemeProvider";
+import { ThemeToggle } from "../components/theme/ThemeToggle";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,9 +13,32 @@ type RootLayoutProps = Readonly<{
 }>;
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const themeBootstrapScript = `
+    (function () {
+      try {
+        var key = "exammate-theme";
+        var storedTheme = window.localStorage.getItem(key);
+        var theme = storedTheme === "dark" || storedTheme === "light"
+          ? storedTheme
+          : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  `;
+
   return (
-    <html lang="ko">
-      <body>{children}</body>
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />
+      </head>
+      <body>
+        <ThemeProvider>
+          {children}
+          <ThemeToggle />
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

@@ -645,11 +645,11 @@ export function QuizPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-mist px-3 py-4 text-ink sm:px-10 sm:py-14">
+    <main className="theme-page-shell min-h-screen px-3 py-4 sm:px-10 sm:py-14">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 sm:gap-6">
         {!state.isReady ? (
-          <section className="rounded-[1.5rem] border border-ink/10 bg-white px-4 py-5 shadow-sm sm:rounded-[1.75rem] sm:px-8 sm:py-8">
-            <h1 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+          <section className="theme-card rounded-[1.5rem] px-4 py-5 sm:rounded-[1.75rem] sm:px-8 sm:py-8">
+            <h1 className="text-xl font-semibold tracking-tight text-[var(--app-text)] sm:text-2xl">
               불러오는 중입니다.
             </h1>
           </section>

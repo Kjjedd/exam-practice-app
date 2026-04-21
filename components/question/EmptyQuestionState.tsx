@@ -14,14 +14,14 @@ export function EmptyQuestionState({
   primaryLabel = "PDF 가져오기"
 }: EmptyQuestionStateProps) {
   return (
-    <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
+    <section className="theme-card rounded-[1.75rem] px-6 py-8 sm:px-8">
       <span className="inline-flex rounded-full border border-coral/25 bg-coral/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-coral">
         Empty State
       </span>
-      <h1 className="mt-5 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+      <h1 className="mt-5 text-2xl font-semibold tracking-tight text-[var(--app-text)] sm:text-3xl">
         {title}
       </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/70 sm:text-base">
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
         {description}
       </p>
       <div className="mt-6 flex flex-wrap gap-3">
@@ -33,7 +33,7 @@ export function EmptyQuestionState({
         </Link>
         <Link
           href="/"
-          className="inline-flex items-center rounded-full border border-ink/15 bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors hover:border-coral/40 hover:text-coral"
+          className="theme-outline-button inline-flex items-center rounded-full px-5 py-3 text-sm font-semibold transition-colors hover:border-coral/40 hover:text-coral"
         >
           홈으로 돌아가기
         </Link>

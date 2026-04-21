@@ -14,7 +14,7 @@ export function FavoriteToggle({
       className={`inline-flex items-center justify-center rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
         isFavorite
           ? "border-coral/30 bg-coral/10 text-coral hover:bg-coral/15"
-          : "border-ink/15 bg-white text-ink hover:border-ink/25 hover:bg-mist"
+          : "theme-outline-button hover:border-ink/25"
       }`}
     >
       {isFavorite ? "저장됨" : "저장"}

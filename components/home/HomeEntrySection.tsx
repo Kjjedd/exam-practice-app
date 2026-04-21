@@ -320,7 +320,7 @@ export function HomeEntrySection() {
   );
 
   return (
-    <section className="flex flex-col gap-4 xl:gap-5">
+    <section className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr] xl:items-start xl:gap-4">
       <ActiveQuestionSetSummary
         activeQuestionSet={state.activeQuestionSet}
         questionSetSummaries={state.questionSetSummaries}

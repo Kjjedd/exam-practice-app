@@ -244,11 +244,6 @@ export function PrimaryActions({
               <div
                 className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-80 sm:h-28 ${resolvedGlowClassName}`}
               />
-              {theme === "dark" ? (
-                <div
-                  className={`pointer-events-none absolute left-3 top-3 h-8 w-1 rounded-full opacity-90 sm:left-5 sm:top-5 sm:h-10 ${action.darkStripeClassName}`}
-                />
-              ) : null}
               <div className="flex items-start justify-between gap-4">
                   <span
                     className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${mutedBadgeClassName}`}
@@ -290,11 +285,6 @@ export function PrimaryActions({
               <div
                 className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b opacity-85 transition-opacity group-hover:opacity-100 sm:h-28 ${resolvedGlowClassName}`}
               />
-              {theme === "dark" ? (
-                <div
-                  className={`pointer-events-none absolute left-3 top-3 h-8 w-1 rounded-full opacity-95 sm:left-5 sm:top-5 sm:h-10 ${action.darkStripeClassName}`}
-                />
-              ) : null}
               <div className="flex items-start justify-between gap-4">
                 <span
                   className={`inline-flex rounded-2xl border px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] shadow-sm sm:px-3 sm:py-2 sm:text-xs ${activeBadgeClassName}`}

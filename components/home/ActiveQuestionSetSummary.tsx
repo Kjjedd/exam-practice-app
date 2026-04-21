@@ -28,13 +28,13 @@ export function ActiveQuestionSetSummary({
   const hasActiveQuestionSet = activeQuestionSet !== null;
 
   return (
-    <section className="flex h-full flex-col rounded-[1.5rem] bg-[linear-gradient(180deg,_rgba(244,247,251,1),_rgba(255,255,255,1))] p-4 sm:rounded-[1.75rem] sm:p-7">
+    <section className="flex h-full flex-col rounded-[1.5rem] bg-[linear-gradient(180deg,_rgba(244,247,251,1),_rgba(255,255,255,1))] p-4 sm:rounded-[1.75rem] sm:p-7 xl:p-5">
       <div className="flex items-start justify-between gap-3 sm:gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/45">
             Active Set
           </p>
-          <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-ink sm:mt-2 sm:text-2xl">
+          <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-ink sm:mt-2 sm:text-2xl xl:text-[1.55rem]">
             문제 세트
           </h2>
         </div>
@@ -49,14 +49,14 @@ export function ActiveQuestionSetSummary({
       ) : null}
 
       {isReady && hasActiveQuestionSet ? (
-        <div className="mt-4 flex flex-1 flex-col gap-3 sm:mt-6 sm:gap-4">
-          <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem] sm:px-5 sm:py-5">
-            <h3 className="text-lg font-semibold text-ink sm:text-2xl">
+        <div className="mt-4 flex flex-1 flex-col gap-3 sm:mt-6 sm:gap-4 xl:mt-4">
+          <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem] sm:px-5 sm:py-5 xl:px-4 xl:py-4">
+            <h3 className="text-lg font-semibold text-ink sm:text-2xl xl:text-xl">
               {activeQuestionSet.title}
             </h3>
           </div>
           {questionSetSummaries.length > 1 ? (
-            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
+            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem] xl:px-4 xl:py-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
@@ -64,14 +64,14 @@ export function ActiveQuestionSetSummary({
                   </p>
                 </div>
               </div>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-3 flex flex-wrap gap-2">
                 {questionSetSummaries.map((summary) => (
                   <button
                     key={summary.id}
                     type="button"
                     onClick={() => onSelectQuestionSet?.(summary.id)}
                     disabled={summary.isActive}
-                    className={`rounded-full px-3.5 py-2 text-xs font-semibold transition-colors sm:px-4 sm:text-sm ${
+                    className={`rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors sm:px-4 sm:text-sm xl:px-3.5 xl:py-1.5 xl:text-xs ${
                       summary.isActive
                         ? "cursor-default bg-ink text-white"
                         : "border border-ink/12 bg-mist text-ink hover:border-coral/30 hover:bg-white"
@@ -84,12 +84,14 @@ export function ActiveQuestionSetSummary({
             </div>
           ) : null}
           {isRangeSelectable ? (
-            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
-              <div className="flex flex-col gap-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
-                  Range
-                </p>
-                <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
+            <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem] xl:px-4 xl:py-4">
+              <div className="flex flex-col gap-3 xl:grid xl:grid-cols-[1fr_1fr_auto] xl:items-end xl:gap-3">
+                <div className="xl:col-span-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                    Range
+                  </p>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2 sm:gap-3 xl:col-span-2 xl:w-full">
                   <label className="flex flex-col gap-2 text-sm font-medium text-ink/72">
                     시작
                     <input
@@ -99,7 +101,7 @@ export function ActiveQuestionSetSummary({
                       max={activeQuestionSet.maximumQuestionNumber ?? undefined}
                       value={rangeStartInput}
                       onChange={(event) => onChangeRangeStart?.(event.target.value)}
-                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white sm:text-base"
+                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white sm:text-base xl:px-3.5 xl:py-2.5 xl:text-sm"
                     />
                   </label>
                   <label className="flex flex-col gap-2 text-sm font-medium text-ink/72">
@@ -111,24 +113,26 @@ export function ActiveQuestionSetSummary({
                       max={activeQuestionSet.maximumQuestionNumber ?? undefined}
                       value={rangeEndInput}
                       onChange={(event) => onChangeRangeEnd?.(event.target.value)}
-                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white sm:text-base"
+                      className="rounded-2xl border border-ink/10 bg-mist px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-coral/40 focus:bg-white sm:text-base xl:px-3.5 xl:py-2.5 xl:text-sm"
                     />
                   </label>
                 </div>
+                <div className="rounded-[1rem] border border-ink/10 bg-mist/80 px-4 py-3 xl:min-w-[110px] xl:px-4 xl:py-2.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/45">
+                    Questions
+                  </p>
+                  <p className="mt-1 text-lg font-semibold text-ink xl:text-xl">
+                    {activeQuestionSet.questionCount}
+                  </p>
+                </div>
                 {rangeValidationMessage !== null ? (
-                  <p className="text-sm leading-6 text-[#b36926]">{rangeValidationMessage}</p>
+                  <p className="text-sm leading-6 text-[#b36926] xl:col-span-3">
+                    {rangeValidationMessage}
+                  </p>
                 ) : null}
               </div>
             </div>
           ) : null}
-          <div className="rounded-[1.25rem] border border-ink/10 bg-white px-4 py-4 shadow-sm sm:rounded-[1.5rem]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
-              Questions
-            </p>
-            <p className="mt-1.5 text-xl font-semibold text-ink sm:mt-2 sm:text-2xl">
-              {activeQuestionSet.questionCount}
-            </p>
-          </div>
         </div>
       ) : null}
 

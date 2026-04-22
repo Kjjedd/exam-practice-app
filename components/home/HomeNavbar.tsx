@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "../theme/ThemeToggle";
 
 type NavbarLink = Readonly<{
   label: string;
@@ -64,12 +65,7 @@ export function HomeNavbar() {
           ))}
         </nav>
 
-        <Link
-          href="/import"
-          className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
-        >
-          Try now
-        </Link>
+        <ThemeToggle variant="inline" />
       </div>
     </header>
   );

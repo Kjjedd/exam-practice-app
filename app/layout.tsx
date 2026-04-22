@@ -36,7 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body>
         <ThemeProvider>
           {children}
-          <ThemeToggle />
+          <ThemeToggle hiddenOnHome />
         </ThemeProvider>
       </body>
     </html>

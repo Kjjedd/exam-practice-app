@@ -741,7 +741,7 @@ export function QuizPageContent() {
                 onToggle={handleToggleExplanation}
               />
             ) : null}
-            {state.activeQuestionSet !== null ? (
+            {!isExamMode && isSubmitted && state.activeQuestionSet !== null ? (
               <QuestionContributionActions
                 question={currentQuestion}
                 questionSet={state.activeQuestionSet}

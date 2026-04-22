@@ -51,8 +51,7 @@ export function QuestionContributionActions({
             Contribution
           </p>
           <p className="mt-2 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-[0.95rem]">
-            문제 오류나 해설 보완은 GitHub Issue로 제안할 수 있습니다. 정답은
-            자동으로 바뀌지 않으며, 검토 후 반영됩니다.
+            문제 오류나 해설 보완은 GitHub Issue로 제안할 수 있습니다.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">

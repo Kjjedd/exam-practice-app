@@ -6,12 +6,12 @@ import { THEME_DARK, THEME_LIGHT } from "../../lib/theme/theme";
 import { useTheme } from "./ThemeProvider";
 
 type ThemeToggleProps = Readonly<{
-  hiddenOnHome?: boolean;
+  hiddenOnPathnames?: readonly string[];
   variant?: "floating" | "inline" | "compact";
 }>;
 
 export function ThemeToggle({
-  hiddenOnHome = false,
+  hiddenOnPathnames = [],
   variant = "floating"
 }: ThemeToggleProps) {
   const { isReady, setTheme, theme } = useTheme();
@@ -32,7 +32,7 @@ export function ThemeToggle({
         ? "theme-toggle-button theme-toggle-button-idle inline-flex h-11 w-11 items-center justify-center rounded-full text-lg font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(15,23,42,0.18)]"
       : "theme-toggle-button theme-toggle-button-idle inline-flex h-11 w-11 items-center justify-center rounded-full text-lg font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(15,23,42,0.18)]";
 
-  if (hiddenOnHome && pathname === "/") {
+  if (hiddenOnPathnames.includes(pathname)) {
     return null;
   }
 

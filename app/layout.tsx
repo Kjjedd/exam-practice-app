@@ -36,7 +36,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body>
         <ThemeProvider>
           {children}
-          <ThemeToggle hiddenOnHome />
+          <ThemeToggle hiddenOnPathnames={["/", "/quiz"]} />
         </ThemeProvider>
       </body>
     </html>

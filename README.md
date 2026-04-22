@@ -210,9 +210,9 @@ components/
   theme/
 
 data/
-  default-question-set.json
+  default-question-set-base-1-725.json
   default-question-set-saa-600-plus.json
-  default-question-set-saa-verified-726-1019.json
+  default-question-set-verified-726-1019.json
 
 lib/
   data/

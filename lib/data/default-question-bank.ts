@@ -1,11 +1,18 @@
-import defaultQuestionSetJson from "../../data/default-question-set.json";
+import defaultQuestionSetBaseJson from "../../data/default-question-set-base-1-725.json";
 import defaultQuestionSet600PlusJson from "../../data/default-question-set-saa-600-plus.json";
+import defaultQuestionSetVerifiedTailJson from "../../data/default-question-set-verified-726-1019.json";
 import type { QuestionBank, QuestionSet } from "../types";
 import { validateQuestionBank, validateQuestionSet } from "../storage/question-bank-model";
 
 const DEFAULT_QUESTION_SET = validateQuestionSet({
-  ...(defaultQuestionSetJson as QuestionSet),
-  title: "AWS SAA 전체 세트"
+  id: "aws-saa-default",
+  title: "AWS SAA 전체 세트",
+  sourceLabel: "AWS SAA Canonical 1~1019 Base",
+  createdAt: (defaultQuestionSetBaseJson as QuestionSet).createdAt,
+  questions: [
+    ...(defaultQuestionSetBaseJson as QuestionSet).questions,
+    ...(defaultQuestionSetVerifiedTailJson as QuestionSet).questions
+  ]
 });
 
 export const DEFAULT_QUESTION_SET_ID = DEFAULT_QUESTION_SET.id;

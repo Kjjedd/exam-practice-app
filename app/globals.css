@@ -384,8 +384,20 @@ a {
   border: 1px solid var(--theme-toggle-border);
 }
 
+.theme-toggle-button {
+  background: transparent;
+}
+
 .theme-toggle-button-idle {
   color: var(--theme-toggle-text);
+}
+
+.theme-toggle-button-idle:hover {
+  background: color-mix(in srgb, var(--theme-toggle-surface) 72%, white 28%);
+}
+
+:root[data-theme="dark"] .theme-toggle-button-idle:hover {
+  background: color-mix(in srgb, var(--theme-toggle-surface) 82%, #8be9fd 18%);
 }
 
 .theme-toggle-button-active {

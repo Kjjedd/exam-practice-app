@@ -65,7 +65,7 @@ export function HomeNavbar() {
           ))}
         </nav>
 
-        <ThemeToggle variant="inline" />
+        <ThemeToggle variant="compact" />
       </div>
     </header>
   );

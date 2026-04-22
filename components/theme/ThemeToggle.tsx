@@ -7,7 +7,7 @@ import { useTheme } from "./ThemeProvider";
 
 type ThemeToggleProps = Readonly<{
   hiddenOnHome?: boolean;
-  variant?: "floating" | "inline";
+  variant?: "floating" | "inline" | "compact";
 }>;
 
 export function ThemeToggle({
@@ -22,10 +22,14 @@ export function ThemeToggle({
   const shellClassName =
     variant === "inline"
       ? "theme-toggle-shell inline-flex items-center gap-1 rounded-full p-1 shadow-[0_18px_40px_rgba(15,23,42,0.16)] backdrop-blur-xl"
+      : variant === "compact"
+        ? "theme-toggle-shell inline-flex items-center rounded-full p-1 shadow-[0_18px_40px_rgba(15,23,42,0.16)] backdrop-blur-xl"
       : "theme-toggle-shell pointer-events-auto rounded-full p-1 shadow-[0_18px_40px_rgba(15,23,42,0.16)] backdrop-blur-xl";
   const buttonClassName =
     variant === "inline"
       ? "theme-toggle-button inline-flex min-w-[4.5rem] items-center justify-center rounded-full px-3 py-2 text-xs font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(15,23,42,0.18)] sm:min-w-[5rem]"
+      : variant === "compact"
+        ? "theme-toggle-button theme-toggle-button-idle inline-flex h-11 w-11 items-center justify-center rounded-full text-lg font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(15,23,42,0.18)]"
       : "theme-toggle-button theme-toggle-button-idle inline-flex h-11 w-11 items-center justify-center rounded-full text-lg font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(15,23,42,0.18)]";
 
   if (hiddenOnHome && pathname === "/") {
@@ -58,6 +62,23 @@ export function ThemeToggle({
           }`}
         >
           다크
+        </button>
+      </div>
+    );
+  }
+
+  if (variant === "compact") {
+    return (
+      <div className={shellClassName}>
+        <button
+          type="button"
+          onClick={() => setTheme(nextTheme)}
+          aria-label={buttonLabel}
+          title={buttonLabel}
+          className={buttonClassName}
+        >
+          <span aria-hidden="true">{isDarkTheme ? "☀︎" : "☾"}</span>
+          <span className="sr-only">{buttonLabel}</span>
         </button>
       </div>
     );

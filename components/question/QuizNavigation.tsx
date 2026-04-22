@@ -26,7 +26,7 @@ export function QuizNavigation({
   if (isFreeNavigationEnabled) {
     return (
       <section className="theme-card rounded-[1.75rem] px-4 py-4 sm:px-8 sm:py-6">
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-3">
             <button
               type="button"
               onClick={onGoPrevious}
@@ -76,7 +76,7 @@ export function QuizNavigation({
 
   return (
     <section className="theme-card rounded-[1.75rem] px-4 py-4 sm:px-8 sm:py-6">
-      <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-3">
           <button
             type="button"
             onClick={onProceed}

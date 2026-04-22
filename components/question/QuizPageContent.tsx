@@ -44,6 +44,7 @@ import { FavoriteToggle } from "./FavoriteToggle";
 import { ProgressIndicator } from "./ProgressIndicator";
 import { QuizNavigation } from "./QuizNavigation";
 import { QuestionCard } from "./QuestionCard";
+import { QuestionContributionActions } from "./QuestionContributionActions";
 import { QuizHeader } from "./QuizHeader";
 
 type QuizPageState = Readonly<{
@@ -738,6 +739,12 @@ export function QuizPageContent() {
                 isCorrect={isCorrect}
                 isOpen={isExplanationOpen}
                 onToggle={handleToggleExplanation}
+              />
+            ) : null}
+            {state.activeQuestionSet !== null ? (
+              <QuestionContributionActions
+                question={currentQuestion}
+                questionSet={state.activeQuestionSet}
               />
             ) : null}
             {isFreeNavigationMode || isSubmitted ? (

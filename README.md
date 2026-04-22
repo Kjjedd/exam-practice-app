@@ -206,11 +206,6 @@ lib/
   quiz/
   storage/
   types/
-
-plans/
-  feature-*/
-  fix-*/
-  refactor-*/
 ```
 
 ## Local Development
@@ -265,7 +260,7 @@ npm run build
 
 워크플로우 파일:
 
-- [`deploy.yml`](/Users/jongeon/Desktop/Study/exam-practice-app/.github/workflows/deploy.yml)
+- [`deploy.yml`](./.github/workflows/deploy.yml)
 
 빌드 후 배포 예시:
 

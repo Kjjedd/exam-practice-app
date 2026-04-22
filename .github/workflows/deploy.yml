@@ -71,7 +71,7 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Sync static export to S3
-        run: aws s3 sync out/ s3://kjjedd-cloud-web-prod-165749212250-ap-northeast-2-an --delete
+        run: aws s3 sync out/ "s3://${{ secrets.AWS_S3_BUCKET }}" --delete
 
       - name: Invalidate CloudFront cache
-        run: aws cloudfront create-invalidation --distribution-id EF0XMUB8GNKVY --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id "${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }}" --paths "/*"

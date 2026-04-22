@@ -31,6 +31,21 @@ coverage/
 codex-project-guidelines-exam-webapp.md
 plan.md
 research.md
+plans/
+
+# Local source assets for question-set reconstruction
+726~740/
+741~760/
+761~780/
+781~800/
+801~900/
+901~1019/
+
+# Internal/generated maintenance artifacts
+data/canonical-saa-phase1-3-report.json
+data/default-question-set-canonical-base-1-725.json
+data/default-question-set-saa-verified-*.json
+scripts/generate-canonical-saa-phase1-3.mjs
 
 # Certificates and keys
 *.pem

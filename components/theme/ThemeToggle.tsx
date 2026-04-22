@@ -5,33 +5,22 @@ import { useTheme } from "./ThemeProvider";
 
 export function ThemeToggle() {
   const { isReady, setTheme, theme } = useTheme();
+  const isDarkTheme = isReady ? theme === THEME_DARK : false;
+  const nextTheme = isDarkTheme ? THEME_LIGHT : THEME_DARK;
+  const buttonLabel = isDarkTheme ? "라이트 모드로 전환" : "다크 모드로 전환";
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-50 sm:bottom-6 sm:right-6">
-      <div className="theme-toggle-shell pointer-events-auto inline-flex items-center gap-1 rounded-full p-1 shadow-[0_18px_40px_rgba(15,23,42,0.16)] backdrop-blur-xl">
+    <div className="pointer-events-none fixed right-3 top-3 z-50 sm:right-5 sm:top-5">
+      <div className="theme-toggle-shell pointer-events-auto rounded-full p-1 shadow-[0_18px_40px_rgba(15,23,42,0.16)] backdrop-blur-xl">
         <button
           type="button"
-          onClick={() => setTheme(THEME_LIGHT)}
-          aria-pressed={theme === THEME_LIGHT}
-          className={`inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold transition-colors sm:px-3.5 ${
-            isReady && theme === THEME_LIGHT
-              ? "theme-toggle-button-active"
-              : "theme-toggle-button-idle"
-          }`}
+          onClick={() => setTheme(nextTheme)}
+          aria-label={buttonLabel}
+          title={buttonLabel}
+          className="theme-toggle-button theme-toggle-button-idle inline-flex h-11 w-11 items-center justify-center rounded-full text-lg font-semibold transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(15,23,42,0.18)]"
         >
-          라이트
-        </button>
-        <button
-          type="button"
-          onClick={() => setTheme(THEME_DARK)}
-          aria-pressed={theme === THEME_DARK}
-          className={`inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold transition-colors sm:px-3.5 ${
-            isReady && theme === THEME_DARK
-              ? "theme-toggle-button-active"
-              : "theme-toggle-button-idle"
-          }`}
-        >
-          다크
+          <span aria-hidden="true">{isDarkTheme ? "☀︎" : "☾"}</span>
+          <span className="sr-only">{buttonLabel}</span>
         </button>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "../components/theme/ThemeProvider";
-import { ThemeToggle } from "../components/theme/ThemeToggle";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -36,7 +35,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body>
         <ThemeProvider>
           {children}
-          <ThemeToggle hiddenOnPathnames={["/", "/quiz"]} />
         </ThemeProvider>
       </body>
     </html>

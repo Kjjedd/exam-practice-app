@@ -10,19 +10,19 @@ export function ImportValidationSummary({
   totalCount
 }: ImportValidationSummaryProps) {
   return (
-    <section className="rounded-[1.5rem] border border-ink/10 bg-white px-5 py-5 shadow-sm">
+    <section className="theme-card rounded-[1.5rem] px-5 py-5">
       <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
         Validation
       </span>
-      <h2 className="mt-4 text-xl font-semibold tracking-tight text-ink">
+      <h2 className="mt-4 text-xl font-semibold tracking-tight text-[var(--app-text)]">
         저장 전 검증 상태
       </h2>
       <dl className="mt-5 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl bg-mist px-4 py-4">
-          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+        <div className="theme-subtle-surface rounded-2xl px-4 py-4">
+          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
             Total
           </dt>
-          <dd className="mt-2 text-2xl font-semibold text-ink">{totalCount}</dd>
+          <dd className="mt-2 text-2xl font-semibold text-[var(--app-text)]">{totalCount}</dd>
         </div>
         <div className="rounded-2xl bg-tide/6 px-4 py-4">
           <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">

@@ -1,5 +1,4 @@
 import defaultQuestionSetBaseJson from "../../data/default-question-set-base-1-725.json";
-import defaultQuestionSet600PlusJson from "../../data/default-question-set-saa-600-plus.json";
 import defaultQuestionSetVerifiedTailJson from "../../data/default-question-set-verified-726-1019.json";
 import type { QuestionBank, QuestionSet } from "../types";
 import { validateQuestionBank, validateQuestionSet } from "../storage/question-bank-model";
@@ -18,7 +17,7 @@ const DEFAULT_QUESTION_SET = validateQuestionSet({
 export const DEFAULT_QUESTION_SET_ID = DEFAULT_QUESTION_SET.id;
 
 export const LEGACY_DEFAULT_QUESTION_SET_IDS = [
-  (defaultQuestionSet600PlusJson as QuestionSet).id,
+  "aws-saa-600-plus",
   "aws-saa-1-100",
   "aws-saa-600-725"
 ] as const;

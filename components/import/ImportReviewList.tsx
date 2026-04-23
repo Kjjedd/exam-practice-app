@@ -24,17 +24,17 @@ export function ImportReviewList({
   onSelectCandidate
 }: ImportReviewListProps) {
   return (
-    <section className="rounded-[1.75rem] border border-ink/10 bg-white px-5 py-5 shadow-sm">
+    <section className="theme-card rounded-[1.75rem] px-5 py-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <span className="inline-flex rounded-full bg-mist px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
+          <span className="theme-subtle-surface inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-muted)]">
             Candidates
           </span>
-          <h2 className="mt-3 text-xl font-semibold tracking-tight text-ink">
+          <h2 className="mt-3 text-xl font-semibold tracking-tight text-[var(--app-text)]">
             추출된 문항 목록
           </h2>
         </div>
-        <span className="rounded-full bg-ink px-3 py-1 text-sm font-semibold text-white">
+        <span className="theme-home-overview rounded-full px-3 py-1 text-sm font-semibold text-[var(--app-text)]">
           {candidates.length}
         </span>
       </div>
@@ -51,15 +51,15 @@ export function ImportReviewList({
               className={`w-full rounded-[1.25rem] border px-4 py-4 text-left transition-colors ${
                 isSelected
                   ? "border-coral bg-coral/6"
-                  : "border-ink/10 bg-white hover:border-ink/20 hover:bg-mist"
+                  : "theme-subtle-surface hover:border-[color:var(--app-border-strong)]"
               }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
                     Question {index + 1}
                   </p>
-                  <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-ink sm:text-base">
+                  <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-6 text-[var(--app-text)] sm:text-base">
                     {candidate.question || "문제 본문이 아직 비어 있습니다."}
                   </h3>
                 </div>

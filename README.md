@@ -211,7 +211,6 @@ components/
 
 data/
   default-question-set-base-1-725.json
-  default-question-set-saa-600-plus.json
   default-question-set-verified-726-1019.json
 
 lib/

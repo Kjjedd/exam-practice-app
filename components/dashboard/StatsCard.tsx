@@ -13,7 +13,7 @@ function getToneClassName(tone: StatsCardProps["tone"]): string {
     return "bg-coral/10 text-coral border-coral/20";
   }
 
-  return "bg-white text-ink border-ink/10";
+  return "theme-subtle-surface text-[var(--app-text)]";
 }
 
 export function StatsCard({

@@ -41,7 +41,7 @@ export function WrongAnswerCallout({ wrongCount }: WrongAnswerCalloutProps) {
         </div>
         <Link
           href="/review"
-          className="inline-flex items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
+          className="theme-solid-button inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
         >
           복습
         </Link>

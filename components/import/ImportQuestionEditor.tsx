@@ -38,13 +38,13 @@ export function ImportQuestionEditor({
   const issues = getCandidateIssues(candidate, validationSummary);
 
   return (
-    <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-6 shadow-sm sm:px-8">
+    <section className="theme-card rounded-[1.75rem] px-6 py-6 sm:px-8">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <span className="inline-flex rounded-full bg-mist px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-ink/70">
+          <span className="theme-subtle-surface inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-muted)]">
             Editor
           </span>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-ink">
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[var(--app-text)]">
             문항 {questionNumber} 검수
           </h2>
         </div>
@@ -68,22 +68,22 @@ export function ImportQuestionEditor({
 
       <div className="mt-6 space-y-6">
         <label className="block">
-          <span className="text-sm font-semibold text-ink">문제 본문</span>
+          <span className="text-sm font-semibold text-[var(--app-text)]">문제 본문</span>
           <textarea
             value={candidate.question}
             onChange={(event) => onQuestionChange(event.target.value)}
             rows={5}
-            className="mt-3 w-full rounded-[1.25rem] border border-ink/10 bg-mist px-4 py-3 text-sm leading-7 text-ink outline-none transition-colors focus:border-coral"
+            className="theme-input mt-3 w-full rounded-[1.25rem] px-4 py-3 text-sm leading-7 text-[var(--app-text)] outline-none transition-colors"
           />
         </label>
 
         <section>
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm font-semibold text-ink">선택지</span>
+            <span className="text-sm font-semibold text-[var(--app-text)]">선택지</span>
             <button
               type="button"
               onClick={onAddChoice}
-              className="rounded-full border border-ink/15 px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-coral/40 hover:text-coral"
+              className="theme-outline-button rounded-full px-4 py-2 text-sm font-semibold transition-colors"
             >
               선택지 추가
             </button>
@@ -92,10 +92,10 @@ export function ImportQuestionEditor({
             {candidate.choices.map((choice, choiceIndex) => (
               <div
                 key={`${candidate.tempId}-choice-${choiceIndex}`}
-                className="rounded-[1.25rem] border border-ink/10 bg-mist px-4 py-4"
+                className="theme-subtle-surface rounded-[1.25rem] px-4 py-4"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <label className="flex items-center gap-3 text-sm font-semibold text-ink">
+                  <label className="flex items-center gap-3 text-sm font-semibold text-[var(--app-text)]">
                     <input
                       type="radio"
                       name={`answer-${candidate.tempId}`}
@@ -110,7 +110,7 @@ export function ImportQuestionEditor({
                     disabled={candidate.choices.length <= 2}
                     className={`text-sm font-semibold ${
                       candidate.choices.length <= 2
-                        ? "cursor-not-allowed text-ink/35"
+                        ? "cursor-not-allowed text-[color:var(--app-text-faint)]"
                         : "text-coral"
                     }`}
                   >
@@ -121,7 +121,7 @@ export function ImportQuestionEditor({
                   value={choice}
                   onChange={(event) => onChoiceChange(choiceIndex, event.target.value)}
                   rows={3}
-                  className="mt-3 w-full rounded-[1rem] border border-ink/10 bg-white px-4 py-3 text-sm leading-7 text-ink outline-none transition-colors focus:border-coral"
+                  className="theme-input mt-3 w-full rounded-[1rem] px-4 py-3 text-sm leading-7 text-[var(--app-text)] outline-none transition-colors"
                 />
               </div>
             ))}
@@ -129,21 +129,21 @@ export function ImportQuestionEditor({
         </section>
 
         <label className="block">
-          <span className="text-sm font-semibold text-ink">해설</span>
+          <span className="text-sm font-semibold text-[var(--app-text)]">해설</span>
           <textarea
             value={candidate.explanation}
             onChange={(event) => onExplanationChange(event.target.value)}
             rows={4}
-            className="mt-3 w-full rounded-[1.25rem] border border-ink/10 bg-mist px-4 py-3 text-sm leading-7 text-ink outline-none transition-colors focus:border-coral"
+            className="theme-input mt-3 w-full rounded-[1.25rem] px-4 py-3 text-sm leading-7 text-[var(--app-text)] outline-none transition-colors"
           />
         </label>
 
         {candidate.sourceExcerpt ? (
-          <section className="rounded-[1.25rem] border border-ink/10 bg-ink px-4 py-4 text-white">
-            <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">
+          <section className="theme-home-overview rounded-[1.25rem] px-4 py-4">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
               Source Excerpt
             </h3>
-            <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-white/85">
+            <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[color:var(--app-text-muted)]">
               {candidate.sourceExcerpt}
             </p>
           </section>

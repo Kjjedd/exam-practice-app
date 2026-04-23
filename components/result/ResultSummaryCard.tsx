@@ -14,7 +14,7 @@ export function ResultSummaryCard({
       ? "border-tide/18 bg-tide/10 text-tide"
       : tone === "warning"
         ? "border-coral/18 bg-coral/10 text-coral"
-        : "border-[#dce5f5] bg-mist text-ink";
+        : "theme-subtle-surface text-[var(--app-text)]";
 
   return (
     <article className="theme-card rounded-[1.25rem] px-4 py-4 backdrop-blur sm:rounded-[1.5rem] sm:px-5 sm:py-5">

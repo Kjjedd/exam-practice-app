@@ -138,41 +138,41 @@ export function DashboardPageContent() {
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
-          <article className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-8 shadow-sm sm:px-8">
-            <h2 className="text-2xl font-semibold tracking-tight text-ink">
+          <article className="theme-card rounded-[1.75rem] px-6 py-8 sm:px-8">
+            <h2 className="text-2xl font-semibold tracking-tight text-[var(--app-text)]">
               최신 학습 문맥
             </h2>
             <dl className="mt-6 grid gap-5 sm:grid-cols-2">
               <div>
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
                   Last Studied
                 </dt>
-                <dd className="mt-2 text-base leading-7 text-ink">
+                <dd className="mt-2 text-base leading-7 text-[var(--app-text)]">
                   {formatStudiedAt(summary.stats.lastStudiedAt)}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
                   Latest Mode
                 </dt>
-                <dd className="mt-2 text-base leading-7 text-ink">
+                <dd className="mt-2 text-base leading-7 text-[var(--app-text)]">
                   {summary.latestModeLabel ?? "기록 없음"}
                 </dd>
               </div>
               <div className="sm:col-span-2">
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
                   Latest Question Set
                 </dt>
-                <dd className="mt-2 text-base leading-7 text-ink">
+                <dd className="mt-2 text-base leading-7 text-[var(--app-text)]">
                   {summary.latestQuestionSetTitle ?? "아직 완료된 세션이 없습니다."}
                 </dd>
               </div>
             </dl>
           </article>
 
-          <article className="rounded-[1.75rem] border border-ink/10 bg-ink px-6 py-8 text-white shadow-sm sm:px-8">
-            <h2 className="text-2xl font-semibold tracking-tight">학습 상태 해석</h2>
-            <ul className="mt-5 space-y-4 text-sm leading-6 text-white/80 sm:text-base">
+          <article className="theme-home-overview rounded-[1.75rem] px-6 py-8 sm:px-8">
+            <h2 className="text-2xl font-semibold tracking-tight text-[var(--app-text)]">학습 상태 해석</h2>
+            <ul className="mt-5 space-y-4 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
               <li>
                 현재 저장 구조 기준으로 통계는 최신 완료 세션을 중심으로 계산됩니다.
               </li>
@@ -189,13 +189,13 @@ export function DashboardPageContent() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/result"
-                className="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-ink transition-colors hover:bg-white/90"
+                className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
               >
                 결과 화면 보기
               </Link>
               <Link
                 href="/favorites"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-white/35 hover:bg-white/10"
+                className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
               >
                 즐겨찾기 보기
               </Link>
@@ -204,11 +204,11 @@ export function DashboardPageContent() {
         </section>
 
         {!summary.hasCompletedLatestQuizSession ? (
-          <section className="rounded-[1.75rem] border border-coral/20 bg-coral/5 px-6 py-6 shadow-sm sm:px-8">
-            <h2 className="text-xl font-semibold tracking-tight text-ink">
+          <section className="theme-card rounded-[1.75rem] border-coral/20 px-6 py-6 sm:px-8">
+            <h2 className="text-xl font-semibold tracking-tight text-[var(--app-text)]">
               완료된 학습 세션이 아직 없습니다.
             </h2>
-            <p className="mt-3 text-sm leading-6 text-ink/70 sm:text-base">
+            <p className="mt-3 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
               현재 저장된 세션이 있더라도 완료되지 않았다면, 성과 지표는 0으로
               표시됩니다. 퀴즈를 끝까지 진행하면 대시보드 수치가 정확히 반영됩니다.
             </p>

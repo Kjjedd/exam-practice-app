@@ -22,43 +22,43 @@ export function SelectedPdfSummary({
   note
 }: SelectedPdfSummaryProps) {
   return (
-    <section className="rounded-[1.75rem] border border-tide/20 bg-tide/5 px-6 py-6 shadow-sm sm:px-8">
+    <section className="theme-card rounded-[1.75rem] border-tide/20 px-6 py-6 sm:px-8">
       <span className="inline-flex rounded-full bg-tide/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
         Ready
       </span>
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-ink">
+      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-[var(--app-text)]">
         검수 단계로 넘길 PDF가 준비됐습니다.
       </h2>
       <dl className="mt-5 grid gap-4 sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
             File Name
           </dt>
-          <dd className="mt-2 text-sm leading-7 text-ink sm:text-base">
+          <dd className="mt-2 text-sm leading-7 text-[var(--app-text)] sm:text-base">
             {draft.fileName}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
             File Size
           </dt>
-          <dd className="mt-2 text-sm leading-7 text-ink sm:text-base">
+          <dd className="mt-2 text-sm leading-7 text-[var(--app-text)] sm:text-base">
             {formatFileSize(draft.fileSize)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
             File Type
           </dt>
-          <dd className="mt-2 text-sm leading-7 text-ink sm:text-base">
+          <dd className="mt-2 text-sm leading-7 text-[var(--app-text)] sm:text-base">
             {draft.fileType || "application/pdf"}
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-ink/55">
+          <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--app-text-faint)]">
             Selected At
           </dt>
-          <dd className="mt-2 text-sm leading-7 text-ink sm:text-base">
+          <dd className="mt-2 text-sm leading-7 text-[var(--app-text)] sm:text-base">
             {new Intl.DateTimeFormat("ko-KR", {
               dateStyle: "medium",
               timeStyle: "short"
@@ -67,7 +67,7 @@ export function SelectedPdfSummary({
         </div>
       </dl>
       {note ? (
-        <p className="mt-5 text-sm leading-6 text-ink/70 sm:text-base">{note}</p>
+        <p className="mt-5 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">{note}</p>
       ) : null}
     </section>
   );

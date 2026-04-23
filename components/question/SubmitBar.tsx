@@ -29,13 +29,13 @@ export function SubmitBar({
   const buttonLabel = isSubmitted ? "제출 완료" : isExamMode ? "답안 제출" : "정답 확인";
 
   return (
-    <section className="rounded-[1.75rem] border border-ink/10 bg-white px-6 py-6 shadow-sm sm:px-8">
+    <section className="theme-card rounded-[1.75rem] px-6 py-6 sm:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-xl font-semibold tracking-tight text-ink">
+          <h3 className="text-xl font-semibold tracking-tight text-[var(--app-text)]">
             {title}
           </h3>
-          <p className="mt-2 text-sm leading-6 text-ink/70 sm:text-base">
+          <p className="mt-2 text-sm leading-6 text-[color:var(--app-text-muted)] sm:text-base">
             {statusText}
           </p>
         </div>
@@ -45,8 +45,8 @@ export function SubmitBar({
           onClick={onSubmit}
           className={`inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors ${
             !canSubmit || isSubmitted
-              ? "cursor-not-allowed bg-ink/10 text-ink/45"
-              : "bg-ink text-white hover:bg-ink/90"
+              ? "cursor-not-allowed theme-muted-surface text-[color:var(--app-text-faint)]"
+              : "theme-solid-button hover:opacity-90"
           }`}
         >
           {buttonLabel}

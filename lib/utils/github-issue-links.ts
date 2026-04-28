@@ -77,8 +77,21 @@ function createIssueBody({
     appOrigin === null
       ? "알 수 없음"
       : `${appOrigin}/quiz?questionId=${encodeURIComponent(question.id)}`;
+  const metadataBlock = [
+    "<!-- exammate-meta",
+    "version: 1",
+    `kind: ${kind}`,
+    `questionSetId: ${questionSet.id}`,
+    `questionSetTitle: ${questionSet.title}`,
+    `questionId: ${question.id}`,
+    `questionNumber: ${questionTitle}`,
+    `appUrl: ${appUrl}`,
+    "-->"
+  ].join("\n");
 
   const sections = [
+    metadataBlock,
+    "",
     "## 문제 정보",
     `- 문제 세트 ID: ${questionSet.id}`,
     `- 문제 세트 이름: ${questionSet.title}`,
@@ -99,7 +112,7 @@ function createIssueBody({
     "",
     kind === "question-error"
       ? "## 제안 내용\n문제 본문, 보기, 구조 이상 또는 정답 의심 근거를 적어 주세요."
-      : "## 제안하는 해설\n현재 해설을 어떻게 보완하면 좋은지 적어 주세요.",
+      : "## 제안하는 해설\n현재 해설을 어떻게 보완하면 좋은지 적어 주세요. 이 영역만 수정하면 자동 PR 생성 대상이 됩니다.",
     "",
     "## 근거 / 참고 자료",
     "- 공식 문서, 스크린샷, 예시가 있다면 함께 남겨 주세요."

@@ -1,0 +1,260 @@
+name: Issue To PR
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: issue-to-pr-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  issue-to-pr:
+    name: Convert eligible issue into PR
+    runs-on: ubuntu-latest
+    if: github.event.issue.state == 'open'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Parse issue body
+        id: parse
+        run: node scripts/issue-to-pr/parse-issue-body.mjs
+
+      - name: Handle invalid issue format
+        if: steps.parse.outputs.mode == 'invalid'
+        uses: actions/github-script@v7
+        env:
+          ISSUE_REASON: ${{ steps.parse.outputs.reason }}
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const reason = process.env.ISSUE_REASON;
+            const ensureLabel = async (name, color, description) => {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name
+                });
+              } catch (error) {
+                if (error.status !== 404) {
+                  throw error;
+                }
+
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color,
+                  description
+                });
+              }
+            };
+
+            await ensureLabel("invalid-issue-format", "D93F0B", "Issue body is missing required automation fields.");
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ["invalid-issue-format"]
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: [
+                "자동 PR을 만들지 못했습니다.",
+                "",
+                `사유: ${reason}`,
+                "",
+                "웹앱에서 생성된 메타데이터와 필수 입력을 유지한 상태로 다시 수정해 주세요."
+              ].join("\n")
+            });
+
+      - name: Handle manual review issue
+        if: steps.parse.outputs.mode == 'manual-review'
+        uses: actions/github-script@v7
+        env:
+          ISSUE_REASON: ${{ steps.parse.outputs.reason }}
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const reason = process.env.ISSUE_REASON;
+            const ensureLabel = async (name, color, description) => {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name
+                });
+              } catch (error) {
+                if (error.status !== 404) {
+                  throw error;
+                }
+
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color,
+                  description
+                });
+              }
+            };
+
+            await ensureLabel("manual-review-required", "8B949E", "This issue requires a maintainer-reviewed manual PR.");
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ["manual-review-required"]
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: [
+                "이 이슈는 자동 PR 생성 대상이 아닙니다.",
+                "",
+                `사유: ${reason}`,
+                "",
+                "정답 변경이나 구조 변경 제안은 관리자가 직접 검토한 뒤 수동 PR로 반영합니다."
+              ].join("\n")
+            });
+
+      - name: Install dependencies
+        if: steps.parse.outputs.mode == 'auto-pr'
+        run: npm ci
+
+      - name: Apply explanation suggestion
+        if: steps.parse.outputs.mode == 'auto-pr'
+        id: apply
+        env:
+          QUESTION_NUMBER: ${{ steps.parse.outputs.question_number }}
+          PROPOSAL_TEXT: ${{ steps.parse.outputs.proposal }}
+          REFERENCE_TEXT: ${{ steps.parse.outputs.reference }}
+        run: node scripts/issue-to-pr/apply-explanation-suggestion.mjs
+
+      - name: Typecheck
+        if: steps.parse.outputs.mode == 'auto-pr'
+        run: npm run typecheck
+
+      - name: Build
+        if: steps.parse.outputs.mode == 'auto-pr'
+        run: npm run build
+
+      - name: Create pull request
+        if: steps.parse.outputs.mode == 'auto-pr'
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.parse.outputs.branch_name }}
+          commit-message: ${{ steps.parse.outputs.commit_title }}
+          title: ${{ steps.parse.outputs.commit_title }}
+          body: |
+            ## Summary
+            - apply explanation improvement from issue #${{ steps.parse.outputs.issue_number }}
+            - update the explanation for question ${{ steps.parse.outputs.question_number }}
+            - keep answer keys and structural fields unchanged
+
+            ## Source issue
+            - closes #${{ steps.parse.outputs.issue_number }}
+
+            ## Changed dataset
+            - `${{ steps.apply.outputs.fileName }}`
+
+            ## Validation
+            - npm run typecheck
+            - npm run build
+          delete-branch: true
+
+      - name: Comment with PR link
+        if: steps.parse.outputs.mode == 'auto-pr' && steps.cpr.outputs.pull-request-number != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+            const prNumber = `${{ steps.cpr.outputs.pull-request-number }}`;
+            const prUrl = `${{ steps.cpr.outputs.pull-request-url }}`;
+            const ensureLabel = async (name, color, description) => {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name
+                });
+              } catch (error) {
+                if (error.status !== 404) {
+                  throw error;
+                }
+
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color,
+                  description
+                });
+              }
+            };
+
+            await ensureLabel("auto-pr-created", "0E8A16", "An automated PR was created from this issue.");
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ["auto-pr-created"]
+            });
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: [
+                "자동 PR을 생성했습니다.",
+                "",
+                `- PR #${prNumber}: ${prUrl}`,
+                "",
+                "이 PR은 CI 통과 후에도 자동 머지되지 않으며, 관리자의 검토와 승인이 필요합니다."
+              ].join("\n")
+            });
+
+      - name: Comment when no PR was needed
+        if: steps.parse.outputs.mode == 'auto-pr' && steps.cpr.outputs.pull-request-number == ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueNumber = context.payload.issue.number;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: [
+                "자동 PR을 만들지 않았습니다.",
+                "",
+                "동일한 제안이 이미 반영되어 있거나, 실제 변경 diff가 없어 새 PR이 필요하지 않았습니다."
+              ].join("\n")
+            });

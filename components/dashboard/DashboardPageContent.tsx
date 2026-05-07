@@ -87,7 +87,7 @@ export function DashboardPageContent() {
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/quiz"
+              href="/quiz/"
               className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               퀴즈로 이동
@@ -188,13 +188,13 @@ export function DashboardPageContent() {
             </ul>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/result"
+                href="/result/"
                 className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
               >
                 결과 화면 보기
               </Link>
               <Link
-                href="/favorites"
+                href="/favorites/"
                 className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
               >
                 즐겨찾기 보기

@@ -299,7 +299,7 @@ export function ImportReviewPageContent() {
           </p>
           <div className="mt-6">
             <Link
-              href="/import"
+              href="/import/"
               className="inline-flex items-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
             >
               PDF 선택 화면으로 이동
@@ -350,7 +350,7 @@ export function ImportReviewPageContent() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/import"
+                href="/import/"
                 className="inline-flex items-center rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90"
               >
                 PDF 다시 선택
@@ -462,7 +462,7 @@ export function ImportReviewPageContent() {
           ) : null}
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/import"
+              href="/import/"
               className="inline-flex items-center rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-white/35 hover:bg-white/10"
             >
               PDF 다시 선택

@@ -558,7 +558,7 @@ export function QuizPageContent() {
 
     if (isLastQuestion) {
       if (state.activeQuestionSet === null) {
-        router.push("/result");
+        router.push("/result/");
         return;
       }
 
@@ -580,7 +580,7 @@ export function QuizPageContent() {
       clearInProgressQuizSession(currentSessionMatcher);
       writeLatestQuizSession(completedQuizSession);
       syncWrongQuestionIdsFromQuizSession(completedQuizSession);
-      router.push("/result");
+      router.push("/result/");
       return;
     }
 

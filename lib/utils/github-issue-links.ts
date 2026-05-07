@@ -1,5 +1,6 @@
 import type { Question, QuestionSet } from "../types";
 import { getQuestionNumber } from "../quiz/question-range";
+import { buildStaticRoute } from "./static-routes";
 
 const GITHUB_ISSUE_BASE_URL =
   "https://github.com/Kjjedd/exam-practice-app/issues/new";
@@ -76,7 +77,9 @@ function createIssueBody({
   const appUrl =
     appOrigin === null
       ? "알 수 없음"
-      : `${appOrigin}/quiz?questionId=${encodeURIComponent(question.id)}`;
+      : `${appOrigin}${buildStaticRoute("/quiz", new URLSearchParams({
+          questionId: question.id
+        }))}`;
   const metadataBlock = [
     "<!-- exammate-meta",
     "version: 1",

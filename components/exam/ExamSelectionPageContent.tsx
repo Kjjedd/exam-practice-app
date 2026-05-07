@@ -48,13 +48,13 @@ export function ExamSelectionPageContent() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/quiz/"
+                href="/quiz/index.html"
                 className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
               >
                 일반 문제풀이
               </Link>
               <Link
-                href="/quiz/?mode=random"
+                href="/quiz/index.html?mode=random"
                 className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
               >
                 랜덤 모드
@@ -141,7 +141,7 @@ export function ExamSelectionPageContent() {
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
-                  href={`/quiz/?mode=exam&exam=${template.id}&restart=1${
+                  href={`/quiz/index.html?mode=exam&exam=${template.id}&restart=1${
                     rangeQueryString.length > 0 ? `&${rangeQueryString}` : ""
                   }`}
                   className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"

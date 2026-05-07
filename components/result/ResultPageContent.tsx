@@ -122,7 +122,7 @@ export function ResultPageContent() {
               홈으로 이동
             </Link>
             <Link
-              href="/quiz/"
+              href="/quiz/index.html"
               className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
             >
               퀴즈로 돌아가기

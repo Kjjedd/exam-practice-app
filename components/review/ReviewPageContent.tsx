@@ -431,13 +431,13 @@ export function ReviewPageContent() {
                   홈으로 이동
                 </Link>
                 <Link
-                  href="/quiz/"
+                  href="/quiz/index.html"
                   className="theme-outline-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors"
                 >
                   현재 세트 다시 풀기
                 </Link>
                 <Link
-                  href="/quiz/?restart=1"
+                  href="/quiz/index.html?restart=1"
                   className="inline-flex items-center justify-center rounded-full border border-tide/20 bg-tide/8 px-5 py-3 text-sm font-semibold text-tide transition-colors hover:bg-tide/12"
                 >
                   처음부터 다시 시작
@@ -466,7 +466,7 @@ export function ReviewPageContent() {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/result/"
+              href="/result/index.html"
               className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               결과 화면으로 이동

@@ -23,7 +23,7 @@ type PrimaryAction = Readonly<{
 const primaryActions: readonly PrimaryAction[] = [
   {
     title: "PDF 가져오기",
-    href: "/import/",
+    href: "/import/index.html",
     badge: "Import",
     availability: "always",
     accentClassName: "border-[#7e9fff] bg-white text-[#325ecc]",
@@ -39,7 +39,7 @@ const primaryActions: readonly PrimaryAction[] = [
   },
   {
     title: "일반 문제풀이",
-    href: "/quiz/",
+    href: "/quiz/index.html",
     badge: "Normal",
     availability: "active-set",
     accentClassName: "border-[#f0a18f] bg-white text-[#c96a50]",
@@ -55,7 +55,7 @@ const primaryActions: readonly PrimaryAction[] = [
   },
   {
     title: "랜덤 모드",
-    href: "/quiz/?mode=random",
+    href: "/quiz/index.html?mode=random",
     badge: "Random",
     availability: "active-set",
     accentClassName: "border-[#e8bf78] bg-white text-[#b07b17]",
@@ -71,7 +71,7 @@ const primaryActions: readonly PrimaryAction[] = [
   },
   {
     title: "시험 모드",
-    href: "/exam/",
+    href: "/exam/index.html",
     badge: "Exam",
     availability: "default-saa",
     accentClassName: "border-[#93d7c1] bg-white text-[#2d8a68]",

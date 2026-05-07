@@ -108,7 +108,7 @@ export function FavoritesPageContent() {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/quiz/"
+              href="/quiz/index.html"
               className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               퀴즈로 이동
@@ -164,7 +164,7 @@ export function FavoritesPageContent() {
                   </p>
                 </div>
                 <Link
-                  href={`/quiz/?questionId=${encodeURIComponent(question.id)}`}
+                  href={`/quiz/index.html?questionId=${encodeURIComponent(question.id)}`}
                   className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
                 >
                   이 문제 다시 보기

@@ -140,7 +140,7 @@ export function ActiveQuestionSetSummary({
         <div className="theme-card mt-6 rounded-[1.5rem] border-dashed border-coral/30 px-5 py-5">
           <h3 className="text-lg font-semibold text-[var(--app-text)]">세트가 없습니다.</h3>
           <a
-            href="/import/"
+            href="/import/index.html"
             className="mt-5 inline-flex items-center rounded-full bg-coral px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-coral/90"
           >
             PDF 가져오기

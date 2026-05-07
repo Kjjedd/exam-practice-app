@@ -558,7 +558,7 @@ export function QuizPageContent() {
 
     if (isLastQuestion) {
       if (state.activeQuestionSet === null) {
-        router.push("/result/");
+        router.push("/result/index.html");
         return;
       }
 
@@ -580,7 +580,7 @@ export function QuizPageContent() {
       clearInProgressQuizSession(currentSessionMatcher);
       writeLatestQuizSession(completedQuizSession);
       syncWrongQuestionIdsFromQuizSession(completedQuizSession);
-      router.push("/result/");
+      router.push("/result/index.html");
       return;
     }
 
@@ -682,10 +682,10 @@ export function QuizPageContent() {
             }
             primaryHref={
               isExamMode && !canUseExamModeForQuestionSet(state.activeQuestionSet)
-                ? "/quiz/"
+                ? "/quiz/index.html"
                 : isExamMode
-                  ? "/exam/"
-                  : "/import/"
+                  ? "/exam/index.html"
+                  : "/import/index.html"
             }
             primaryLabel={
               isExamMode && !canUseExamModeForQuestionSet(state.activeQuestionSet)

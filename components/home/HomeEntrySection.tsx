@@ -10,6 +10,7 @@ import {
   readInProgressQuizSessions
 } from "../../lib/quiz/session-storage";
 import type { InProgressQuizSession, QuestionSetSummary } from "../../lib/types";
+import { buildStaticRoute, withTrailingSlash } from "../../lib/utils/static-routes";
 import { ActiveQuestionSetSummary } from "./ActiveQuestionSetSummary";
 import { PrimaryActions } from "./PrimaryActions";
 
@@ -60,23 +61,21 @@ function getResumeHref(quizSession: InProgressQuizSession | null): string | null
 
   if (quizSession.mode === "random") {
     searchParams.set("mode", "random");
-    return `/quiz?${searchParams.toString()}`;
+    return buildStaticRoute("/quiz", searchParams);
   }
 
   if (quizSession.mode === "exam") {
     if (quizSession.examTemplateId === null) {
-      return `/exam?${searchParams.toString()}`;
+      return buildStaticRoute("/exam", searchParams);
     }
 
     searchParams.set("mode", "exam");
     searchParams.set("exam", quizSession.examTemplateId);
 
-    return `/quiz?${searchParams.toString()}`;
+    return buildStaticRoute("/quiz", searchParams);
   }
 
-  const queryString = searchParams.toString();
-
-  return queryString.length > 0 ? `/quiz?${queryString}` : "/quiz";
+  return buildStaticRoute("/quiz", searchParams);
 }
 
 function getRestartHref(quizSession: InProgressQuizSession | null): string | null {
@@ -98,21 +97,21 @@ function getRestartHref(quizSession: InProgressQuizSession | null): string | nul
 
   if (quizSession.mode === "random") {
     searchParams.set("mode", "random");
-    return `/quiz?${searchParams.toString()}`;
+    return buildStaticRoute("/quiz", searchParams);
   }
 
   if (quizSession.mode === "exam") {
     if (quizSession.examTemplateId === null) {
-      return `/exam?${searchParams.toString()}`;
+      return buildStaticRoute("/exam", searchParams);
     }
 
     searchParams.set("mode", "exam");
     searchParams.set("exam", quizSession.examTemplateId);
 
-    return `/quiz?${searchParams.toString()}`;
+    return buildStaticRoute("/quiz", searchParams);
   }
 
-  return `/quiz?${searchParams.toString()}`;
+  return buildStaticRoute("/quiz", searchParams);
 }
 
 function parseRangeInput(value: string): number | null {
@@ -151,13 +150,7 @@ function buildModeHref(
     searchParams.set("mode", "random");
   }
 
-  const queryString = searchParams.toString();
-
-  if (queryString.length === 0) {
-    return pathname;
-  }
-
-  return `${pathname}?${queryString}`;
+  return buildStaticRoute(pathname, searchParams);
 }
 
 export function HomeEntrySection() {

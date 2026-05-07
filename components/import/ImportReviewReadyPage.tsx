@@ -65,7 +65,7 @@ export function ImportReviewReadyPage() {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/import"
+              href="/import/"
               className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               가져오기 화면으로 이동
@@ -116,7 +116,7 @@ export function ImportReviewReadyPage() {
           </ul>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/import"
+              href="/import/"
               className="theme-solid-button inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
             >
               PDF 다시 선택

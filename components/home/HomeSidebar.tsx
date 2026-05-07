@@ -14,7 +14,7 @@ const sidebarItems: readonly SidebarItem[] = [
   },
   {
     label: "문제풀이",
-    href: "/quiz",
+    href: "/quiz/",
     shortLabel: "QZ"
   },
   {

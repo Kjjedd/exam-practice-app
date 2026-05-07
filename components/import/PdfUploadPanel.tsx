@@ -171,7 +171,7 @@ export function PdfUploadPanel() {
           홈으로 돌아가기
         </Link>
         <Link
-          href="/import/review"
+          href="/import/review/"
           aria-disabled={!state.hasLiveFile}
           className={`inline-flex items-center rounded-full px-5 py-3 text-sm font-semibold transition-colors ${
             state.hasLiveFile

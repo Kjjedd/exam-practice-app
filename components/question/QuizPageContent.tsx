@@ -682,10 +682,10 @@ export function QuizPageContent() {
             }
             primaryHref={
               isExamMode && !canUseExamModeForQuestionSet(state.activeQuestionSet)
-                ? "/quiz"
+                ? "/quiz/"
                 : isExamMode
-                  ? "/exam"
-                  : "/import"
+                  ? "/exam/"
+                  : "/import/"
             }
             primaryLabel={
               isExamMode && !canUseExamModeForQuestionSet(state.activeQuestionSet)

@@ -10,17 +10,17 @@ const secondaryLinks: readonly SecondaryLink[] = [
   {
     title: "오답 복습",
     description: "틀린 문제만 다시 봅니다.",
-    href: "/review"
+    href: "/review/"
   },
   {
     title: "즐겨찾기",
     description: "저장한 문제를 봅니다.",
-    href: "/favorites"
+    href: "/favorites/"
   },
   {
     title: "학습 통계",
     description: "학습 기록을 봅니다.",
-    href: "/dashboard"
+    href: "/dashboard/"
   }
 ] as const;
 

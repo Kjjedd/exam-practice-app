@@ -23,7 +23,7 @@ type PrimaryAction = Readonly<{
 const primaryActions: readonly PrimaryAction[] = [
   {
     title: "PDF 가져오기",
-    href: "/import",
+    href: "/import/",
     badge: "Import",
     availability: "always",
     accentClassName: "border-[#7e9fff] bg-white text-[#325ecc]",

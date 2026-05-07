@@ -9,7 +9,7 @@ type SidebarItem = Readonly<{
 const sidebarItems: readonly SidebarItem[] = [
   {
     label: "가져오기",
-    href: "/import",
+    href: "/import/",
     shortLabel: "IM"
   },
   {
@@ -19,12 +19,12 @@ const sidebarItems: readonly SidebarItem[] = [
   },
   {
     label: "복습",
-    href: "/review",
+    href: "/review/",
     shortLabel: "RV"
   },
   {
     label: "통계",
-    href: "/dashboard",
+    href: "/dashboard/",
     shortLabel: "ST"
   }
 ] as const;

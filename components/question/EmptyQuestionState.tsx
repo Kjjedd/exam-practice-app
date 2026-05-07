@@ -10,7 +10,7 @@ type EmptyQuestionStateProps = Readonly<{
 export function EmptyQuestionState({
   title = "아직 활성 문제 세트가 없습니다.",
   description = "문제를 표시하려면 먼저 PDF를 가져오고 검수한 뒤 활성 문제 세트로 저장해야 합니다. 저장이 끝나면 이 화면에서 바로 첫 문제를 읽기 시작할 수 있습니다.",
-  primaryHref = "/import",
+  primaryHref = "/import/",
   primaryLabel = "PDF 가져오기"
 }: EmptyQuestionStateProps) {
   return (

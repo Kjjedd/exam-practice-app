@@ -14,9 +14,7 @@ type BuildQuestionSuggestionIssueUrlParams = Readonly<{
   appOrigin: string | null;
 }>;
 
-const MAX_QUESTION_PREVIEW_LENGTH = 720;
-const MAX_EXPLANATION_PREVIEW_LENGTH = 900;
-const MAX_CHOICE_PREVIEW_LENGTH = 180;
+const MAX_QUESTION_PREVIEW_LENGTH = 160;
 
 function truncateText(value: string, maxLength: number): string {
   const normalizedValue = value.replace(/\n{3,}/g, "\n\n").trim();
@@ -26,16 +24,6 @@ function truncateText(value: string, maxLength: number): string {
   }
 
   return `${normalizedValue.slice(0, maxLength - 1).trimEnd()}…`;
-}
-
-function formatChoices(question: Question): string {
-  return question.choices
-    .map((choice, index) => {
-      const choiceLabel = String.fromCharCode(65 + index);
-
-      return `- ${choiceLabel}. ${truncateText(choice, MAX_CHOICE_PREVIEW_LENGTH)}`;
-    })
-    .join("\n");
 }
 
 function formatAnswers(question: Question): string {
@@ -70,10 +58,6 @@ function createIssueBody({
   const questionNumber = getQuestionNumber(question);
   const questionTitle = questionNumber === null ? question.id : String(questionNumber);
   const questionPreview = truncateText(question.question, MAX_QUESTION_PREVIEW_LENGTH);
-  const explanationPreview = truncateText(
-    question.explanation,
-    MAX_EXPLANATION_PREVIEW_LENGTH
-  );
   const appUrl =
     appOrigin === null
       ? "알 수 없음"
@@ -104,21 +88,18 @@ function createIssueBody({
     "## 현재 문제 본문",
     questionPreview,
     "",
-    "## 현재 보기",
-    formatChoices(question),
-    "",
     "## 현재 정답",
     `${formatAnswers(question)} (참고용, 자동 변경되지 않음)`,
-    "",
-    "## 현재 해설",
-    explanationPreview,
     "",
     kind === "question-error"
       ? "## 제안 내용\n문제 본문, 보기, 구조 이상 또는 정답 의심 근거를 적어 주세요."
       : "## 제안하는 해설\n현재 해설을 어떻게 보완하면 좋은지 적어 주세요. 이 영역만 수정하면 자동 PR 생성 대상이 됩니다.",
     "",
     "## 근거 / 참고 자료",
-    "- 공식 문서, 스크린샷, 예시가 있다면 함께 남겨 주세요."
+    "- 공식 문서, 스크린샷, 예시가 있다면 함께 남겨 주세요.",
+    "",
+    "## 참고",
+    "- 현재 해설 전문은 앱 화면에서 직접 확인해 주세요."
   ];
 
   return sections.join("\n");

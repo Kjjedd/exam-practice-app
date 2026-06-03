@@ -8119,7 +8119,9 @@
         "REST API를 위한 API Gateway에서 사용자 지정 도메인 이름을 만듭니다. AWS Certificate Manager (ACM)에서 인증서를 가져옵니다."
       ],
       "answers": [
-        0
+        0,
+        3,
+        5
       ],
       "explanation": "A. 레지스트라에 필요한 도메인을 등록합니다. Route 53 호스팅 존에 와일드카드 사용자 지정 도메인 이름을 만들고 API Gateway 엔드포인트를 가리키는 존에 기록합니다. - 도메인 등록은 회사가 사용하는 사용자 지정 도메인을 설정하는 첫 단계로 필수적입니다. - 와일드카드 도메인을 설정하면 각 고객에게 고유한 URL을 제공할 수 있습니다. 예를 들어, *.example.com 형식의 URL을 통해 customer1.example.com과 같은 개별 URL을 생성할 수 있습니다. - 와일드카드 도메인을 API Gateway 엔드포인트에 연결하여, 모든 고객이 개별 URL을 통해 API Gateway에 접근할 수 있도록 구성할 수 있습니다. 이 단계는 고유한 URL과 API Gateway 통합을 설정하는 데 필수적입니다.\n\nD. 동일한 지역의 AWS Certificate Manager(ACM)에서 사용자 지정 도메인 이름과 일치하는 와일드카드 인증서를 요청합니다. - AWS Certificate Manager(ACM)에서 와일드카드 인증서를 발급받으면, 모든 고객에 대해 개별적인 HTTPS 연결을 설정할 수 있습니다. 와일드카드 인증서는 *.example.com과 같은 도메인을 지원하므로, 고유한 URL을 HTTPS로 보호할 수 있습니다. - AWS Certificate Manager(ACM) : SSL/TLS 인증서를 간편하게 관리하고 배포할 수 있도록 지원하는 AWS 서비스로 ACM을 사용하면 웹 애플리케이션이나 AWS 리소스에 필요한 SSL/TLS 인증서를 쉽게 요청, 배포, 갱신할 수 있음 - ACM 인증서는 API Gateway와 같은 지역에서 발급되어야 하므로, 이 단계는 필수적입니다. F. REST API를 위한 API Gateway에서 사용자 지정 도메인 이름을 만듭니다. AWS Certificate Manager(ACM)에서 인증서를 가져옵니다. - API Gateway에 사용자 지정 도메인 이름을 설정하면, API 엔드포인트에 사용자 지정 URL을 매핑할 수 있습니다. 이를 통해 고객마다 고유한 URL을 제공할 수 있습니다. - ACM 인증서를 API Gateway에 연결하여 HTTPS 통신을 보장할 수 있습니다. 이는 보안과 운영 효율성을 동시에 충족하는 중요한 단계입니다.",
       "category": "AWS SAA"

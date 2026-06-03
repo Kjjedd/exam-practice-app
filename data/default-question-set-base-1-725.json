@@ -8258,7 +8258,9 @@
         "PHP, CSS, JS를 사용하여 Amazon S3 정적 웹 호스팅을 사용합니다. Amazon CloudFront를 사용하여 프런트엔드 웹 콘텐츠를 제공합니다."
       ],
       "answers": [
-        0
+        0,
+        2,
+        5
       ],
       "explanation": "A. Amazon DynamoDB에서 사용자 정보를 검색하는 AWS Lambda 함수를 만듭니다. RESTful API를 허용하는 Amazon API Gateway 엔드포인트를 만듭니다. API 호출을 Lambda 함수로 보냅니다. - AWS Lambda는 서버리스로 실행되므로 유휴 시간에 비용이 발생하지 않으며, DynamoDB를 사용해 빠르고 확장 가능한 데이터베이스 접근이 가능합니다. C. 사용자를 인증하기 위해 Amazon Cognito 사용자 풀을 생성합니다. - Amazon Cognito는 사용자 인증 및 관리에 최적화된 서비스로, 사용자 등록, 로그인 및 접근 제어를 쉽게 설정할 수 있습니다. F. PHP, CSS, JS를 사용하여 Amazon S3 정적 웹 호스팅을 사용합니다. Amazon CloudFront를 사용하여 프런트엔드 웹 콘텐츠를 제공합니다. - Amazon S3와 CloudFront를 사용하면 정적 웹 콘텐츠를 효율적으로 제공할 수 있으며, 전 세계적으로 빠른 액세스를 보장할 수 있습니다. 이 조합은 서버리스 아키텍처와 정적 웹 호스팅을 결합하여 비용 효율성을 극대화하며, 유휴 상태에서도 최소한의 비용만 발생하도록 설계되었습니다. Lambda와 DynamoDB는 동적으로 확장되며, Cognito는 인증을 관리하여 구독한 사용자만 접근할 수 있도록 보장합니다.",
       "category": "AWS SAA"

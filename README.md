@@ -407,6 +407,8 @@ npm run build
 
 현재는 소규모 사용자 환경의 운영 비용을 고려해 Cloudflare Pages로 전환했습니다. GitHub 저장소와 연동해 `main` 브랜치는 운영 배포, PR 브랜치는 미리보기 배포로 처리합니다.
 
+Cloudflare Pages 설정은 Build command에 `npm run build`, Build output directory에 `out`, Production branch에 `main`, 환경 변수 `NODE_VERSION=22`를 사용합니다.
+
 <br/>
 
 ### CI/CD Pipeline

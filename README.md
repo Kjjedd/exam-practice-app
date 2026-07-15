@@ -296,7 +296,7 @@ graph LR
 | **Language** | TypeScript 5 |
 | **Styling** | Tailwind CSS 3 |
 | **Storage** | localStorage · sessionStorage |
-| **Deploy** | AWS S3 + CloudFront + Route 53 |
+| **Deploy** | Cloudflare Pages (current) · AWS S3 + CloudFront + Route 53 (initial) |
 
 </div>
 
@@ -308,10 +308,9 @@ graph LR
 
 ```mermaid
 graph TB
-    User[👤 User] --> CF[☁️ CloudFront]
-    CF --> S3[📦 S3 Static Assets]
-    DNS[🌐 Route 53] --> CF
-    ACM[🔒 ACM Certificate] --> CF
+    User[👤 User] --> CF[☁️ Cloudflare Pages]
+    DNS[🌐 Custom Domain DNS] --> CF
+    CF --> Assets[📦 Static Export Assets]
     App[📱 ExamMate App] --> Storage[💾 Browser Storage]
 ```
 
@@ -402,12 +401,11 @@ npm run build
 
 ## 🌍 Deployment
 
-### AWS Infrastructure
+### Deployment Evolution
 
-- **S3**: Static file hosting
-- **CloudFront**: CDN distribution
-- **ACM**: SSL/TLS certificate
-- **Route 53**: DNS management
+초기에는 AWS S3, CloudFront, ACM, Route 53으로 정적 웹 서비스 인프라를 구성하고 GitHub Actions를 통해 배포를 자동화했습니다. 이 과정에서 CDN 배포, 캐시 무효화, IAM OIDC 기반의 배포 권한 관리 경험을 쌓았습니다.
+
+현재는 소규모 사용자 환경의 운영 비용을 고려해 Cloudflare Pages로 전환했습니다. GitHub 저장소와 연동해 `main` 브랜치는 운영 배포, PR 브랜치는 미리보기 배포로 처리합니다.
 
 <br/>
 
@@ -417,8 +415,8 @@ npm run build
 
 | Event | Actions |
 |:---:|---|
-| **PR → main** | ✅ Type check<br/>✅ Build test |
-| **Push → main** | ✅ Type check<br/>✅ Build<br/>📤 S3 sync<br/>🔄 CloudFront invalidation |
+| **PR → main** | ✅ GitHub Actions: Type check<br/>✅ GitHub Actions: Build<br/>🔎 Cloudflare Pages: Preview deployment |
+| **Push → main** | ✅ GitHub Actions: Type check<br/>✅ GitHub Actions: Build<br/>🚀 Cloudflare Pages: Production deployment |
 
 </div>
 
